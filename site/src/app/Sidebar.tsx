@@ -10,6 +10,8 @@ import { Ecran, PALETTES, useAtelierStore } from '../store/useAtelierStore';
 import { usePatronymeStore } from '../store/usePatronymeStore';
 import { nomLisible, teinteDe } from '../lib/origins';
 import { useLectureSeule } from '../lib/lectureSeule';
+import { BoutonSiteEnLigne } from '../lib/boutonSiteEnLigne';
+import { PortesDuSite } from '../lib/portesDuSite';
 import { MONTRER_RECENTS } from '../features/home/accueilNeutre';
 const ENTREES: {
     ecran: Ecran;
@@ -38,6 +40,8 @@ export const Sidebar = ({ rail }: {
                 <BoutonRecherche rail/>
                 {!lecture && <><BoutonSuggestions rail/>
                 <BoutonIncoherences rail/>
+                <PortesDuSite rail/>
+                <BoutonSiteEnLigne rail/>
                 <BoutonSauvegarde rail/>
                 <BoutonCarnet rail/>
                 <BoutonGedcom rail/></>}
@@ -64,7 +68,9 @@ export const Sidebar = ({ rail }: {
             </nav>
             <BoutonRecherche rail={false}/>
             {!lecture && <><BoutonSuggestions rail={false}/>
-            <BoutonIncoherences rail={false}/></>}
+            <BoutonIncoherences rail={false}/>
+            <PortesDuSite rail={false}/>
+            <BoutonSiteEnLigne rail={false}/></>}
 
             {MONTRER_RECENTS && recents.length > 0 && (<div className="flex flex-col gap-2.5 px-3">
                     <div className="text-[10.5px] tracking-[.12em] uppercase text-encre-3">Récemment consultés</div>

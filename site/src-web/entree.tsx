@@ -9,6 +9,9 @@ import '../src/ui/theme.css';
 import './telephone/telephone.css'; // telephone.css : sous 760 px de large, les mêmes blocs rangés pour un téléphone
 import { Porte } from './Porte';
 import { CadrePartenaires } from './partenaires/Partenaires';
+import { useBoutonSiteEnLigne } from '../src/lib/boutonSiteEnLigne';
+
+useBoutonSiteEnLigne.setState({ montrer: false }); // le bouton « Site en ligne » est pour lui, au PC : jamais dans le site
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
