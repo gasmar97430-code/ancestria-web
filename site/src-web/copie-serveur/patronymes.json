@@ -1,0 +1,2988 @@
+{
+  "_source": [
+    "Frequences : naissances recensees a La Reunion entre 1891 et 1915,",
+    "relevees par ici-la.co a partir des registres d'etat civil.",
+    "Origines et procedes d'attribution : Portail de l'esclavage a La Reunion",
+    "(dossier « Les noms de la liberte, 1664-1848 »), Universite Numerique de",
+    "La Reunion, et le Portail des Coutaye pour les noms indo-reunionnais.",
+    "Voir REPERTOIRE-PATRONYMES.md a la racine du depot pour le detail."
+  ],
+  "_avertissement": [
+    "L'origine indiquee est celle DU NOM, jamais celle des familles qui le",
+    "portent. En 1848 l'etat civil a attribue un patronyme a plus de 62 000",
+    "affranchis, tres souvent des noms francais : un nom d'apparence",
+    "europeenne ne dit rien de l'ascendance de celui qui le porte."
+  ],
+  "_certitude": [
+    "Documentee : origine etablie par une source citee.",
+    "Probable : finale caracteristique des patronymes indo-reunionnais,",
+    "  indice linguistique et non attribution sourcee.",
+    "Non documentee : le nom figure au repertoire pour la recherche, mais",
+    "  aucune origine ne lui est attribuee. C'est le cas le plus frequent,",
+    "  et il vaut mieux qu'une attribution inventee."
+  ],
+  "patronymes": [
+    {
+      "nom": "PAYET",
+      "origine": "Europe",
+      "frequence": 2758,
+      "notes": "Le patronyme le plus porte de l'ile. Porte aussi bien par des descendants de colons que par des familles ayant recu un nom francais en 1848.",
+      "rang": 1,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "GRONDIN",
+      "origine": "Europe",
+      "frequence": 1714,
+      "notes": "Nom de colons francais, tres largement diffuse ensuite.",
+      "rang": 2,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "HOARAU",
+      "origine": "Malgache",
+      "frequence": 1699,
+      "notes": "Une des deux graphies concurrentes, avec HOAREAU. L'etat civil n'a jamais tranche.",
+      "rang": 3,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "FONTAINE",
+      "origine": "Europe",
+      "frequence": 1444,
+      "rang": 4,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "BOYER",
+      "origine": "Europe",
+      "frequence": 1320,
+      "rang": 5,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "ROBERT",
+      "origine": "Europe",
+      "frequence": 1231,
+      "rang": 6,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "HOAREAU",
+      "origine": "Malgache",
+      "frequence": 1229,
+      "notes": "Variante graphique de HOARAU. Les deux formes coexistent dans les memes familles.",
+      "rang": 7,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "RIVIERE",
+      "origine": "Europe",
+      "frequence": 1105,
+      "rang": 8,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "MAILLOT",
+      "origine": "Europe",
+      "frequence": 959,
+      "rang": 9,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "DIJOUX",
+      "origine": "Malgache",
+      "frequence": 847,
+      "rang": 10,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "TECHER",
+      "origine": "Malgache",
+      "frequence": 840,
+      "notes": "Nom de proprietaires dont l'anagramme CHERTE a ete attribue a des affranchis en 1848.",
+      "rang": 11,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LEBON",
+      "origine": "Europe",
+      "frequence": 755,
+      "rang": 12,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LAURET",
+      "origine": "Europe",
+      "frequence": 686,
+      "rang": 13,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "BEGUE",
+      "origine": "Europe",
+      "frequence": 648,
+      "rang": 14,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "CLAIN",
+      "origine": "Europe",
+      "frequence": 578,
+      "rang": 15,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "TURPIN",
+      "origine": "Europe",
+      "frequence": 503,
+      "rang": 16,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "DAMOUR",
+      "origine": "Europe",
+      "frequence": 457,
+      "rang": 17,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "BENARD",
+      "origine": "Europe",
+      "frequence": 446,
+      "rang": 18,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "CADET",
+      "origine": "Europe",
+      "frequence": 421,
+      "rang": 19,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "MOREL",
+      "origine": "Europe",
+      "frequence": 413,
+      "rang": 20,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "ETHEVE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 356,
+      "rang": 21
+    },
+    {
+      "nom": "MUSSARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 353,
+      "rang": 22
+    },
+    {
+      "nom": "NATIVEL",
+      "origine": "Malgache",
+      "notes": "Nom dont les anagrammes LEVITAN et VELITAN ont ete attribues a des affranchis en 1848.",
+      "frequence": 343,
+      "rang": 23,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "VITRY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 338,
+      "rang": 24
+    },
+    {
+      "nom": "DALLEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 335,
+      "rang": 25
+    },
+    {
+      "nom": "PICARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 334,
+      "rang": 26
+    },
+    {
+      "nom": "GONTHIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 323,
+      "rang": 27
+    },
+    {
+      "nom": "SAUTRON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 322,
+      "rang": 28
+    },
+    {
+      "nom": "LALLEMAND",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 244,
+      "rang": 29
+    },
+    {
+      "nom": "LEBRETON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 221,
+      "rang": 30
+    },
+    {
+      "nom": "SERY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 212,
+      "rang": 31
+    },
+    {
+      "nom": "THOMAS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 206,
+      "rang": 32
+    },
+    {
+      "nom": "HUET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 200,
+      "rang": 33
+    },
+    {
+      "nom": "LEPINAY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 200,
+      "rang": 34
+    },
+    {
+      "nom": "FOLIO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 199,
+      "rang": 35
+    },
+    {
+      "nom": "LEPERLIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 192,
+      "rang": 36
+    },
+    {
+      "nom": "GUICHARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 186,
+      "rang": 37
+    },
+    {
+      "nom": "LEGROS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 183,
+      "rang": 38
+    },
+    {
+      "nom": "MARTIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 178,
+      "rang": 39
+    },
+    {
+      "nom": "POTHIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 177,
+      "rang": 40
+    },
+    {
+      "nom": "VIDOT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 169,
+      "rang": 41
+    },
+    {
+      "nom": "BARET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 166,
+      "rang": 42
+    },
+    {
+      "nom": "ZITTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 164,
+      "rang": 43
+    },
+    {
+      "nom": "PAUSE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 160,
+      "rang": 44
+    },
+    {
+      "nom": "VIENNE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 150,
+      "rang": 45
+    },
+    {
+      "nom": "BARRET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 148,
+      "rang": 46
+    },
+    {
+      "nom": "ELISABETH",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 146,
+      "rang": 47
+    },
+    {
+      "nom": "FERRERE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 145,
+      "rang": 48
+    },
+    {
+      "nom": "LEBEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 145,
+      "rang": 49
+    },
+    {
+      "nom": "NAZE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 137,
+      "rang": 50
+    },
+    {
+      "nom": "LATCHIMY",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 136,
+      "rang": 51,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "LEVENEUR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 131,
+      "rang": 53
+    },
+    {
+      "nom": "MALET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 131,
+      "rang": 52
+    },
+    {
+      "nom": "GASTRIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 127,
+      "rang": 54
+    },
+    {
+      "nom": "CAZAL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 126,
+      "rang": 55
+    },
+    {
+      "nom": "MINATCHY",
+      "origine": "Inde tamoule",
+      "notes": "Du nom de la deesse Minakshi. Nombre de patronymes indo-reunionnais sont des noms de divinites.",
+      "frequence": 125,
+      "rang": 56,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "GROSSET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 121,
+      "rang": 57
+    },
+    {
+      "nom": "FRANCOISE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 118,
+      "rang": 58
+    },
+    {
+      "nom": "GAUVIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 118,
+      "rang": 59
+    },
+    {
+      "nom": "GENCE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 117,
+      "rang": 60
+    },
+    {
+      "nom": "NOEL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 116,
+      "rang": 61
+    },
+    {
+      "nom": "DENNEMONT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 114,
+      "rang": 63
+    },
+    {
+      "nom": "K BIDI",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 114,
+      "rang": 62
+    },
+    {
+      "nom": "DUCHEMANN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 112,
+      "rang": 64
+    },
+    {
+      "nom": "PITOU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 110,
+      "rang": 65
+    },
+    {
+      "nom": "NOURRY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 107,
+      "rang": 66
+    },
+    {
+      "nom": "CUVELIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 106,
+      "rang": 67
+    },
+    {
+      "nom": "MORIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 104,
+      "rang": 68
+    },
+    {
+      "nom": "CERVEAUX",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 102,
+      "rang": 69
+    },
+    {
+      "nom": "HUBERT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 102,
+      "rang": 71
+    },
+    {
+      "nom": "MAUNIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 102,
+      "rang": 70
+    },
+    {
+      "nom": "DUBARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 100,
+      "rang": 72
+    },
+    {
+      "nom": "GRIMAUD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 100,
+      "rang": 73
+    },
+    {
+      "nom": "CORRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 99,
+      "rang": 74
+    },
+    {
+      "nom": "CHAMAND",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 98,
+      "rang": 75
+    },
+    {
+      "nom": "SEVERIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 98,
+      "rang": 76
+    },
+    {
+      "nom": "CARRON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 97,
+      "rang": 79
+    },
+    {
+      "nom": "PADRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 97,
+      "rang": 78
+    },
+    {
+      "nom": "RAMSAMY",
+      "origine": "Inde tamoule",
+      "notes": "Classe 77e des patronymes de l'ile. Le suffixe -samy, tres frequent, vient du tamoul et renvoie au divin.",
+      "frequence": 97,
+      "rang": 77,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LOUISE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 95,
+      "rang": 80
+    },
+    {
+      "nom": "MICHEL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 95,
+      "rang": 81
+    },
+    {
+      "nom": "BOUCHER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 94,
+      "rang": 82
+    },
+    {
+      "nom": "COLLET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 91,
+      "rang": 84
+    },
+    {
+      "nom": "LARAVINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 91,
+      "rang": 83
+    },
+    {
+      "nom": "BAILLIF",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 89,
+      "rang": 85
+    },
+    {
+      "nom": "GIGAN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 86,
+      "rang": 86
+    },
+    {
+      "nom": "RICHARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 86,
+      "rang": 87
+    },
+    {
+      "nom": "RICQUEBOURG",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 85,
+      "rang": 88
+    },
+    {
+      "nom": "VIRAPIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 84,
+      "rang": 89
+    },
+    {
+      "nom": "MIRANVILLE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 82,
+      "rang": 91
+    },
+    {
+      "nom": "MOUTOUSSAMY",
+      "origine": "Inde tamoule",
+      "notes": "Compose des elements moutou et samy, caracteristiques des patronymes tamouls de l'ile.",
+      "frequence": 82,
+      "rang": 90,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "CRESCENCE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 80,
+      "rang": 94
+    },
+    {
+      "nom": "HIBON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 80,
+      "rang": 95
+    },
+    {
+      "nom": "NIRLO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 80,
+      "rang": 93
+    },
+    {
+      "nom": "SMITH",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 80,
+      "rang": 92
+    },
+    {
+      "nom": "MOUTAMA",
+      "origine": "Inde musulmane",
+      "notes": "Heritage des engages musulmans venus du Gujarat et du nord de l'Inde.",
+      "frequence": 79,
+      "rang": 96,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "ESPARON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 77,
+      "rang": 97
+    },
+    {
+      "nom": "POUDROUX",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 77,
+      "rang": 98
+    },
+    {
+      "nom": "VELIA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 74,
+      "rang": 99
+    },
+    {
+      "nom": "AGATHE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 73,
+      "rang": 100
+    },
+    {
+      "nom": "AUBRAS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 73,
+      "rang": 101
+    },
+    {
+      "nom": "BIGOT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 73,
+      "rang": 103
+    },
+    {
+      "nom": "LAUDE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 73,
+      "rang": 102
+    },
+    {
+      "nom": "BAPTISTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 72,
+      "rang": 107
+    },
+    {
+      "nom": "LEBIHAN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 72,
+      "rang": 106
+    },
+    {
+      "nom": "PLANTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 72,
+      "rang": 105
+    },
+    {
+      "nom": "PUYLAURENT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 72,
+      "rang": 104
+    },
+    {
+      "nom": "ADRIEN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 71,
+      "rang": 108
+    },
+    {
+      "nom": "FRANCOIS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 71,
+      "rang": 110
+    },
+    {
+      "nom": "SERVEAUX",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 71,
+      "rang": 109
+    },
+    {
+      "nom": "ADOLPHE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 70,
+      "rang": 111
+    },
+    {
+      "nom": "MONDON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 69,
+      "rang": 112
+    },
+    {
+      "nom": "BASQUE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 68,
+      "rang": 116
+    },
+    {
+      "nom": "GONNEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 68,
+      "rang": 114
+    },
+    {
+      "nom": "IVOULA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 68,
+      "rang": 113
+    },
+    {
+      "nom": "MERLO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 68,
+      "rang": 115
+    },
+    {
+      "nom": "CARPAYE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 67,
+      "rang": 118
+    },
+    {
+      "nom": "LEFEVRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 67,
+      "rang": 119
+    },
+    {
+      "nom": "SINAMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 67,
+      "rang": 117
+    },
+    {
+      "nom": "GOSSARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 66,
+      "rang": 120
+    },
+    {
+      "nom": "TAOCHY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 65,
+      "rang": 121
+    },
+    {
+      "nom": "CASIMIR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 64,
+      "rang": 122
+    },
+    {
+      "nom": "ADRAS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 62,
+      "rang": 123
+    },
+    {
+      "nom": "DUGAIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 62,
+      "rang": 124
+    },
+    {
+      "nom": "JULIE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 62,
+      "rang": 125
+    },
+    {
+      "nom": "ROUSSEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 61,
+      "rang": 126
+    },
+    {
+      "nom": "BLARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 59,
+      "rang": 130
+    },
+    {
+      "nom": "COCHARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 59,
+      "rang": 133
+    },
+    {
+      "nom": "DEJEAN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 59,
+      "rang": 132
+    },
+    {
+      "nom": "GASP",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 59,
+      "rang": 127
+    },
+    {
+      "nom": "JEAN-BAPTISTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 59,
+      "rang": 131
+    },
+    {
+      "nom": "LAMOLY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 59,
+      "rang": 128
+    },
+    {
+      "nom": "RAMAYE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 59,
+      "rang": 129
+    },
+    {
+      "nom": "ARMAND",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 58,
+      "rang": 140
+    },
+    {
+      "nom": "CARO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 58,
+      "rang": 138
+    },
+    {
+      "nom": "GLENAC",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 58,
+      "rang": 134
+    },
+    {
+      "nom": "LAPIERRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 58,
+      "rang": 139
+    },
+    {
+      "nom": "MOUNIAMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 58,
+      "rang": 137
+    },
+    {
+      "nom": "ORANGE",
+      "origine": "Affranchi 1848",
+      "procede": "Nom commun",
+      "frequence": 58,
+      "rang": 136,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "THIBURCE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 58,
+      "rang": 135
+    },
+    {
+      "nom": "GEORGET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 57,
+      "rang": 143
+    },
+    {
+      "nom": "LAMBERT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 57,
+      "rang": 142
+    },
+    {
+      "nom": "LAMY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 57,
+      "rang": 144
+    },
+    {
+      "nom": "MARIANNE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 57,
+      "rang": 141
+    },
+    {
+      "nom": "CHEVALIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 56,
+      "rang": 147
+    },
+    {
+      "nom": "FELICITE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 56,
+      "rang": 145
+    },
+    {
+      "nom": "PERRAULT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 56,
+      "rang": 146
+    },
+    {
+      "nom": "VIRASSAMY",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 55,
+      "rang": 148,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "BOISVILLIERS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 54,
+      "rang": 150
+    },
+    {
+      "nom": "HAMILCARO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 54,
+      "rang": 152
+    },
+    {
+      "nom": "IMACHE",
+      "origine": "Inde musulmane",
+      "frequence": 54,
+      "rang": 151,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "VELNA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 54,
+      "rang": 149
+    },
+    {
+      "nom": "COURTOIS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 53,
+      "rang": 156
+    },
+    {
+      "nom": "HONORINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 53,
+      "rang": 153
+    },
+    {
+      "nom": "MARA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 53,
+      "rang": 155
+    },
+    {
+      "nom": "MEZINO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 53,
+      "rang": 154
+    },
+    {
+      "nom": "AURE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 52,
+      "rang": 158
+    },
+    {
+      "nom": "BABET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 52,
+      "rang": 159
+    },
+    {
+      "nom": "FRANCOMME",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 52,
+      "rang": 161
+    },
+    {
+      "nom": "VICTOIRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 52,
+      "rang": 160
+    },
+    {
+      "nom": "VIRAMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 52,
+      "rang": 157
+    },
+    {
+      "nom": "DANY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 51,
+      "rang": 164
+    },
+    {
+      "nom": "ELIE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 51,
+      "rang": 163
+    },
+    {
+      "nom": "PEDRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 51,
+      "rang": 162
+    },
+    {
+      "nom": "ESTHER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 50,
+      "rang": 168
+    },
+    {
+      "nom": "JULIENNE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 50,
+      "rang": 169
+    },
+    {
+      "nom": "MOUNOUSSAMY",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 50,
+      "rang": 165,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "POSE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 50,
+      "rang": 167
+    },
+    {
+      "nom": "TRULES",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 50,
+      "rang": 166
+    },
+    {
+      "nom": "EMMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 49,
+      "rang": 170
+    },
+    {
+      "nom": "GRUCHET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 49,
+      "rang": 172
+    },
+    {
+      "nom": "LEON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 49,
+      "rang": 175
+    },
+    {
+      "nom": "MARIMOUTOU",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 49,
+      "rang": 171,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "MAZEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 49,
+      "rang": 174
+    },
+    {
+      "nom": "POTIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 49,
+      "rang": 173
+    },
+    {
+      "nom": "ABELARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 182
+    },
+    {
+      "nom": "ABLANCOURT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 177
+    },
+    {
+      "nom": "BULIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 184
+    },
+    {
+      "nom": "DORVAL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 183
+    },
+    {
+      "nom": "GOVINDIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 181
+    },
+    {
+      "nom": "GRONDEIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 178
+    },
+    {
+      "nom": "MALBROUCK",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 179
+    },
+    {
+      "nom": "METRO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 180
+    },
+    {
+      "nom": "TARISTAS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 48,
+      "rang": 176
+    },
+    {
+      "nom": "BANOR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 186
+    },
+    {
+      "nom": "BUREL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 191
+    },
+    {
+      "nom": "CATHERINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 189
+    },
+    {
+      "nom": "DAMBREVILLE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 188
+    },
+    {
+      "nom": "EDMOND",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 190
+    },
+    {
+      "nom": "FELIX",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 193
+    },
+    {
+      "nom": "INCANA",
+      "origine": "Inde musulmane",
+      "frequence": 47,
+      "rang": 185,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "JOSEPH",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 192
+    },
+    {
+      "nom": "SUZANNE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 47,
+      "rang": 187
+    },
+    {
+      "nom": "CHARLETTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 46,
+      "rang": 198
+    },
+    {
+      "nom": "ICHIZA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 46,
+      "rang": 196
+    },
+    {
+      "nom": "LATCHOUMANIN",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 46,
+      "rang": 195,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "ROCHEFEUILLE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 46,
+      "rang": 194
+    },
+    {
+      "nom": "ZETTOR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 46,
+      "rang": 197
+    },
+    {
+      "nom": "BERTIL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 200
+    },
+    {
+      "nom": "BOULANGER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 202
+    },
+    {
+      "nom": "LAURENT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 207
+    },
+    {
+      "nom": "LEGER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 206
+    },
+    {
+      "nom": "MARIE-LOUISE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 199
+    },
+    {
+      "nom": "MOREAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 205
+    },
+    {
+      "nom": "MULOT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 204
+    },
+    {
+      "nom": "SAVIGNY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 201
+    },
+    {
+      "nom": "VALERY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 45,
+      "rang": 203
+    },
+    {
+      "nom": "ANNETTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 44,
+      "rang": 210
+    },
+    {
+      "nom": "BREZE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 44,
+      "rang": 209
+    },
+    {
+      "nom": "GIGANT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 44,
+      "rang": 213
+    },
+    {
+      "nom": "LEOCADIE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 44,
+      "rang": 211
+    },
+    {
+      "nom": "MASSEAUX",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 44,
+      "rang": 212
+    },
+    {
+      "nom": "SORRES",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 44,
+      "rang": 208
+    },
+    {
+      "nom": "CAZANOVE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 220
+    },
+    {
+      "nom": "CHABOT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 222
+    },
+    {
+      "nom": "FRUTEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 215
+    },
+    {
+      "nom": "FRUTEAU DE LACLOS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 221
+    },
+    {
+      "nom": "GARDENAT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 217
+    },
+    {
+      "nom": "IMAHO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 219
+    },
+    {
+      "nom": "KICHENIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 218
+    },
+    {
+      "nom": "LEICHNIG",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 216
+    },
+    {
+      "nom": "SINCERE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 43,
+      "rang": 214
+    },
+    {
+      "nom": "ACADINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 42,
+      "rang": 223
+    },
+    {
+      "nom": "DARTY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 42,
+      "rang": 224
+    },
+    {
+      "nom": "DUMONT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 42,
+      "rang": 227
+    },
+    {
+      "nom": "PARIS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 42,
+      "rang": 226
+    },
+    {
+      "nom": "XAVIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 42,
+      "rang": 225
+    },
+    {
+      "nom": "AUGUSTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 234
+    },
+    {
+      "nom": "BENOIT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 235
+    },
+    {
+      "nom": "DOLPHIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 230
+    },
+    {
+      "nom": "DUCHEMAN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 228
+    },
+    {
+      "nom": "GERMAIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 233
+    },
+    {
+      "nom": "GRAVINA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 231
+    },
+    {
+      "nom": "TAILAMEE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 229
+    },
+    {
+      "nom": "VALENTIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 41,
+      "rang": 232
+    },
+    {
+      "nom": "ALPHONSINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 40,
+      "rang": 238
+    },
+    {
+      "nom": "BACHELIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 40,
+      "rang": 239
+    },
+    {
+      "nom": "BERNARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 40,
+      "rang": 241
+    },
+    {
+      "nom": "DIDIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 40,
+      "rang": 240
+    },
+    {
+      "nom": "RAMASSAMY",
+      "origine": "Inde tamoule",
+      "notes": "Variante de RAMSAMY. Les transcriptions administratives des noms des engages ont multiplie les graphies d'un meme nom.",
+      "frequence": 40,
+      "rang": 237,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "SELLOM",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 40,
+      "rang": 236
+    },
+    {
+      "nom": "GERBITH",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 39,
+      "rang": 243
+    },
+    {
+      "nom": "JAVEGNY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 39,
+      "rang": 244
+    },
+    {
+      "nom": "LACOUTURE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 39,
+      "rang": 248
+    },
+    {
+      "nom": "LANGEVILLIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 39,
+      "rang": 242
+    },
+    {
+      "nom": "PERSEE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 39,
+      "rang": 246
+    },
+    {
+      "nom": "PONAMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 39,
+      "rang": 245
+    },
+    {
+      "nom": "VALLY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 39,
+      "rang": 247
+    },
+    {
+      "nom": "ANDOCHE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 38,
+      "rang": 250
+    },
+    {
+      "nom": "BELLON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 38,
+      "rang": 253
+    },
+    {
+      "nom": "SEYCHELLES",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 38,
+      "rang": 252
+    },
+    {
+      "nom": "TREMOULU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 38,
+      "rang": 251
+    },
+    {
+      "nom": "VIRIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 38,
+      "rang": 249
+    },
+    {
+      "nom": "ANGAMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 260
+    },
+    {
+      "nom": "BILLAUD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 262
+    },
+    {
+      "nom": "BRASIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 265
+    },
+    {
+      "nom": "BRUNO",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 264
+    },
+    {
+      "nom": "DUPUY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 263
+    },
+    {
+      "nom": "FLORICOURT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 259
+    },
+    {
+      "nom": "LAUP",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Anagramme du prenom Paul.",
+      "frequence": 37,
+      "rang": 255,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LAYEMAR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 256
+    },
+    {
+      "nom": "NASSIBOU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 257
+    },
+    {
+      "nom": "RAMIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 261
+    },
+    {
+      "nom": "SAVIGNAN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 258
+    },
+    {
+      "nom": "THAZAR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 37,
+      "rang": 254
+    },
+    {
+      "nom": "BATAILLE",
+      "origine": "Affranchi 1848",
+      "procede": "Nom commun",
+      "frequence": 36,
+      "rang": 269,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "DESIRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 36,
+      "rang": 270
+    },
+    {
+      "nom": "LENEPVEU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 36,
+      "rang": 268
+    },
+    {
+      "nom": "LORION",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 36,
+      "rang": 267
+    },
+    {
+      "nom": "ROCHETAING",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 36,
+      "rang": 266
+    },
+    {
+      "nom": "AJORQUE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 277
+    },
+    {
+      "nom": "AVRIL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 283
+    },
+    {
+      "nom": "BONNEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 282
+    },
+    {
+      "nom": "GALMAR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 278
+    },
+    {
+      "nom": "GARDEBIEN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 271
+    },
+    {
+      "nom": "MORBY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 276
+    },
+    {
+      "nom": "ODON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 279
+    },
+    {
+      "nom": "PARVEDY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 273
+    },
+    {
+      "nom": "PAVADE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 272
+    },
+    {
+      "nom": "ROGER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 281
+    },
+    {
+      "nom": "SELLY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 274
+    },
+    {
+      "nom": "TARBY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 275
+    },
+    {
+      "nom": "TOUSSAINT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 35,
+      "rang": 280
+    },
+    {
+      "nom": "AUDIT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 287
+    },
+    {
+      "nom": "BARDEUR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 286
+    },
+    {
+      "nom": "DAVID",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 293
+    },
+    {
+      "nom": "ELLAMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 290
+    },
+    {
+      "nom": "LUCILY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 284
+    },
+    {
+      "nom": "PHILIPPE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 292
+    },
+    {
+      "nom": "PIERRE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 291
+    },
+    {
+      "nom": "PRIANON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 285
+    },
+    {
+      "nom": "TESCHER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 289
+    },
+    {
+      "nom": "TREPORT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 34,
+      "rang": 288
+    },
+    {
+      "nom": "ALIDOR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 300
+    },
+    {
+      "nom": "BRADANIEL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 294
+    },
+    {
+      "nom": "DORSEUIL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 301
+    },
+    {
+      "nom": "GERARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 307
+    },
+    {
+      "nom": "LABBE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 306
+    },
+    {
+      "nom": "LAPORTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 305
+    },
+    {
+      "nom": "LECLERC",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 304
+    },
+    {
+      "nom": "MARDAYE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 298
+    },
+    {
+      "nom": "PRUGNIERES",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 296
+    },
+    {
+      "nom": "RAMOUCHE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 297
+    },
+    {
+      "nom": "RAYMOND",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 303
+    },
+    {
+      "nom": "RESEDA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 302
+    },
+    {
+      "nom": "RUBEGUE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 295
+    },
+    {
+      "nom": "VAVELIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 33,
+      "rang": 299
+    },
+    {
+      "nom": "ALANOIX",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 319
+    },
+    {
+      "nom": "ALEXIS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 320
+    },
+    {
+      "nom": "AUBERVAL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 312
+    },
+    {
+      "nom": "BARAKA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 314
+    },
+    {
+      "nom": "CATAYE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 310
+    },
+    {
+      "nom": "CELESTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 322
+    },
+    {
+      "nom": "CERVEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 323
+    },
+    {
+      "nom": "DERAND",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 315
+    },
+    {
+      "nom": "ELISE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 317
+    },
+    {
+      "nom": "ENAULT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 318
+    },
+    {
+      "nom": "GAUDENS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 326
+    },
+    {
+      "nom": "IMIZA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 311
+    },
+    {
+      "nom": "LAFOSSE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 321
+    },
+    {
+      "nom": "LUCAS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 325
+    },
+    {
+      "nom": "NAYAGOM",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 32,
+      "rang": 313,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "NIOBE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 316
+    },
+    {
+      "nom": "RENE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 324
+    },
+    {
+      "nom": "SELLAYE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 309
+    },
+    {
+      "nom": "TAYE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 308
+    },
+    {
+      "nom": "VINCENT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 32,
+      "rang": 327
+    },
+    {
+      "nom": "BASSONVILLE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 330
+    },
+    {
+      "nom": "BEAUVAL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 340
+    },
+    {
+      "nom": "CHEREAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 338
+    },
+    {
+      "nom": "JOSEPHINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 341
+    },
+    {
+      "nom": "LENCLUME",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 332
+    },
+    {
+      "nom": "LIN",
+      "origine": "Chine",
+      "notes": "Classe 339e. Les patronymes chinois apparaissent plus loin dans les classements : l'immigration chinoise est plus tardive que les autres vagues de peuplement.",
+      "frequence": 31,
+      "rang": 339,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LINDOR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 336
+    },
+    {
+      "nom": "MARGUERITE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 335
+    },
+    {
+      "nom": "MERCIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 344
+    },
+    {
+      "nom": "PATCHE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 329
+    },
+    {
+      "nom": "PAULIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 343
+    },
+    {
+      "nom": "PICOT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 342
+    },
+    {
+      "nom": "POUGARY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 331
+    },
+    {
+      "nom": "THERINCA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 334
+    },
+    {
+      "nom": "TIBURCE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 333
+    },
+    {
+      "nom": "VALLIAMEE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 31,
+      "rang": 328
+    },
+    {
+      "nom": "VINGADASSALOM",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 31,
+      "rang": 337,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "ARNAL",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 353
+    },
+    {
+      "nom": "BARBE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 352
+    },
+    {
+      "nom": "BEDIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 349
+    },
+    {
+      "nom": "CALCINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 347
+    },
+    {
+      "nom": "CLOTAGATIDE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 345
+    },
+    {
+      "nom": "DEFAUD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 348
+    },
+    {
+      "nom": "HENRY",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 355
+    },
+    {
+      "nom": "MAHE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 351
+    },
+    {
+      "nom": "MALLET",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 354
+    },
+    {
+      "nom": "NICLIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 346
+    },
+    {
+      "nom": "POULOT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 30,
+      "rang": 350
+    },
+    {
+      "nom": "BARENCOURT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 359
+    },
+    {
+      "nom": "BASSON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 369
+    },
+    {
+      "nom": "BASTIDE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 371
+    },
+    {
+      "nom": "CENDRIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 370
+    },
+    {
+      "nom": "COLOGON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 364
+    },
+    {
+      "nom": "DELPHINE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 366
+    },
+    {
+      "nom": "DRULA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 363
+    },
+    {
+      "nom": "EVAN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 367
+    },
+    {
+      "nom": "FERBLANTIER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 358
+    },
+    {
+      "nom": "FESTIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 365
+    },
+    {
+      "nom": "HODGI",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 356
+    },
+    {
+      "nom": "ICHOUZA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 362
+    },
+    {
+      "nom": "LARTIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 357
+    },
+    {
+      "nom": "LOUISIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 361
+    },
+    {
+      "nom": "MELLON",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 368
+    },
+    {
+      "nom": "RANGAMA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 29,
+      "rang": 360
+    },
+    {
+      "nom": "ABRANTES",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 385
+    },
+    {
+      "nom": "ARAYE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 375
+    },
+    {
+      "nom": "BALEYA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 372
+    },
+    {
+      "nom": "BLUKER",
+      "origine": "Chine",
+      "notes": "Classe 373e. Nom chinois passe par une transcription europeenne, d'ou une forme qui n'evoque plus son origine.",
+      "frequence": 28,
+      "rang": 373,
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "CALTEAU",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 384
+    },
+    {
+      "nom": "DELNARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 380
+    },
+    {
+      "nom": "FAUSTIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 389
+    },
+    {
+      "nom": "GALAOR",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 379
+    },
+    {
+      "nom": "IVAHA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 376
+    },
+    {
+      "nom": "JASMIN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 387
+    },
+    {
+      "nom": "JEAN BAPTISTE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 383
+    },
+    {
+      "nom": "LASAONE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 382
+    },
+    {
+      "nom": "LEDOYEN",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 386
+    },
+    {
+      "nom": "LUDOVIC",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 381
+    },
+    {
+      "nom": "MACE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 388
+    },
+    {
+      "nom": "MARIE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 391
+    },
+    {
+      "nom": "PAYER",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 390
+    },
+    {
+      "nom": "TARACONAT",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 374
+    },
+    {
+      "nom": "TERGEMINA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 28,
+      "rang": 378
+    },
+    {
+      "nom": "VAITILINGOM",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 28,
+      "rang": 377,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "BABEF",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 400
+    },
+    {
+      "nom": "BERFROI",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 395
+    },
+    {
+      "nom": "CAMATCHY",
+      "origine": "Inde tamoule",
+      "certitude": "Probable",
+      "frequence": 27,
+      "rang": 398,
+      "notes": "Repere par une finale caracteristique des patronymes indo-reunionnais. Indice linguistique, pas une attribution sourcee."
+    },
+    {
+      "nom": "DIFERNAND",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 393
+    },
+    {
+      "nom": "HERODE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 399
+    },
+    {
+      "nom": "LAGOURDE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 396
+    },
+    {
+      "nom": "MAMMOSA",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 394
+    },
+    {
+      "nom": "VIADERE",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 397
+    },
+    {
+      "nom": "VILRUS",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "frequence": 27,
+      "rang": 392
+    },
+    {
+      "nom": "CAROUMBIN",
+      "origine": "Inde tamoule",
+      "notes": "Prenom d'ancetre devenu patronyme, selon l'usage tamoul de transmission du nom.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "CHARITABLE",
+      "origine": "Affranchi 1848",
+      "procede": "Qualite",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "CHERTE",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Anagramme de TECHER, nom de proprietaires.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "CIDRAP",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Anagramme de PICARD. Javotte, affranchie par un proprietaire de ce nom, est inscrite Javotte CIDRAP.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "COCOTIER",
+      "origine": "Affranchi 1848",
+      "procede": "Nom commun",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "COUTAYE",
+      "origine": "Inde tamoule",
+      "notes": "Chez les Tamouls le nom du pere devenait souvent le prenom du fils : d'ou des noms doubles, et des variantes comme ARAYE-COUTAYE ou VIRAMOUTOU-COUTAYE.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "DIENS",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Anagramme du prenom Denis.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "DIMANCHE",
+      "origine": "Affranchi 1848",
+      "procede": "Nom commun",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "ENILORAC",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Anagramme du prenom Caroline, lu a l'envers.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "FEVRIER",
+      "origine": "Affranchi 1848",
+      "procede": "Nom commun",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "FIDELE",
+      "origine": "Affranchi 1848",
+      "procede": "Qualite",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "JOVIAL",
+      "origine": "Affranchi 1848",
+      "procede": "Qualite",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "L'EVEILLE",
+      "origine": "Affranchi 1848",
+      "procede": "Qualite",
+      "notes": "Surnom decrivant la personne, devenu patronyme a l'inscription.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LEVITAN",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Anagramme de NATIVEL.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LIBER",
+      "origine": "Affranchi 1848",
+      "procede": "Mythologie ou histoire",
+      "notes": "Dieu romain de la croissance et de la fecondite. Difficile de ne pas y lire aussi une forme de « libre ».",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "LUODRAP",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Anagramme de DARBOUL. Louis, affranchi en 1839, est inscrit Louis LUODRAP.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "MAURITIUS",
+      "origine": "Affranchi 1848",
+      "procede": "Origine geographique",
+      "notes": "Nom du pays d'origine donne comme patronyme : Gilbert, venu de Maurice, est inscrit Gilbert MAURITIUS.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "PORTAIL",
+      "origine": "Affranchi 1848",
+      "procede": "Nom commun",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "VELITAN",
+      "origine": "Affranchi 1848",
+      "procede": "Anagramme",
+      "notes": "Seconde anagramme de NATIVEL.",
+      "certitude": "Documentee"
+    },
+    {
+      "nom": "GASTELLIER",
+      "origine": "Europe",
+      "certitude": "Documentee",
+      "notes": "Nom d'origine française : en ancien français, il désigne le pâtissier. Surtout porté dans la Vienne, présent aussi en Seine-et-Marne et à La Réunion. Variantes relevées : Gastelier, Gatellier, Gatelier, Gathelier. (Source : Jean Tosti, via Geneanet, relevé le 26/09/2026.)"
+    },
+    {
+      "nom": "CALPETARD",
+      "origine": "Non documentee",
+      "certitude": "Non documentee",
+      "notes": "Nom rare. Geneanet n'en donne pas l'étymologie ; les lieux les plus cités sont Calcutta (Inde), puis quelques communes de France — ce sont des lieux de mention, pas une origine établie. (Relevé sur Geneanet le 26/09/2026.)"
+    }
+  ]
+}

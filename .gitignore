@@ -1,0 +1,12 @@
+node_modules
+dist
+.env
+.env.local
+.env.*.local
+*.log
+supabase/.temp
+supabase/.branches
+
+# Bancs jetables : ils peuvent contenir des données réelles, jamais publiés
+_banc*/
+site/_banc*/

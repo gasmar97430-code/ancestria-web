@@ -1,0 +1,56 @@
+# Mise en ligne gratuite sur GitHub Pages.
+# À chaque envoi sur la branche main : tous les essais (écran + base) sont
+# rejoués ; si UN SEUL échoue, rien n'est publié.
+name: Mise en ligne
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Essais (logique, parité écran/base, schéma SQL)
+        run: npm test
+      - name: Contrôle des types (site + fonctions Supabase)
+        run: npm run typecheck
+      - name: Construction
+        run: npm run build
+        env:
+          # L'adresse du projet n'est pas secrète : une variable du dépôt suffit (un secret du même nom l'emporte).
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_ADRESSE_PUBLIQUE: ${{ vars.VITE_ADRESSE_PUBLIQUE }}
+          VITE_STRIPE_ACTIF: ${{ vars.VITE_STRIPE_ACTIF }}
+          VITE_BASE: /${{ github.event.repository.name }}/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publier:
+    needs: construire
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,125 @@
+@import 'tailwindcss';
+
+/* 29/09 : « affichage identique au PC » + « un bouton sombre / clair ». Les couleurs
+   et les polices sont CELLES DU BUREAU (arbre-bureau/ui/theme-bureau.css, trois
+   palettes) : chaque nom d'ici renvoie à sa variable, la palette choisie change tout. */
+@import './arbre-bureau/ui/theme-bureau.css';
+@theme {
+    --color-nuit: var(--papier);
+    --color-papier: var(--papier);
+    --color-carte: var(--carte);
+    --color-carte-2: var(--blanc);
+    --color-blanc: var(--blanc);
+    --color-trait: var(--trait);
+    --color-trait-leger: var(--trait-leger);
+    --color-trait-carte: var(--trait-carte);
+    --color-encre: var(--encre);
+    --color-encre-2: var(--encre-2);
+    --color-encre-3: var(--encre-3);
+    --color-sepia: var(--sepia);
+    --color-sepia-fonce: var(--sepia);
+    --color-sepia-deep: var(--sepia-deep);
+    --color-sepia-tint: var(--sepia-tint);
+    --color-rouge: var(--o-afrique);
+    --color-vert: var(--c-prouve);
+    --color-bleu: var(--o-europe);
+    --font-display: 'Cormorant Garamond', serif;
+    --font-sans: 'Instrument Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --ease-plume: cubic-bezier(.22, .8, .26, 1);
+    --shadow-carte: var(--ombre-carte);
+    --shadow-carte-choisie: var(--ombre-carte-choisie);
+    --shadow-onglet: var(--ombre-onglet);
+}
+
+html, body, #racine {
+    height: 100%;
+}
+
+/* Thème sombre déclaré au navigateur : barres de défilement, cases à cocher,
+   listes déroulantes natives suivent (elles restaient blanches). */
+:root {
+    color-scheme: dark;
+    accent-color: var(--color-sepia);
+}
+
+body {
+    margin: 0;
+    background: var(--color-nuit);
+    color: var(--color-encre);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Cibles tactiles confortables sur téléphone. */
+button, [role='button'], input, select, textarea {
+    font: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-sepia);
+    outline-offset: 2px;
+}
+
+/* React Flow : fond et commandes dans le thème. */
+.react-flow__controls button {
+    background: var(--color-carte-2);
+    border-bottom: 1px solid var(--color-trait);
+    fill: var(--color-encre);
+    width: 34px;
+    height: 34px;
+}
+.react-flow__controls button:hover {
+    background: var(--color-trait);
+}
+.react-flow__minimap {
+    background: var(--color-carte);
+}
+.react-flow__attribution {
+    display: none;
+}
+.react-flow__edge-textbg {
+    fill: var(--color-nuit);
+}
+.react-flow__edge-text {
+    fill: var(--color-encre-2);
+    font-size: 10px;
+}
+@media (max-width: 640px) {
+    .react-flow__minimap {
+        display: none;
+    }
+}
+
+/* Impression (certificat) : papier blanc, encre noire, sans boutons. */
+@media print {
+    :root {
+        color-scheme: light;
+    }
+    body {
+        background: #fff;
+        color: #111;
+    }
+    .pas-imprime {
+        display: none !important;
+    }
+    .certificat, .certificat * {
+        color: #111 !important;
+        background: transparent !important;
+        border-color: #8a6a2f !important;
+    }
+}
+
+/* Leaflet : les tuiles restent claires, le cadre suit le thème. */
+.leaflet-container {
+    background: var(--color-carte);
+    font-family: var(--font-sans);
+}
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--color-carte-2);
+    color: var(--color-encre);
+}
+.leaflet-popup-content a {
+    color: var(--color-sepia);
+}

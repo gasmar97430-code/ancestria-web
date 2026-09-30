@@ -1,0 +1,50 @@
+
+
+.lien-lumineux__halo {
+    stroke: var(--sepia);
+    stroke-width: 9px;
+    opacity: 0.28;
+    filter: blur(3px);
+    animation: lien-lumineux-respire 2.4s ease-in-out infinite;
+}
+
+.lien-lumineux__coeur {
+    stroke: var(--sepia);
+    stroke-width: 2.6px;
+    filter: drop-shadow(0 0 3px var(--sepia));
+}
+
+
+.lien-lumineux__lueur {
+    stroke: #ffe7bd;
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-dasharray: 80 920;
+    filter: drop-shadow(0 0 4px #ffd89a) drop-shadow(0 0 9px var(--sepia));
+    animation: lien-lumineux-descend 2.2s linear infinite;
+}
+
+.lien-lumineux__lueur--monte {
+    animation-name: lien-lumineux-monte;
+}
+
+@keyframes lien-lumineux-descend {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes lien-lumineux-monte {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: 1000; }
+}
+
+@keyframes lien-lumineux-respire {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lien-lumineux__lueur, .lien-lumineux__halo { animation: none; }
+}
+
+

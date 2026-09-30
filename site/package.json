@@ -1,0 +1,43 @@
+{
+  "name": "ancestria-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/instrument-sans": "^5.3.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "@supabase/supabase-js": "^2.117.2",
+    "axios": "^1.5.0",
+    "clsx": "^2.0.0",
+    "dagre": "^0.8.5",
+    "fuse.js": "^7.5.0",
+    "lucide-react": "^0.263.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "reactflow": "^11.11.4",
+    "tailwind-merge": "^1.14.0",
+    "zustand": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/dagre": "^0.7.52",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.15",
+    "jsdom": "^29.1.1",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.5",
+    "vitest": "^4.1.10"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "vitest run",
+    "preview": "vite preview"
+  },
+  "description": "Le site d'Ancestria = l'écran de l'Ancestria du PC (copié tel quel par scripts/copier-bureau.mjs), branché sur Supabase par src/api/client.ts"
+}

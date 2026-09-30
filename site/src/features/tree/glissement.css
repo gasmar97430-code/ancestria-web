@@ -1,0 +1,12 @@
+
+.react-flow__node.apparition {
+    animation: ancestria-apparition 0.45s ease-out both;
+}
+@keyframes ancestria-apparition {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .react-flow__node.apparition { animation: none; }
+}
+

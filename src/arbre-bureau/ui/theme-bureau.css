@@ -1,0 +1,168 @@
+/* ---- THÈME DE L'ANCESTRIA DE BUREAU : LES TROIS PALETTES ----
+ *
+ * Ses demandes du 29/09 : « il faut que l'affichage soit identique sur le
+ * téléphone et sur le PC », « même arborescence », puis « un bouton pour le
+ * changement sombre, clair ou autre ». EXTRAIT AUTOMATIQUE de
+ * Ancestria/frontend/src/ui/theme.css (polices, palettes ivoire / parchemin /
+ * sombre, vue d'ensemble) : mêmes valeurs, mêmes paquets aux mêmes versions.
+ * La palette se choisit par data-theme sur <html> (ChoixPalette.tsx), sombre
+ * par défaut comme au bureau. Ne pas retoucher une couleur ici sans le bureau.
+ */
+
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/cormorant-garamond/400-italic.css';
+@import '@fontsource/cormorant-garamond/500-italic.css';
+@import '@fontsource/instrument-sans/400.css';
+@import '@fontsource/instrument-sans/500.css';
+@import '@fontsource/instrument-sans/600.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+:root,
+:root[data-theme='ivoire'] {
+    --papier: #F4EDE0;        /* fond des ecrans */
+    --carte: #FBF7EF;         /* panneaux, barre laterale */
+    --blanc: #FFFDF8;         /* cartes, champs */
+    --trait-leger: #E8DDCA;
+    --trait: #DDD0B9;
+    --trait-carte: #E2D6C1;
+    --piste-fond: #EFE6D4;
+    --points: #DCCFB8;        /* trame de l'arbre */
+    --lien: #B08A62;          /* aretes de l'arbre */
+    --caret: #B7A284;
+    --inactif: #CDBFA6;
+
+    --encre: #2E2118;
+    --encre-2: #5A4636;
+    --encre-3: #85705B;
+
+    --sepia: #8B5A2B;
+    --sepia-deep: #6E4521;
+    --sepia-tint: #F1E2CC;
+    --sepia-halo: rgba(139, 90, 43, 0.18);
+    --sepia-voile: rgba(139, 90, 43, 0.06);
+
+    --o-europe: #4D6186;      --o-europe-t: #E3E7EF;
+    --o-madagascar: #6F8A4E;  --o-madagascar-t: #E7EDDD;
+    --o-inde: #C06A2B;        --o-inde-t: #F6E4D3;
+    --o-afrique: #9A4B35;     --o-afrique-t: #F1DFD8;
+    --o-chine: #2F7A70;       --o-chine-t: #DCEDE9;
+
+    --c-prouve: #4F6E3A;      --c-prouve-t: #E7ECDA;   --c-prouve-surface: #F3F5EC;
+    --c-probable: #A5701F;    --c-probable-t: #F5E8CE;
+    --c-hypothese: #7B6C8C;   --c-hypothese-t: #EEE9F0; --c-hypothese-bord: #B9AEC6;
+    --c-hypothese-surface: rgba(251, 247, 239, 0.6);
+
+    --ombre-carte: 0 1px 0 #FFFDF8 inset, 0 10px 24px -14px rgba(90, 60, 30, 0.45);
+    --ombre-carte-choisie: 0 0 0 3px rgba(139, 90, 43, 0.18), 0 14px 28px -14px rgba(90, 60, 30, 0.55);
+    --ombre-champ: 0 12px 30px -18px rgba(90, 60, 30, 0.45);
+    --ombre-piste: 0 10px 24px -16px rgba(90, 60, 30, 0.5);
+    --ombre-piste-probable: 0 6px 18px -14px rgba(90, 60, 30, 0.4);
+    --ombre-onglet: 0 1px 3px rgba(90, 60, 30, 0.18);
+    --masque-minimap: rgb(244 237 224 / 0.7);
+}
+
+:root[data-theme='parchemin'] {
+    --papier: #E4D7BF;
+    --carte: #ECE1CC;
+    --blanc: #F2E8D6;
+    --trait-leger: #D6C6A9;
+    --trait: #CAB797;
+    --trait-carte: #D0BF9F;
+    --piste-fond: #DACBB0;
+    --points: #C9B695;
+    --lien: #B08A62;
+    --caret: #B7A284;
+    --inactif: #CDBFA6;
+
+    --encre: #2E2118;
+    --encre-2: #5A4636;
+    --encre-3: #6C5843;
+
+    --sepia: #8B5A2B;
+    --sepia-deep: #6E4521;
+    --sepia-tint: #DDC7A4;
+    --sepia-halo: rgba(139, 90, 43, 0.18);
+    --sepia-voile: rgba(139, 90, 43, 0.06);
+
+    --c-prouve-t: #D9E0C6;    --c-prouve-surface: #E3E4D2;
+    --c-probable-t: #EAD7B2;
+    --c-hypothese-t: #E0D8DE;
+    --c-hypothese-surface: rgba(236, 225, 204, 0.6);
+
+    --ombre-carte: 0 1px 0 #F2E8D6 inset, 0 10px 24px -14px rgba(90, 60, 30, 0.45);
+    --masque-minimap: rgb(228 215 191 / 0.7);
+}
+
+:root[data-theme='sombre'] {
+    --papier: #1A1511;
+    --carte: #221B15;
+    --blanc: #2A211A;
+    --trait-leger: #342A21;
+    --trait: #46392C;
+    --trait-carte: #3B3026;
+    --piste-fond: #2F261E;
+    --points: #2E251D;
+    --lien: #7D6248;
+    --caret: #6E5E4C;
+    --inactif: #5A4B3C;
+
+    --encre: #EDE3D2;
+    --encre-2: #C4B49D;
+    --encre-3: #9C8A73;
+
+    --sepia: #C9955E;
+    --sepia-deep: #E0B584;
+    --sepia-tint: #3A2C1F;
+    --sepia-halo: rgba(201, 149, 94, 0.25);
+    --sepia-voile: rgba(201, 149, 94, 0.1);
+
+    --o-europe: #8196C2;      --o-europe-t: #262B38;
+    --o-madagascar: #9DB67A;  --o-madagascar-t: #26301F;
+    --o-inde: #E0924F;        --o-inde-t: #3A2819;
+    --o-afrique: #C97A62;     --o-afrique-t: #37221C;
+    --o-chine: #5FB0A4;       --o-chine-t: #1D3230;
+
+    --c-prouve: #9CBF7F;      --c-prouve-t: #26301D;   --c-prouve-surface: #232A1C;
+    --c-probable: #E0A850;    --c-probable-t: #3A2B15;
+    --c-hypothese: #B3A3C6;   --c-hypothese-t: #2C2634; --c-hypothese-bord: #4E4560;
+    --c-hypothese-surface: rgba(34, 27, 21, 0.6);
+
+    --ombre-carte: 0 1px 0 #2A211A inset, 0 10px 24px -14px rgba(0, 0, 0, 0.55);
+    --ombre-carte-choisie: 0 0 0 3px rgba(201, 149, 94, 0.25), 0 14px 28px -14px rgba(0, 0, 0, 0.6);
+    --ombre-champ: 0 12px 30px -18px rgba(0, 0, 0, 0.55);
+    --ombre-piste: 0 10px 24px -16px rgba(0, 0, 0, 0.55);
+    --ombre-piste-probable: 0 6px 18px -14px rgba(0, 0, 0, 0.45);
+    --ombre-onglet: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --masque-minimap: rgb(26 21 17 / 0.7);
+}
+
+/* Vue d'ensemble de l'arbre (MiniMap React Flow) habillee comme la maquette. */
+.atelier-minimap {
+    padding-top: 22px;
+    background: var(--carte) !important;
+    border: 1px solid var(--trait);
+    border-radius: 12px;
+    box-shadow: var(--ombre-carte);
+    overflow: hidden;
+}
+.atelier-minimap::before {
+    content: "Vue d'ensemble";
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--encre-3);
+    pointer-events: none;
+}
+.atelier-minimap .react-flow__minimap-mask {
+    fill: var(--masque-minimap);
+    stroke: var(--sepia);
+    stroke-width: 1.5;
+}
+
+/* ---- FIN THÈME DE L'ANCESTRIA DE BUREAU ---- */

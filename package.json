@@ -1,0 +1,48 @@
+{
+  "name": "ancestria-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Ancestria en ligne — arbre généalogique collaboratif et inclusif (React + Supabase)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && node scripts/pages-404.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc -b && tsc -p tsconfig.fonctions.json",
+    "test": "vitest run",
+    "test:sql": "vitest run --project sql"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/instrument-sans": "5.3.0",
+    "@phosphor-icons/react": "2.1.10",
+    "@supabase/supabase-js": "^2.117.2",
+    "dagre": "^0.8.5",
+    "leaflet": "^1.9.4",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.18.4",
+    "reactflow": "^11.11.4",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/react": "^16.3.3",
+    "@types/dagre": "^0.7.52",
+    "@types/leaflet": "^1.9.22",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^30.1.1",
+    "stripe": "^17.7.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}
