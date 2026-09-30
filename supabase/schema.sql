@@ -1104,6 +1104,58 @@ begin
 end;
 $$;
 
+-- L'ARBRE PUBLIC D'UN LIEN PARTAGÉ (30/09/2026, sa demande : « les visiteurs
+-- peuvent chercher un nom et voir les branches et les personnes décédées »).
+-- Le site montre l'écran de l'Ancestria du PC aux visiteurs du lien : il lui
+-- faut les personnes DÉCÉDÉES et les liens ENTRE elles (couples, parent → enfant).
+-- Jamais : les vivants, les fiches « à trouver », les notes, les lieux ; les dates
+-- sont réduites à l'année (même prudence que invitation_publique).
+create or replace function public.arbre_public(p_jeton text)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_ouverture jsonb := public.ouvrir_invitation(p_jeton, null);
+    v_arbre     uuid;
+begin
+    if not (v_ouverture ->> 'ok')::boolean then
+        return v_ouverture;
+    end if;
+    v_arbre := (v_ouverture ->> 'arbre_id')::uuid;
+    return jsonb_build_object(
+        'ok', true,
+        'arbre_nom', (select a.nom from public.arbres a where a.id = v_arbre),
+        'individus', coalesce((
+            select jsonb_agg(jsonb_build_object(
+                       'id', i.id, 'prenom', i.prenom, 'nom', i.nom, 'genre', i.genre,
+                       'naissance', case when i.naissance is null then null else make_date(extract(year from i.naissance)::integer, 1, 1) end,
+                       'naissance_precision', 'annee', 'lieu_naissance', null,
+                       'deces', case when i.deces is null then null else make_date(extract(year from i.deces)::integer, 1, 1) end,
+                       'deces_precision', 'annee', 'lieu_deces', null,
+                       'vivant', false, 'notes', null, 'cree_le', i.cree_le, 'maj_le', i.cree_le)
+                   order by i.cree_le, i.id)
+            from public.individus i
+            where i.arbre_id = v_arbre and not i.vivant and i.prenom <> 'Parent à trouver'
+        ), '[]'::jsonb),
+        'unions', coalesce((
+            select jsonb_agg(jsonb_build_object('id', u.id, 'partenaire_a', u.partenaire_a, 'partenaire_b', u.partenaire_b,
+                       'nature', u.nature, 'statut', u.statut, 'debut', null, 'fin', null) order by u.cree_le, u.id)
+            from public.unions u
+            join public.individus a on a.id = u.partenaire_a and not a.vivant and a.prenom <> 'Parent à trouver'
+            join public.individus b on b.id = u.partenaire_b and not b.vivant and b.prenom <> 'Parent à trouver'
+            where u.arbre_id = v_arbre
+        ), '[]'::jsonb),
+        'filiations', coalesce((
+            select jsonb_agg(jsonb_build_object('id', f.id, 'parent_id', f.parent_id, 'enfant_id', f.enfant_id, 'nature', f.nature) order by f.cree_le, f.id)
+            from public.filiations f
+            join public.individus p on p.id = f.parent_id and not p.vivant and p.prenom <> 'Parent à trouver'
+            join public.individus e on e.id = f.enfant_id and not e.vivant and e.prenom <> 'Parent à trouver'
+            where f.arbre_id = v_arbre
+        ), '[]'::jsonb)
+    );
+end;
+$$;
+
 -- Dépôt d'une proposition par le public. Contrôle tout : lien, PIN,
 -- débit (30 par heure et par adresse — une réunion de famille partage
 -- souvent le même wifi —, 200 par heure et par partage), forme du
@@ -1673,7 +1725,7 @@ grant execute on function
     to authenticated;
 grant execute on function
     public.plat(text), public.date_max(date, text), public.thematiques_valides(text[]),
-    public.invitation_publique(text, text), public.soumettre_contribution(text, text, jsonb, text, text),
+    public.invitation_publique(text, text), public.arbre_public(text), public.soumettre_contribution(text, text, jsonb, text, text),
     public.patrimoine_public(text), public.patrimoine_recherche(text, text, text, boolean, text),
     public.patrimoine_individu(text, uuid), public.patrimoine_carte(text), public.verifier_export(text)
     to anon, authenticated;
