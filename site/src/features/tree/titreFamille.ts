@@ -10,9 +10,7 @@ export function titreFamille(people: {
         return personne.nom;
     if (nomDansArbre && people.some((p) => normaliser(p.nom) === normaliser(nomDansArbre)))
         return nomDansArbre;
-    const compte = new Map<string, number>();
-    people.forEach((p) => compte.set(p.nom, (compte.get(p.nom) ?? 0) + 1));
-    return [...compte.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    return null;
 }
 export function useTitreFamille(people: {
     id: Id;

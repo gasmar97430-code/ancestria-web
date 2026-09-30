@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 export type Ecran = 'accueil' | 'arbre' | 'traque' | 'sources';
-export type Palette = 'ivoire' | 'parchemin' | 'sombre';
+export type Palette = 'lumiere' | 'ivoire' | 'parchemin';
 export const PALETTES: {
     cle: Palette;
     libelle: string;
 }[] = [
-    { cle: 'sombre', libelle: 'Sombre' },
+    { cle: 'lumiere', libelle: 'Lumière' },
     { cle: 'ivoire', libelle: 'Ivoire' },
     { cle: 'parchemin', libelle: 'Parchemin' },
 ];
@@ -24,10 +24,10 @@ const ecrire = (cle: string, valeur: string) => {
     catch {
     }
 };
-const CLE_PALETTE = 'ancestria.palette.v2';
+const CLE_PALETTE = 'ancestria.palette.v3';
 const paletteInitiale = (): Palette => {
     const p = lire(CLE_PALETTE);
-    return p === 'parchemin' || p === 'ivoire' ? p : 'sombre';
+    return p === 'parchemin' || p === 'ivoire' ? p : 'lumiere';
 };
 const recentsInitiaux = (): string[] => {
     try {

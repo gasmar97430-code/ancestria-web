@@ -9,6 +9,7 @@ import { RechercheGlobale } from './RechercheGlobale';
 import { appliquerPalette, useAtelierStore } from '../store/useAtelierStore';
 import { usePatronymeStore } from '../store/usePatronymeStore';
 import { useTreeStore } from '../store/useTreeStore';
+import '../features/tree/libellesExacts';
 export const AppShell = () => {
     const { ecran, palette } = useAtelierStore();
     const chargerPatronymes = usePatronymeStore((s) => s.charger);

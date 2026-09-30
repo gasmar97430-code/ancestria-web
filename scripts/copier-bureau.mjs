@@ -65,6 +65,31 @@ if (existsSync(serveur)) {
     console.log('Répertoire des patronymes copié.');
 }
 
+// ---- 2 quater. SOURCES DES ORIGINES ----
+// Loi 3 (30/09) : une origine « documentée » se montre avec sa source. Au bureau, la table
+// patronyme_source est remplie par backend/scripts/sources-des-origines.mjs à partir de
+// prisma/patronymes-sources.json ; ici, les MÊMES lignes (même forme, même ordre) sont
+// écrites pour la prise du site (route /patronymes/sources).
+const releveSources = join(source, '..', '..', 'backend', 'prisma', 'patronymes-sources.json');
+try {
+    if (existsSync(releveSources)) {
+        const r = JSON.parse(readFileSync(releveSources, 'utf8'));
+        const lignes = r.etablies.map((e, k) => {
+            const s = r.sources[e.source];
+            if (!s) throw new Error(`${e.nom} cite une source inconnue (${e.source})`);
+            return { id: k + 1, nom: e.nom, titre: s.titre, editeur: s.editeur, adresse: s.adresse ?? null, nature: s.nature, passage: e.passage, repere: e.repere ?? null, etablit: e.etablit, releve: s.releve };
+        });
+        writeFileSync(join(copieServeur, 'sources-origines.json'), JSON.stringify({ releve_le: r.releve_le, sources: lignes }, null, 2) + '\n');
+        console.log(`Sources des origines copiées : ${lignes.length} lignes, ${new Set(lignes.map((l) => l.nom)).size} noms.`);
+    } else {
+        console.log('Sources des origines : relevé introuvable au bureau, fichier du site laissé tel quel.');
+    }
+} catch (e) {
+    console.error(`Sources des origines NON copiées : ${e.message}`);
+    process.exitCode = 1;
+}
+// ---- FIN 2 quater. SOURCES DES ORIGINES ----
+
 // 3. Tampon : d'où vient la copie.
 let version = 'inconnue';
 try {

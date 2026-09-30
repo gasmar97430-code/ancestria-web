@@ -1,0 +1,49 @@
+
+
+:root[data-theme='lumiere'] {
+    --ciel: #2E6A93;          
+    --ciel-t: #DCEBF6;        
+    --ciel-survol: #EDF4FA;   
+    --amande: #3F6B45;        
+    --amande-t: #DDEDD5;      
+}
+
+
+:root[data-theme='lumiere'] .bg-sepia-tint {
+    background-color: var(--ciel-t);
+}
+:root[data-theme='lumiere'] .bg-sepia-tint.border-sepia {
+    border-color: var(--ciel);
+}
+:root[data-theme='lumiere'] .bg-sepia-tint.text-sepia-deep {
+    color: var(--ciel);
+}
+
+
+:root[data-theme='lumiere'] .bg-blanc.border-sepia {
+    border-color: var(--ciel);
+}
+
+
+:root[data-theme='lumiere'] .hover\:bg-sepia-tint:not(.border-sepia):hover {
+    background-color: var(--ciel-survol);
+}
+:root[data-theme='lumiere'] .bg-sepia-tint.hover\:bg-sepia-tint:not(.border-sepia):hover {
+    background-color: var(--ciel-t); 
+}
+:root[data-theme='lumiere'] .hover\:border-sepia:hover {
+    border-color: var(--ciel);
+}
+:root[data-theme='lumiere'] .hover\:border-sepia.hover\:text-sepia-deep:hover {
+    color: var(--ciel);
+}
+
+
+:root[data-theme='lumiere'] aside.border-r .bg-sepia-tint {
+    background-color: var(--amande-t);
+}
+:root[data-theme='lumiere'] aside.border-r .bg-sepia-tint.text-sepia-deep {
+    color: var(--amande);
+}
+
+

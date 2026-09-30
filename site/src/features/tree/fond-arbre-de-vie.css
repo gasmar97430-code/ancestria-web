@@ -1,0 +1,11 @@
+
+[data-fond-arbre] ~ .react-flow .react-flow__edges {
+    --lien: #FFF6E0;
+    --sepia: #FFD98A;
+}
+
+[data-fond-arbre] ~ .react-flow .lien-lumineux__halo {
+    opacity: 0.55;
+    animation: none;
+}
+

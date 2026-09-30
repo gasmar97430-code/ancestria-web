@@ -9,6 +9,7 @@ import { BoutonGedcom } from '../features/gedcom/EchangesGedcom';
 import { Ecran, PALETTES, useAtelierStore } from '../store/useAtelierStore';
 import { usePatronymeStore } from '../store/usePatronymeStore';
 import { nomLisible, teinteDe } from '../lib/origins';
+import { MONTRER_RECENTS } from '../features/home/accueilNeutre';
 const ENTREES: {
     ecran: Ecran;
     libelle: string;
@@ -63,7 +64,7 @@ export const Sidebar = ({ rail }: {
             <BoutonSuggestions rail={false}/>
             <BoutonIncoherences rail={false}/>
 
-            {recents.length > 0 && (<div className="flex flex-col gap-2.5 px-3">
+            {MONTRER_RECENTS && recents.length > 0 && (<div className="flex flex-col gap-2.5 px-3">
                     <div className="text-[10.5px] tracking-[.12em] uppercase text-encre-3">Récemment consultés</div>
                     {recents.slice(0, 3).map((n) => {
                 const p = patronymes.find((x) => x.nom === n);

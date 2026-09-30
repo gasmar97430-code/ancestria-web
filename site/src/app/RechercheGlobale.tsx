@@ -5,6 +5,8 @@ import apiClient from '../api/client';
 import { useAtelierStore } from '../store/useAtelierStore';
 import { allerALaPersonne } from '../store/versPersonne';
 import { nomLisible, teinteDe } from '../lib/origins';
+import { origineAMontrer } from '../lib/origineEtablie';
+import { usePatronymeStore } from '../store/usePatronymeStore';
 import type { Id } from '../types';
 interface Resultats {
     personnes: {
@@ -196,11 +198,11 @@ const Fenetre = () => {
 
                     {r && r.patronymes.length > 0 && groupe('Noms du répertoire', r.patronymesEnTout, r.patronymes.length)}
                     {r?.patronymes.map((x) => ligne({ genre: 'nom', cle: `n${x.id}`, r: x }, <>
-                                <TextAa size={16} className="mt-0.5 flex-none" style={{ color: teinteDe(x.origine).c }}/>
+                                <TextAa size={16} className="mt-0.5 flex-none" style={{ color: teinteDe(origineAMontrer(x.nom, usePatronymeStore.getState().patronymes)).c }}/>
                                 <span className="flex flex-col min-w-0">
                                     <span className="font-display text-[18px] leading-tight text-encre">{nomLisible(x.nom)}</span>
                                     <span className="text-[12px] text-encre-3 truncate">
-                                        {teinteDe(x.origine).court}
+                                        {teinteDe(origineAMontrer(x.nom, usePatronymeStore.getState().patronymes)).court}
                                         {x.rang ? ` · ${x.rang}ᵉ patronyme de l'île` : ''}
                                         {x.extrait ? ` · ${x.extrait}` : ''}
                                     </span>

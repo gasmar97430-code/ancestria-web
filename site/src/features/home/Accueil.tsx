@@ -10,6 +10,10 @@ import type { Patronyme } from '../../types';
 import { FamilleDuNom } from './FamilleDuNom';
 import { PersonnesTapees } from './PersonnesTapees';
 import { BulleCommunes } from './BulleCommunes';
+import { ArbreDeVieAccueil } from './ArbreDeVieAccueil';
+import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
+import { DEGRES, definitionOrigine } from '../../lib/origineEtablie';
+import { SourceOrigine } from './SourceOrigine';
 const MAX_RESULTATS = 7;
 const CERTITUDES: Record<string, string> = {
     Documentee: 'origine documentée',
@@ -45,9 +49,8 @@ export const Accueil = () => {
     const fuse = useMemo(() => new Fuse(patronymes, { keys: ['nom'], threshold: 0.34, ignoreLocation: true }), [patronymes]);
     const resultats = useMemo(() => {
         const filtres = origine ? patronymes.filter((p) => p.origine === origine) : patronymes;
-        if (!terme) {
-            return [...filtres].sort((a, b) => (a.rang ?? 9999) - (b.rang ?? 9999)).slice(0, MAX_RESULTATS);
-        }
+        if (sansRecherche(terme))
+            return [];
         const exacts = filtres.filter((p) => normaliser(p.nom).includes(terme));
         exacts.sort((a, b) => {
             const da = normaliser(a.nom).startsWith(terme) ? 0 : 1;
@@ -63,9 +66,10 @@ export const Accueil = () => {
             .filter((p) => !vus.has(p.id) && (!origine || p.origine === origine));
         return [...exacts, ...proches].slice(0, MAX_RESULTATS);
     }, [patronymes, terme, saisie, origine, fuse]);
-    const choisi: Patronyme | undefined = terme
-        ? resultats.find((p) => p.nom === nomChoisi) ?? resultats[0]
-        : patronymes.find((p) => p.nom === nomChoisi) ?? resultats[0] ?? patronymes[0];
+    const choisi: Patronyme | undefined = sansRecherche(terme)
+        ? undefined
+        : resultats.find((p) => p.nom === nomChoisi) ?? resultats[0];
+    useNomDemande(nomChoisi, resultats.map((p) => p.nom), saisie, setSaisie);
     const presentes = useMemo(() => {
         const s = new Set(patronymes.map((p) => p.origine));
         return ORDRE_ORIGINES.filter((o) => s.has(o));
@@ -83,6 +87,7 @@ export const Accueil = () => {
                     </a>
                 </p>
             </header>
+            <ArbreDeVieAccueil />
 
             {erreur && <p className="text-sm text-[color:var(--o-afrique)]">Répertoire indisponible : {erreur}</p>}
 
@@ -93,20 +98,21 @@ export const Accueil = () => {
                         <input ref={champ} value={saisie} onChange={(e) => setSaisie(e.target.value)} onKeyDown={(e) => {
             if (e.key === 'Enter' && resultats[0])
                 choisir(resultats[0].nom);
-        }} placeholder="Payet, Hoarau, Moutoussamy…" autoFocus className="flex-1 min-w-0 border-0 bg-transparent font-display text-2xl text-encre outline-none focus-visible:outline-none placeholder:text-encre-3"/>
+        }} placeholder={EXEMPLE_CHAMP} data-champ={MARQUE_CHAMP} autoFocus className="flex-1 min-w-0 border-0 bg-transparent font-display text-2xl text-encre outline-none focus-visible:outline-none placeholder:text-encre-3"/>
                     </label>
 
                     <div className="flex flex-wrap gap-2">
                         {[null, ...presentes].map((o) => {
             const actif = origine === o;
-            return (<button key={o ?? 'toutes'} onClick={() => setOrigine(o)} className={`flex items-center gap-[7px] h-[30px] px-3 rounded-[15px] border text-[12.5px] font-medium text-encre transition-all hover:border-sepia ${actif ? 'bg-sepia-tint border-sepia' : 'bg-carte border-trait'}`}>
+            return (<button key={o ?? 'toutes'} title={definitionOrigine(o)} onClick={() => setOrigine(o)} className={`flex items-center gap-[7px] h-[30px] px-3 rounded-[15px] border text-[12.5px] font-medium text-encre transition-all hover:border-sepia ${actif ? 'bg-sepia-tint border-sepia' : 'bg-carte border-trait'}`}>
                                     <span className="w-[7px] h-[7px] rounded-full" style={{ background: o ? teinteDe(o).c : 'var(--sepia)' }}/>
                                     {o ? teinteDe(o).court : 'Toutes'}
                                 </button>);
         })}
                     </div>
 
-                    <div className="bg-carte border border-trait-leger rounded-2xl p-1.5 flex flex-col">
+                    {sansRecherche(terme) && <InviteRecherche noms={patronymes.length} filtre={origine ? teinteDe(origine).court : null}/>}
+                    <div className={`bg-carte border border-trait-leger rounded-2xl p-1.5 flex flex-col ${sansRecherche(terme) ? 'hidden' : ''}`}>
                         {resultats.map((p) => {
             const { avant, dedans, apres } = decouper(nomLisible(p.nom), terme);
             const t = teinteDe(p.origine);
@@ -170,7 +176,7 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
                 <span className="w-2 h-2 rounded-full" style={{ background: t.c }}/>
                 Origine · {t.court}
                 <span className="ml-2 normal-case tracking-normal text-encre-3 font-normal">
-                    — {CERTITUDES[p.certitude] ?? p.certitude}
+                    — {DEGRES[p.certitude] ?? CERTITUDES[p.certitude] ?? p.certitude}
                 </span>
             </div>
 
@@ -192,6 +198,7 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
             <div className="flex flex-col gap-2.5">
                 <div className="text-[10.5px] tracking-[.12em] uppercase text-sepia">Note historique</div>
                 {p.notes ? (<p className="font-display italic text-[22px] leading-[1.4] text-encre m-0">{p.notes}</p>) : (<p className="text-sm text-encre-3 m-0">Aucune note au répertoire pour ce nom.</p>)}
+                <SourceOrigine nom={p.nom}/>
                 <BulleCommunes nom={p.nom}/>
                 <div className="text-xs text-encre-3">
                     Répertoire des patronymes réunionnais — l'origine est celle du nom, pas celle des familles qui le

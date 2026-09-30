@@ -1,11 +1,10 @@
 {
   "_source": [
-    "Frequences : naissances recensees a La Reunion entre 1891 et 1915,",
-    "relevees par ici-la.co a partir des registres d'etat civil.",
-    "Origines et procedes d'attribution : Portail de l'esclavage a La Reunion",
-    "(dossier « Les noms de la liberte, 1664-1848 »), Universite Numerique de",
-    "La Reunion, et le Portail des Coutaye pour les noms indo-reunionnais.",
-    "Voir REPERTOIRE-PATRONYMES.md a la racine du depot pour le detail."
+    "Frequences : naissances recensees a La Reunion entre 1891 et 1915 (geopatronyme.com,",
+    "relevees par le billet d'Ici & La).",
+    "Origines : chaque nom « Documentee » a sa source, nom par nom, dans",
+    "patronymes-sources.json (meme dossier) — releve du 30/09/2026. Un nom sans",
+    "source lue est « Non documentee ». Voir REPERTOIRE-PATRONYMES.md."
   ],
   "_avertissement": [
     "L'origine indiquee est celle DU NOM, jamais celle des familles qui le",
@@ -14,9 +13,10 @@
     "europeenne ne dit rien de l'ascendance de celui qui le porte."
   ],
   "_certitude": [
-    "Documentee : origine etablie par une source citee.",
+    "Documentee : une source LUE cite ce nom et etablit son origine",
+    "  (patronymes-sources.json ; la base refuse une origine documentee sans source).",
     "Probable : finale caracteristique des patronymes indo-reunionnais,",
-    "  indice linguistique et non attribution sourcee.",
+    "  indice linguistique et non attribution sourcee — l'appli ne montre alors aucune region.",
     "Non documentee : le nom figure au repertoire pour la recherche, mais",
     "  aucune origine ne lui est attribuee. C'est le cas le plus frequent,",
     "  et il vaut mieux qu'une attribution inventee."
@@ -24,148 +24,150 @@
   "patronymes": [
     {
       "nom": "PAYET",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 2758,
-      "notes": "Le patronyme le plus porte de l'ile. Porte aussi bien par des descendants de colons que par des familles ayant recu un nom francais en 1848.",
+      "notes": "Le nom de famille le plus porté de l'île : 2 758 naissances relevées entre 1891 et 1915.",
       "rang": 1,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "GRONDIN",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 1714,
-      "notes": "Nom de colons francais, tres largement diffuse ensuite.",
       "rang": 2,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "HOARAU",
-      "origine": "Malgache",
+      "origine": "Non documentee",
       "frequence": 1699,
-      "notes": "Une des deux graphies concurrentes, avec HOAREAU. L'etat civil n'a jamais tranche.",
+      "notes": "Une des deux graphies du nom, avec HOAREAU : les deux figurent au classement des naissances de 1891 à 1915.",
       "rang": 3,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "FONTAINE",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 1444,
       "rang": 4,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "BOYER",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 1320,
       "rang": 5,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "ROBERT",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 1231,
       "rang": 6,
-      "certitude": "Documentee"
+      "certitude": "Non documentee",
+      "notes": "Donné aussi à des affranchis en 1848 : nom d'ancien maître, avec l'accord de sa famille (Archives départementales de La Réunion, exposition « Les noms de la liberté »)."
     },
     {
       "nom": "HOAREAU",
-      "origine": "Malgache",
+      "origine": "Non documentee",
       "frequence": 1229,
-      "notes": "Variante graphique de HOARAU. Les deux formes coexistent dans les memes familles.",
+      "notes": "Autre graphie de HOARAU : les deux formes figurent au classement des naissances de 1891 à 1915.",
       "rang": 7,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "RIVIERE",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 1105,
       "rang": 8,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "MAILLOT",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 959,
       "rang": 9,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "DIJOUX",
-      "origine": "Malgache",
+      "origine": "Non documentee",
       "frequence": 847,
       "rang": 10,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "TECHER",
-      "origine": "Malgache",
+      "origine": "Non documentee",
       "frequence": 840,
-      "notes": "Nom de proprietaires dont l'anagramme CHERTE a ete attribue a des affranchis en 1848.",
+      "notes": "Nom de maître : son anagramme CHERTE a été donnée à un affranchi (liste de Wikipédia).",
       "rang": 11,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "LEBON",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 755,
       "rang": 12,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "LAURET",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 686,
       "rang": 13,
-      "certitude": "Documentee"
+      "certitude": "Non documentee",
+      "notes": "Figure aussi parmi les noms de baptême européens donnés à des affranchis (liste de Wikipédia)."
     },
     {
       "nom": "BEGUE",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 648,
       "rang": 14,
-      "certitude": "Documentee"
+      "certitude": "Non documentee",
+      "notes": "Figure aussi parmi les noms donnés à des affranchis d'après un trait physique (liste de Wikipédia)."
     },
     {
       "nom": "CLAIN",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 578,
       "rang": 15,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "TURPIN",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 503,
       "rang": 16,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "DAMOUR",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 457,
       "rang": 17,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "BENARD",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 446,
       "rang": 18,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "CADET",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 421,
       "rang": 19,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "MOREL",
-      "origine": "Europe",
+      "origine": "Non documentee",
       "frequence": 413,
       "rang": 20,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "ETHEVE",
@@ -183,11 +185,11 @@
     },
     {
       "nom": "NATIVEL",
-      "origine": "Malgache",
-      "notes": "Nom dont les anagrammes LEVITAN et VELITAN ont ete attribues a des affranchis en 1848.",
+      "origine": "Non documentee",
+      "notes": "Nom de maître : ses anagrammes LEVITAN et VELITAN ont été données à des affranchis (liste de Wikipédia).",
       "frequence": 343,
       "rang": 23,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "VITRY",
@@ -417,7 +419,6 @@
     {
       "nom": "MINATCHY",
       "origine": "Inde tamoule",
-      "notes": "Du nom de la deesse Minakshi. Nombre de patronymes indo-reunionnais sont des noms de divinites.",
       "frequence": 125,
       "rang": 56,
       "certitude": "Documentee"
@@ -578,11 +579,10 @@
     },
     {
       "nom": "RAMSAMY",
-      "origine": "Inde tamoule",
-      "notes": "Classe 77e des patronymes de l'ile. Le suffixe -samy, tres frequent, vient du tamoul et renvoie au divin.",
+      "origine": "Non documentee",
       "frequence": 97,
       "rang": 77,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "LOUISE",
@@ -663,11 +663,10 @@
     },
     {
       "nom": "MOUTOUSSAMY",
-      "origine": "Inde tamoule",
-      "notes": "Compose des elements moutou et samy, caracteristiques des patronymes tamouls de l'ile.",
+      "origine": "Non documentee",
       "frequence": 82,
       "rang": 90,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "CRESCENCE",
@@ -699,11 +698,10 @@
     },
     {
       "nom": "MOUTAMA",
-      "origine": "Inde musulmane",
-      "notes": "Heritage des engages musulmans venus du Gujarat et du nord de l'Inde.",
+      "origine": "Non documentee",
       "frequence": 79,
       "rang": 96,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "ESPARON",
@@ -1001,11 +999,11 @@
     },
     {
       "nom": "ORANGE",
-      "origine": "Affranchi 1848",
-      "procede": "Nom commun",
+      "origine": "Non documentee",
       "frequence": 58,
       "rang": 136,
-      "certitude": "Documentee"
+      "certitude": "Non documentee",
+      "notes": "Le 8 janvier 1839, à Saint-Benoît, quatre personnes affranchies par Frédéric Orange et son épouse prennent le nom d'Orange (Archives départementales de La Réunion, EDEPOT 6/209, acte n° 261)."
     },
     {
       "nom": "THIBURCE",
@@ -1087,10 +1085,10 @@
     },
     {
       "nom": "IMACHE",
-      "origine": "Inde musulmane",
+      "origine": "Non documentee",
       "frequence": 54,
       "rang": 151,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "VELNA",
@@ -1369,10 +1367,10 @@
     },
     {
       "nom": "INCANA",
-      "origine": "Inde musulmane",
+      "origine": "Non documentee",
       "frequence": 47,
       "rang": 185,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "JOSEPH",
@@ -1714,7 +1712,6 @@
     {
       "nom": "RAMASSAMY",
       "origine": "Inde tamoule",
-      "notes": "Variante de RAMSAMY. Les transcriptions administratives des noms des engages ont multiplie les graphies d'un meme nom.",
       "frequence": 40,
       "rang": 237,
       "certitude": "Documentee"
@@ -1898,11 +1895,10 @@
     },
     {
       "nom": "BATAILLE",
-      "origine": "Affranchi 1848",
-      "procede": "Nom commun",
+      "origine": "Non documentee",
       "frequence": 36,
       "rang": 269,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "DESIRE",
@@ -2369,11 +2365,10 @@
     },
     {
       "nom": "LIN",
-      "origine": "Chine",
-      "notes": "Classe 339e. Les patronymes chinois apparaissent plus loin dans les classements : l'immigration chinoise est plus tardive que les autres vagues de peuplement.",
+      "origine": "Non documentee",
       "frequence": 31,
       "rang": 339,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "LINDOR",
@@ -2665,11 +2660,10 @@
     },
     {
       "nom": "BLUKER",
-      "origine": "Chine",
-      "notes": "Classe 373e. Nom chinois passe par une transcription europeenne, d'ou une forme qui n'evoque plus son origine.",
+      "origine": "Non documentee",
       "frequence": 28,
       "rang": 373,
-      "certitude": "Documentee"
+      "certitude": "Non documentee"
     },
     {
       "nom": "CALTEAU",
@@ -2895,9 +2889,8 @@
     },
     {
       "nom": "DIMANCHE",
-      "origine": "Affranchi 1848",
-      "procede": "Nom commun",
-      "certitude": "Documentee"
+      "origine": "Non documentee",
+      "certitude": "Non documentee"
     },
     {
       "nom": "ENILORAC",
@@ -2908,9 +2901,8 @@
     },
     {
       "nom": "FEVRIER",
-      "origine": "Affranchi 1848",
-      "procede": "Nom commun",
-      "certitude": "Documentee"
+      "origine": "Non documentee",
+      "certitude": "Non documentee"
     },
     {
       "nom": "FIDELE",
@@ -2940,10 +2932,8 @@
     },
     {
       "nom": "LIBER",
-      "origine": "Affranchi 1848",
-      "procede": "Mythologie ou histoire",
-      "notes": "Dieu romain de la croissance et de la fecondite. Difficile de ne pas y lire aussi une forme de « libre ».",
-      "certitude": "Documentee"
+      "origine": "Non documentee",
+      "certitude": "Non documentee"
     },
     {
       "nom": "LUODRAP",
@@ -2961,9 +2951,8 @@
     },
     {
       "nom": "PORTAIL",
-      "origine": "Affranchi 1848",
-      "procede": "Nom commun",
-      "certitude": "Documentee"
+      "origine": "Non documentee",
+      "certitude": "Non documentee"
     },
     {
       "nom": "VELITAN",

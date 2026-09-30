@@ -5,6 +5,7 @@ import { nomLisible, teinteDe } from '../../../lib/origins';
 import { CARTE, DonneesCarte, periode } from '../graphe';
 import { MarqueStatut } from '../StatutVie';
 import { OrigineCarte } from '../Origines';
+import { PhotoCarte } from '../Photos';
 const poignee = { opacity: 0, width: 1, height: 1, border: 0, minWidth: 0, minHeight: 0 };
 export const PersonMemorialNode = memo(({ data }: {
     data: DonneesCarte;
@@ -27,6 +28,7 @@ export const PersonMemorialNode = memo(({ data }: {
             <div className="w-11 h-11 flex-none rounded-full grid place-items-center font-display text-lg text-encre border" style={{ background: t.t, borderColor: t.c }}>
                 {initiales}
             </div>
+            <PhotoCarte id={i.id} origine={origine}/>
             <div className="min-w-0 flex flex-col gap-0.5">
                 
                 <div className="font-display leading-none text-encre-2 truncate" style={{ fontSize: i.prenom.length > 22 ? 10.5 : i.prenom.length > 15 ? 12 : 14 }} title={i.prenom}>

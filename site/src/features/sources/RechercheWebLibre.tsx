@@ -34,7 +34,7 @@ export const RechercheWebLibre = () => {
                 <span className="text-[12.5px] text-encre-3">Chaque bouton ouvre la recherche dans ton navigateur. Entrée : les arbres Geneanet.</span>
             </div>
             <div className="grid grid-cols-[2fr_2fr_1fr_2fr] gap-2.5">
-                <input className={champ} placeholder="Nom (ex. Hoarau)" value={v.nom} onChange={(e) => setV({ ...v, nom: e.target.value })} onKeyDown={entree} autoFocus/>
+                <input className={champ} placeholder="Nom de famille" value={v.nom} onChange={(e) => setV({ ...v, nom: e.target.value })} onKeyDown={entree} autoFocus/>
                 <input className={champ} placeholder="Prénom" value={v.prenom} onChange={(e) => setV({ ...v, prenom: e.target.value })} onKeyDown={entree}/>
                 <input className={champ} placeholder="Année" inputMode="numeric" value={v.annee} onChange={(e) => setV({ ...v, annee: e.target.value })} onKeyDown={entree}/>
                 <input className={champ} placeholder="Lieu (ex. Saint-Pierre)" value={v.lieu} onChange={(e) => setV({ ...v, lieu: e.target.value })} onKeyDown={entree}/>

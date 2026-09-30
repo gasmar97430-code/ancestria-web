@@ -19,11 +19,14 @@ import { RechercheWeb } from './RechercheWeb';
 import { ActionsFiche } from './ActionsFiche';
 import { avecBarre, BarreEdition } from './BarreEdition';
 import { avecBoutonsEpouses, BarreSansEnfant, BoutonEnfantEpouse } from './BoutonEnfantEpouse';
-import { useArbreAuClic } from './conjointsAuClic';
+import { avecPastillesCoparents, useArbreFoyers } from './foyers/useArbreFoyers';
+import { relationsDePlacement, unionsEnregistrees } from './foyers/normaliser';
 import { useGlissement } from './glissement';
 import { cercleResserre } from './cercleResserre';
 import { useArriveeDansArbre } from '../../store/versPersonne';
 import { ChoixBranche, lumineuxDeLaBranche, netsDeLaBranche, noyauDeLaBranche } from './ChoixBranche';
+import { FondArbreDeVie } from './FondArbreDeVie';
+import { PhotoFiche } from './Photos';
 import { PistesPersonne, useRattachements } from './PistesPersonne';
 import { useTaillesConnues } from './taillesConnues';
 import { LigneCouples } from './LigneCouples';
@@ -38,6 +41,7 @@ import { avecNaturesTraits, useAvecFamillesFormes } from './FamillesFormes';
 import { avecPoubelle, BoutonSupprimerCarte } from './SupprimerSurCarte';
 import { useAncrage } from './ancrage';
 import { usePositionsValides, GardeCamera } from './positionsValides';
+import { definitionOrigine } from '../../lib/origineEtablie';
 const nodeTypes = { carte: PersonMemorialNode, pastille: UnionPillNode };
 const edgeTypes = { lumineux: LienLumineux };
 const nodeTypesEdition = { ...nodeTypes, edition: BarreEdition, enfantEpouse: BoutonEnfantEpouse, editionSansEnfant: BarreSansEnfant, inconnu: CarteInconnue, supprimerCarte: BoutonSupprimerCarte };
@@ -47,7 +51,7 @@ export const Arbre = () => (<ReactFlowProvider>
     </ReactFlowProvider>);
 const ArbreInterieur = () => {
     const [choisi, setChoisi] = useState<Id | null>(null);
-    const tree = useAvecFamillesFormes(useAvecOrdreUnions(useAvecParentsInconnus(useArbreAuClic(choisi))));
+    const tree = useAvecFamillesFormes(useAvecOrdreUnions(useAvecParentsInconnus(useArbreFoyers(choisi))));
     const { patronymes } = usePatronymeStore();
     const { nomDansArbre, traquer } = useAtelierStore();
     const people = tree.people as Individu[];
@@ -101,7 +105,7 @@ const ArbreInterieur = () => {
     const lignee = useMemo(() => (choisi === null ? undefined : noeudsLignee(choisi, liens, unions)), [choisi, liens, unions]);
     const noyau = useMemo(() => noyauDeLaBranche(choisi === null ? null : noyauDe(choisi, liens, unions), dansLaBranche, unions), [choisi, liens, unions, dansLaBranche]);
     const lumineux = useMemo(() => lumineuxDeLaBranche(choisi === null ? null : noeudsLumineux(choisi, liens, unions), dansLaBranche, unions), [choisi, liens, unions, dansLaBranche]);
-    const affiche = useMemo(() => appliquerFocus(cercle && nets ? disposerFocus(nodes, nets, cercle, people, unions, tree.relationships) : nodes, edges, netsDeLaBranche(nets, dansLaBranche, unions), netsDeLaBranche(lignee, dansLaBranche, unions), lumineux), [nodes, edges, nets, lignee, lumineux, cercle, people, unions, tree.relationships, dansLaBranche]);
+    const affiche = useMemo(() => appliquerFocus(cercle && nets ? disposerFocus(nodes, nets, cercle, people, unions, relationsDePlacement(tree.relationships, unions, tree.unionChildren)) : nodes, edges, netsDeLaBranche(nets, dansLaBranche, unions), netsDeLaBranche(lignee, dansLaBranche, unions), lumineux), [nodes, edges, nets, lignee, lumineux, cercle, people, unions, tree.relationships, dansLaBranche]);
     const parentsChoisi = useMemo(() => (choisi === null ? [] : [...(liens.parentsDe.get(choisi) ?? [])].map((id) => `p-${id}`)), [choisi, liens]);
     const famille = useTitreFamille(people, nomDansArbre, choisi);
     const doyen = useMemo(() => [...people]
@@ -113,7 +117,7 @@ const ArbreInterieur = () => {
             setChoisi(null);
     }, [choisi, people]);
     const ancres = useAncrage(usePositionsValides(affiche.nodes), choisi);
-    const noeudsGlisses = useGlissement(avecPoubelle(avecRangsDesUnions(avecCartesInconnues(avecBoutonsEpouses(avecBarre(ancres, choisi, CARTE.width), choisi, people, unions, CARTE.width), tree.inconnus))));
+    const noeudsGlisses = useGlissement(avecPoubelle(avecPastillesCoparents(avecRangsDesUnions(avecCartesInconnues(avecBoutonsEpouses(avecBarre(ancres, choisi, CARTE.width), choisi, people, unionsEnregistrees(unions), CARTE.width), tree.inconnus)))));
     const noeudsAffiches = useTaillesConnues(noeudsGlisses);
     return (<div className="flex-1 min-w-0 flex flex-col">
             
@@ -138,7 +142,7 @@ const ArbreInterieur = () => {
                     {origines.map((o) => {
             const on = !eteintes.has(o);
             const t = teinteDe(o);
-            return (<button key={o} onClick={() => setEteintes((s) => {
+            return (<button key={o} title={definitionOrigine(o)} onClick={() => setEteintes((s) => {
                     const n = new Set(s);
                     if (on)
                         n.add(o);
@@ -166,6 +170,7 @@ const ArbreInterieur = () => {
 
             <div className="flex-1 min-h-0 flex">
                 <div className="flex-1 min-w-0 relative bg-papier">
+                    <FondArbreDeVie />
                     {people.length === 0 ? (<ArbreVide onAjouter={() => setAjout(true)} charge={!tree.loading}/>) : (<ReactFlow nodes={noeudsAffiches} edges={avecNaturesTraits(affiche.edges)} nodeTypes={nodeTypesEdition} edgeTypes={edgeTypes} onNodeClick={(_, n: Node) => {
                 if (n.type === 'carte')
                     setChoisi((n.data as DonneesCarte).individu.id);
@@ -222,6 +227,7 @@ const PersonDrawer = ({ personne: p, origine, sources, onTraquer, }: {
                     Portrait ou document
                 </div>
             </div>
+            <PhotoFiche personne={p} origine={origine}/>
             <div className="flex flex-col gap-1.5">
                 <div className="font-display text-[34px] leading-none font-medium">
                     {p.prenom} {nomLisible(p.nom)}

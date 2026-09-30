@@ -1,6 +1,7 @@
 import { disposer } from './disposition';
 import type { Edge, Node } from 'reactflow';
-import { buildGraph, personNodeId } from '../../lib/buildGraph';
+import { tracerFoyers, noeudPersonne as personNodeId } from './foyers/tracer';
+import { relationsDePlacement } from './foyers/normaliser';
 import { normaliser } from '../../lib/origins';
 import type { Id, Patronyme, Person, Relationship, Union, UnionChild } from '../../types';
 export const CARTE = { width: 176, height: 84 };
@@ -77,7 +78,7 @@ export function construireArbre(args: {
     generations: number;
 } {
     const { people, unions, relationships, unionChildren, patronymes, choisi, visibles, sources } = args;
-    const base = buildGraph(people, unions, relationships, unionChildren);
+    const base = tracerFoyers(people, unions, relationships, unionChildren);
     const parId = new Map(people.map((p) => [personNodeId(p.id), p]));
     const unionParId = new Map(unions.map((u) => [`u-${u.id}`, u]));
     const estompeNoeud = new Map<string, boolean>();
@@ -122,7 +123,7 @@ export function construireArbre(args: {
             },
         };
     });
-    const places = disposer(nodes, people, unions, relationships);
+    const places = disposer(nodes, people, unions, relationsDePlacement(relationships, unions, unionChildren));
     const rangs = new Set(places.filter((n) => n.type === 'carte').map((n) => Math.round(n.position.y)));
     return { nodes: places, edges, generations: rangs.size };
 }

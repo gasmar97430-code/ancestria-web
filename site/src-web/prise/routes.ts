@@ -9,6 +9,7 @@
 
 import { chargerArbre } from './donnees';
 import repertoire from '../copie-serveur/patronymes.json';
+import { sourcesDesOrigines } from './sources-origines';
 
 export interface Reponse {
     status: number;
@@ -31,6 +32,8 @@ const LECTURES: Record<string, (params: Record<string, string>) => Promise<Repon
         return ok({ ...a, meta: { total: a.people.length, returned: a.people.length, limit: 2000, truncated: false } });
     },
     '/patronymes': () => ok({ total: PATRONYMES.length, items: PATRONYMES }),
+    '/patronymes/sources': (params) => ok(sourcesDesOrigines(params.nom)), // prise/sources-origines.ts (loi 3)
+    '/photos': () => ok([]), // les photos du site (photo_url de la base en ligne) : prise à écrire ; d'ici là, les cartes gardent leurs initiales
     // Étapes suivantes : fiches « ? », rangs des unions, foyers, natures, genres dits par la famille.
     '/parents-inconnus': () => ok([]),
     '/rangs-unions': () => ok([]),
@@ -44,6 +47,7 @@ const LECTURES: Record<string, (params: Record<string, string>) => Promise<Repon
     '/traque/zones': () => ok([]),
     '/traque/sources': () => ok([]),
     '/traque/recherches': () => ok([]),
+    '/traque/rattachements': () => ok([]), // compteur « pistes rattachées » des cartes : aucune en ligne
     '/carnet/notes': () => ok([]),
     '/recherche-globale': () => ok({ personnes: [], patronymes: [], pistes: [], dureeMs: 0 }),
 };
@@ -56,7 +60,9 @@ export async function repondre(methode: string, chemin: string, params: Record<s
             if (chemin.startsWith('/carnet')) return pasEnLigne('Le carnet du téléphone');
             if (chemin.startsWith('/gedcom')) return pasEnLigne('Les fichiers GEDCOM');
             if (chemin.startsWith('/ia') || chemin.startsWith('/assistant')) return pasEnLigne('L’assistant');
-            if (chemin.startsWith('/pistes-personne')) return ok([]);
+            // La fiche d'une personne lit ses archives : même forme que le serveur du PC (api/pistes-personne.ts).
+            // Une liste vide à la place faisait tomber tout l'écran au clic sur une carte (banc du 30/09).
+            if (chemin.startsWith('/pistes-personne')) return ok({ rattachees: [], possibles: [], possiblesEnTout: 0, auNomSeul: 0, horsEpoque: 0 });
             return pasEncore();
         }
         if (chemin === '/sauvegarde') return pasEnLigne('La sauvegarde de la base');

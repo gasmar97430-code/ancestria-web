@@ -4,6 +4,7 @@ import apiClient from '../../api/client';
 import { allerALaPersonne } from '../../store/versPersonne';
 import { nomLisible } from '../../lib/origins';
 import type { Id } from '../../types';
+import { estChampAccueil } from './accueilNeutre';
 interface Trouvee {
     id: Id;
     prenom: string;
@@ -41,7 +42,7 @@ export const PersonnesTapees = ({ saisie, aucunNom }: {
     useEffect(() => {
         const touche = (e: KeyboardEvent) => {
             const champ = document.activeElement as HTMLInputElement | null;
-            if (e.key !== 'Enter' || !champ?.placeholder?.startsWith('Payet') || gens.length === 0 || !actif)
+            if (e.key !== 'Enter' || !estChampAccueil(champ) || gens.length === 0 || !actif)
                 return;
             e.preventDefault();
             e.stopPropagation();

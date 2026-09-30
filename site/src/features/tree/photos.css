@@ -1,0 +1,5 @@
+
+aside:has(> [data-photo-fiche]) > div:first-child:not([data-photo-fiche]) {
+    display: none;
+}
+
