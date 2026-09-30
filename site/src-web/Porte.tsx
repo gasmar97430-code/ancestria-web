@@ -10,6 +10,9 @@ import type { Session } from '@supabase/supabase-js';
 import { adressePublique, configurationPrete, supabase } from './prise/supabase';
 import { entrerEnProprietaire } from './propositions/Propositions'; // Propositions.tsx : sa porte « Propositions », lui seul
 import { entrerEnVisiteur, jetonVisiteur } from './visiteur/visiteur'; // visiteur.ts : le lien partagé s'ouvre sans connexion, en lecture seule
+import { useAssistantIA } from '../src/app/AssistantIA';
+
+useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (IA locale) : pas dans le site en ligne
 
 export function Porte({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null | undefined>(undefined);

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { create } from 'zustand';
 import { ArrowSquareOut, Binoculars, MagnifyingGlass, TextAa, User } from '@phosphor-icons/react';
+import { AssistantIA } from './AssistantIA';
 import apiClient from '../api/client';
 import { useAtelierStore } from '../store/useAtelierStore';
 import { allerALaPersonne } from '../store/versPersonne';
@@ -177,6 +178,7 @@ const Fenetre = () => {
                     <span className="font-mono text-[10.5px] text-encre-3 border border-trait rounded-md px-1.5 py-px">Échap</span>
                 </label>
 
+                <AssistantIA question={q} onFermer={fermer}/>
                 <div ref={liste} className="overflow-y-auto p-1.5">
                     {q.trim().length < 2 && <div className="px-3 py-6 text-sm text-encre-3">Tapez au moins deux lettres. Tous les mots doivent se trouver ; accents et majuscules n'y changent rien.</div>}
                     {erreur && <div className="px-3 py-3 text-sm" style={{ color: 'var(--o-afrique)' }}>{erreur}</div>}
