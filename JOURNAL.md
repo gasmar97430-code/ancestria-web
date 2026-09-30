@@ -2,7 +2,7 @@
 
 Relevé de ce qui est fait, mesuré, et de ce qui reste. Le plus récent en haut.
 
-## ▶ 30/09/2026 20:00 — site/ REÇOIT L'ÉCRAN DU PC D'AUJOURD'HUI (ENREGISTRÉ EN LOCAL, NON ENVOYÉ, NON EN LIGNE) — REPRENDRE ICI
+## ▶ 30/09/2026 19:55 — site/ REÇOIT L'ÉCRAN DU PC D'AUJOURD'HUI (ENREGISTRÉ EN LOCAL, NON ENVOYÉ, NON EN LIGNE) — REPRENDRE ICI
 
 **Ce qui est en ligne n'a pas changé** : c'est toujours l'ancien site (`src/`, publié à 15:31). Aucun fichier de `src/`, `supabase/`, `tests/`, `.github/` n'est touché par cette passe.
 
