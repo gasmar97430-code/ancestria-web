@@ -12,6 +12,7 @@ import { UnionPillNode } from './nodes/UnionPillNode';
 import { FormulaireMembre } from './FormulaireMembre';
 import { appliquerFocus, disposerFocus, liensDeFamille, noeudsLignee, noeudsLumineux, noeudsNets, noyauDe } from './focus';
 import { LienLumineux } from './LienLumineux';
+import { LumiereDesParents } from './LumiereDesParents';
 import { CadrageFocus } from './CadrageFocus';
 import { RechercheArbre } from './RechercheArbre';
 import { FilAriane } from './FilAriane';
@@ -183,6 +184,7 @@ const ArbreInterieur = () => {
                             
                             <ZoomDock />
                             <CadrageFocus nodes={ancres} noyau={noyau} pivot={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi}/>
+                            <LumiereDesParents choisi={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi} lumineux={lumineux} edges={affiche.edges}/>
                             <BoiteNoireArbre />
                             <GardeCamera />
                         </ReactFlow>)}

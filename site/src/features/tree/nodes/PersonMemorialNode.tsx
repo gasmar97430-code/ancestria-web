@@ -22,7 +22,7 @@ export const PersonMemorialNode = memo(({ data }: {
             opacity: estompe ? 0.2 : 1,
         }}>
             <Handle type="target" position={Position.Top} style={poignee}/>
-            <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: t.c }}/>
+            
             <MarqueStatut individu={i}/>
             <OrigineCarte origine={origine}/>
             <div className="w-11 h-11 flex-none rounded-full grid place-items-center font-display text-lg text-encre border" style={{ background: t.t, borderColor: t.c }}>
