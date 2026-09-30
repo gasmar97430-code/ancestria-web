@@ -2,7 +2,12 @@
 
 Relevé de ce qui est fait, mesuré, et de ce qui reste. Le plus récent en haut.
 
-## ▶ 30/09/2026 19:55 — site/ REÇOIT L'ÉCRAN DU PC D'AUJOURD'HUI (ENREGISTRÉ EN LOCAL, NON ENVOYÉ, NON EN LIGNE) — REPRENDRE ICI
+## ▶ 30/09/2026 23:35 — ÉCRAN DU PC 1.6.49 RECOPIÉ DANS site/ (local, NON publié)
+- `node scripts/copier-bureau.mjs` (bureau 862bf53) : seuls changent `features/tree/LumiereDesParents.tsx` + `lumiere-parents.css` (neufs), `Arbre.tsx` (ligne d'appel), `nodes/PersonMemorialNode.tsx` (bande au-dessus du nom retirée). Enregistré : db91f5b.
+- Contrôles : tsc 0 ; essais 22 / 22 ; banc 33 / 35 (les 2 mêmes qu'avant : carnet du téléphone absent en ligne) ; visiteur 22 / 22 ; téléphone 32 / 32 ; banc neuf `D:	mpncestria-banc-siteanc-lumiere.mjs` 4 / 4 (Théodule choisi → Anselme et Rosalie seuls clignotent, 4 cordons clairs 4 px, aucune bande, 0 erreur), image regardée ; noms de sa base dans ce qui est enregistré : 0.
+- L'entrée de 19:55 ci-dessous reste la suite à reprendre.
+
+## 30/09/2026 19:55 — site/ REÇOIT L'ÉCRAN DU PC D'AUJOURD'HUI (ENREGISTRÉ EN LOCAL, NON ENVOYÉ, NON EN LIGNE) — REPRENDRE ICI
 
 **Ce qui est en ligne n'a pas changé** : c'est toujours l'ancien site (`src/`, publié à 15:31). Aucun fichier de `src/`, `supabase/`, `tests/`, `.github/` n'est touché par cette passe.
 
