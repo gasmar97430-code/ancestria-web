@@ -111,19 +111,6 @@ const lireVariantes = (json: string): {
         return [];
     }
 };
-function lienGeneanet(r: {
-    nom: string;
-    commune: string | null;
-    zone: string | null;
-}): string {
-    const p = new URLSearchParams({ go: '1', nom: r.nom, size: '50' });
-    const surLile = !r.zone || r.zone === 'reunion';
-    if (r.commune)
-        p.set('place__0__', surLile ? `${r.commune}, Réunion` : r.commune);
-    else if (surLile)
-        p.set('place__0__', 'Réunion');
-    return `https://www.geneanet.org/fonds/individus/?${p.toString()}`;
-}
 const messageErreur = (e: any): string => {
     const d = e?.response?.data;
     if (d?.details?.length)
@@ -328,9 +315,6 @@ export const TraqueBoard = () => {
                                 {masquees > 0 && (<button onClick={() => setVoirMasquees((v) => !v)} title="Actes d'état civil de moins de 75 ans (naissances, mariages) et pistes liées à une personne vivante : masqués par défaut (Code du patrimoine, art. L213-2). Les décès sont communicables." className={`h-[30px] px-3 rounded-lg border text-xs font-medium ${voirMasquees ? 'bg-sepia-tint border-sepia text-sepia-deep' : 'border-trait text-encre-3'}`}>
                                         {voirMasquees ? 'cacher' : 'voir'} les pistes protégées ({masquees})
                                     </button>)}
-                                <a href={lienGeneanet(recherche)} target="_blank" rel="noreferrer" title="Geneanet interdit la consultation automatique : la page s'ouvre dans ton navigateur, c'est toi qui la consultes." className="h-[30px] px-3 rounded-lg border border-trait text-xs font-medium text-encre-2 flex items-center gap-1.5 hover:border-sepia">
-                                    Voir sur Geneanet <ArrowSquareOut />
-                                </a>
                             </div>
                         </header>
 

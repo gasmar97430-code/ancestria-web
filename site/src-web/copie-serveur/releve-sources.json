@@ -144,15 +144,6 @@
     "branchee": false
   },
   {
-    "cle": "geneanet",
-    "titre": "Geneanet",
-    "domaine": "www.geneanet.org",
-    "etat": "protege",
-    "mesure": "403 : accès automatique interdit par ses conditions",
-    "note": "ÉCARTÉE par ses conditions d’utilisation.",
-    "branchee": false
-  },
-  {
     "cle": "familysearch",
     "titre": "FamilySearch",
     "domaine": "www.familysearch.org",

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Fuse from 'fuse.js';
-import { ArrowSquareOut, Binoculars, CaretRight, MagnifyingGlass, TreeStructure } from '@phosphor-icons/react';
+import { Binoculars, CaretRight, MagnifyingGlass, TreeStructure } from '@phosphor-icons/react';
 import apiClient from '../../api/client';
 import { usePatronymeStore } from '../../store/usePatronymeStore';
 import { useAtelierStore } from '../../store/useAtelierStore';
@@ -14,7 +14,6 @@ import { ArbreDeVieAccueil } from './ArbreDeVieAccueil';
 import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
 import { DEGRES, definitionOrigine } from '../../lib/origineEtablie';
 import { SourceOrigine } from './SourceOrigine';
-import { PlaceDansLesArbres } from './PlaceDansLesArbres';
 import { EmplacementAjouterFamille } from '../../lib/ajouterFamille';
 const MAX_RESULTATS = 7;
 const CERTITUDES: Record<string, string> = {
@@ -84,9 +83,6 @@ export const Accueil = () => {
                 <p className="text-[15px] text-encre-2">
                     {patronymes.length} patronymes réunionnais, leurs origines et les notes du répertoire.
                     
-                    <a href="https://www.geneanet.org/nom-de-famille/list/browse-country/REU" target="_blank" rel="noreferrer" title="S'ouvre dans ton navigateur : c'est toi qui consultes Geneanet." className="ml-3 text-[13px] text-encre-3 hover:text-encre-2 inline-flex items-center gap-1">
-                        Tous les noms de La Réunion sur Geneanet <ArrowSquareOut />
-                    </a>
                 </p>
             </header>
             <ArbreDeVieAccueil />
@@ -198,8 +194,6 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
                     </>)}
             </div>
 
-            <PlaceDansLesArbres nom={p.nom}/>
-
             <div className="flex flex-col gap-2.5">
                 <div className="text-[10.5px] tracking-[.12em] uppercase text-sepia">Note historique</div>
                 {p.notes ? (<p className="font-display italic text-[22px] leading-[1.4] text-encre m-0">{p.notes}</p>) : (<p className="text-sm text-encre-3 m-0">Aucune note au répertoire pour ce nom.</p>)}
@@ -232,10 +226,6 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
                     Lancer la traque
                 </button>
                 
-                <a href={`https://www.geneanet.org/genealogie/${encodeURIComponent(p.nom.toLowerCase())}/${encodeURIComponent(p.nom.toUpperCase())}`} target="_blank" rel="noreferrer" title="S'ouvre dans ton navigateur : c'est toi qui consultes Geneanet." className="flex items-center gap-2 whitespace-nowrap h-[42px] px-[14px] rounded-[10px] text-encre-3 text-sm transition-colors hover:bg-papier hover:text-encre-2">
-                    Le nom sur Geneanet
-                    <ArrowSquareOut />
-                </a>
             </div>
         </article>);
 };

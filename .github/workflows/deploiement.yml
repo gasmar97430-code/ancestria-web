@@ -42,6 +42,24 @@ jobs:
           # Adresse de l'administrateur montrée au public (message « écrire à l'administrateur », avis sur les données) : c'est lui qui la choisit.
           VITE_EMAIL_ADMINISTRATEUR: ${{ vars.VITE_EMAIL_ADMINISTRATEUR }}
           VITE_BASE: /${{ github.event.repository.name }}/
+      # ---- ADRESSE D'ESSAI : le nouveau site (site/ = l'écran du PC), À PART, sous /<dépôt>/essai/ (son oui du 01/10) ----
+      - name: Nouveau site — dépendances
+        run: npm ci
+        working-directory: site
+      - name: Nouveau site — essais et types
+        run: npx vitest run && npx tsc --noEmit -p .
+        working-directory: site
+      - name: Nouveau site — construction dans dist/essai
+        run: npx vite build --outDir ../dist/essai --emptyOutDir
+        working-directory: site
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_EMAIL_ADMINISTRATEUR: ${{ vars.VITE_EMAIL_ADMINISTRATEUR }}
+          VITE_BASE: /${{ github.event.repository.name }}/essai/
+      - name: Nouveau site — liens directs (/essai/c/…)
+        run: node scripts/essai-404.mjs /${{ github.event.repository.name }}/essai/
+      # ---- FIN ADRESSE D'ESSAI ----
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

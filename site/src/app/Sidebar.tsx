@@ -5,7 +5,6 @@ import { BoutonRecherche } from './RechercheGlobale';
 import { BoutonSuggestions } from './Suggestions';
 import { BoutonIncoherences } from './Incoherences';
 import { BoutonCarnet } from '../features/carnet/BoutonCarnet';
-import { BoutonGedcom } from '../features/gedcom/EchangesGedcom';
 import { Ecran, PALETTES, useAtelierStore } from '../store/useAtelierStore';
 import { usePatronymeStore } from '../store/usePatronymeStore';
 import { nomLisible, teinteDe } from '../lib/origins';
@@ -42,8 +41,7 @@ export const Sidebar = ({ rail }: {
                 <PortesDuSite rail/>
                 <BoutonSiteEnLigne rail/>
                 <BoutonSauvegarde rail/>
-                <BoutonCarnet rail/>
-                <BoutonGedcom rail/></>}
+                <BoutonCarnet rail/></>}
             </aside>);
     }
     return (<aside className="w-[272px] flex-none bg-carte border-r border-trait-leger px-[18px] py-7 flex flex-col gap-8">
@@ -72,8 +70,7 @@ export const Sidebar = ({ rail }: {
                 </div>)}
 
             {!lecture && <><BoutonSauvegarde rail={false}/>
-            <BoutonCarnet rail={false}/>
-            <BoutonGedcom rail={false}/></>}
+            <BoutonCarnet rail={false}/></>}
             <div className="flex flex-col gap-2 p-3 border border-trait-leger rounded-xl text-xs text-encre-2">
                 <span className="text-encre font-medium">Palette</span>
                 <div className="flex bg-papier rounded-[10px] p-[3px] gap-0.5">

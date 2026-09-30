@@ -21,7 +21,7 @@ export const RechercheWebLibre = () => {
     const arbres = p ? liensArbres(p) : [];
     const champ = 'h-11 px-3.5 bg-blanc border border-trait rounded-[12px] text-[15px] text-encre outline-none focus:border-sepia placeholder:text-encre-3 min-w-0';
     const entree = (e: React.KeyboardEvent) => {
-        const g = arbres.find((l) => l.titre === 'Geneanet — arbres');
+        const g = arbres[0];
         if (e.key === 'Enter' && g)
             window.open(g.url, '_blank');
     };
@@ -31,7 +31,7 @@ export const RechercheWebLibre = () => {
                     <Globe size={22} className="text-sepia"/>
                     Chercher sur le web
                 </h2>
-                <span className="text-[12.5px] text-encre-3">Chaque bouton ouvre la recherche dans ton navigateur. Entrée : les arbres Geneanet.</span>
+                <span className="text-[12.5px] text-encre-3">Chaque bouton ouvre la recherche dans ton navigateur. Entrée : le premier site d'arbres.</span>
             </div>
             <div className="grid grid-cols-[2fr_2fr_1fr_2fr] gap-2.5">
                 <input className={champ} placeholder="Nom de famille" value={v.nom} onChange={(e) => setV({ ...v, nom: e.target.value })} onKeyDown={entree} autoFocus/>

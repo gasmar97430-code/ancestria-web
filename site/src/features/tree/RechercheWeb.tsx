@@ -27,7 +27,6 @@ export function liensWeb(p: Individu): {
     if (lieu)
         fs.set('q.birthLikePlace', lieu);
     return [
-        { titre: 'Geneanet', url: `https://www.geneanet.org/fonds/individus/?go=1&nom=${q(nom)}&prenom=${q(prenom)}` },
         { titre: 'FamilySearch', url: `https://www.familysearch.org/search/record/results?${fs.toString()}` },
         { titre: 'Filae', url: `https://www.filae.com/nom-de-famille/${q(nom.toLowerCase())}.html` },
         {
@@ -44,15 +43,9 @@ export function liensArbres(p: Individu): {
     const prenom = prenomSur(p.prenom);
     const nom = p.nom.replace(/…/g, '').trim();
     const q = encodeURIComponent;
-    const phrase = `"${[prenom, nom].filter(Boolean).join(' ')}"`;
     return [
-        {
-            titre: 'Geneanet — arbres',
-            url: `https://www.geneanet.org/fonds/individus/?categories_1%5Barbres%5D=arbres&categories_2%5Barbres%23utilisateur%5D=arbres%23utilisateur&go=1&nom=${q(nom)}&prenom=${q(prenom)}`,
-        },
         { titre: 'Geni', url: `https://www.geni.com/search?search_type=people&names=${q([prenom.split(/[\s-]+/)[0], nom].filter(Boolean).join(' '))}` },
         { titre: 'WikiTree', url: `https://www.wikitree.com/genealogy/${q(nom.toUpperCase().replace(/\s+/g, '-'))}` },
-        { titre: 'Google — arbres Geneanet', url: `https://www.google.com/search?q=${q(`${phrase} site:gw.geneanet.org`)}` },
     ];
 }
 export const GroupeLiens = ({ titre, liens }: {

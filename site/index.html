@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ancestria</title>
+    <script>
+      // Adresse d'essai sur GitHub Pages (01/10) : un lien direct (/essai/c/<jeton>) arrive par la page 404,
+      // qui le renvoie ici sous la forme ?/c/<jeton> (scripts/essai-404.mjs) ; on remet l'adresse d'origine.
+      (function () {
+        var q = window.location.search;
+        if (q.slice(0, 2) !== '?/') return;
+        var reste = q.slice(2).split('&').map(function (s) { return s.replace(/~and~/g, '&'); }).join('?');
+        window.history.replaceState(null, '', window.location.pathname.replace(/\/?$/, '/') + reste + window.location.hash);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
