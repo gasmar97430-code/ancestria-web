@@ -1,0 +1,12 @@
+/* ---- PARTENAIRES : L'ÉCRAN D'ANCESTRIA DANS SON CADRE ----
+ * L'écran copié du bureau se donne toute la fenêtre (h-screen w-screen). Quand un
+ * emplacement de partenaire est affiché, il prend la place qui reste dans le cadre.
+ * Sans annonce, ce cadre n'existe pas et ces règles ne s'appliquent à rien.
+ */
+.cadre-partenaires [data-ecran-ancestria] > .h-screen {
+    height: 100%;
+}
+.cadre-partenaires [data-ecran-ancestria] > .w-screen {
+    width: 100%;
+}
+/* ---- FIN PARTENAIRES : L'ÉCRAN D'ANCESTRIA DANS SON CADRE ---- */

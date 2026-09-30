@@ -7,11 +7,12 @@ import App from '../src/App';
 import '../src/index.css';
 import '../src/ui/theme.css';
 import { Porte } from './Porte';
+import { CadrePartenaires } from './partenaires/Partenaires';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <Porte>
-            <App />
+            <CadrePartenaires><App /></CadrePartenaires>{/* partenaires/Partenaires.tsx : sans annonce, rien autour */}
         </Porte>
     </React.StrictMode>,
 );
