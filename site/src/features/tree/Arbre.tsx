@@ -186,7 +186,7 @@ const ArbreInterieur = () => {
                             <ZoomDock />
                             <CadrageFocus nodes={ancres} noyau={noyau} pivot={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi}/>
                             <LumiereDesParents choisi={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi} lumineux={lumineux} edges={affiche.edges}/>
-                            <CouleursConjointes unions={unions}/>
+                            <CouleursConjointes unions={unions} choisi={choisi}/>
                             <BoiteNoireArbre />
                             <GardeCamera />
                         </ReactFlow>)}
