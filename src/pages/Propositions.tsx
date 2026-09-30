@@ -101,6 +101,7 @@ export function Propositions() {
                                     <div className="text-sm text-encre-2">Proches : {k.proches.map((p) => `${nomAffiche(p)} (${RELATION_PROCHE[p.relation]})`).join(', ')}</div>
                                 )}
                                 {k.message && <div className="text-sm text-encre-2 whitespace-pre-line">{k.message}</div>}
+                                {k.inscrit && <div className="text-xs text-encre-2">Inscrit : <b>{k.inscrit.prenom} {k.inscrit.nom}</b></div>}{/* règle du 30/09 : qui a fait l'envoi */}
                                 {c.contact && <div className="text-xs text-encre-3">Contact : {c.contact}</div>}
                                 {c.motif && <div className="text-xs text-encre-3">Motif du refus : {c.motif}</div>}
                                 {c.statut === 'en_attente' && (

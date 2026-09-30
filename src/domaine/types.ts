@@ -153,6 +153,8 @@ export interface ContenuContribution {
     lien: { relation: RelationContribution; individu_id: Id | null; texte: string };
     proches: { prenom: string; nom: string; genre: Genre; naissance_annee: number | null; vivant: boolean; relation: RelationProche }[];
     message: string;
+    /** Qui a fait l'envoi (règle du 30/09 : inscription obligatoire). Absent des propositions d'avant cette règle. */
+    inscrit?: { nom: string; prenom: string; charte?: string };
 }
 
 export interface Contribution {

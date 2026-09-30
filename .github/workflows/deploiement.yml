@@ -39,6 +39,8 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_ADRESSE_PUBLIQUE: ${{ vars.VITE_ADRESSE_PUBLIQUE }}
           VITE_STRIPE_ACTIF: ${{ vars.VITE_STRIPE_ACTIF }}
+          # Adresse de l'administrateur montrée au public (message « écrire à l'administrateur », avis sur les données) : c'est lui qui la choisit.
+          VITE_EMAIL_ADMINISTRATEUR: ${{ vars.VITE_EMAIL_ADMINISTRATEUR }}
           VITE_BASE: /${{ github.event.repository.name }}/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

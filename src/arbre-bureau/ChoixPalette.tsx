@@ -1,37 +1,38 @@
-// ---- PALETTE : SOMBRE, IVOIRE, PARCHEMIN ----
+// ---- PALETTE : LUMIÈRE, IVOIRE, PARCHEMIN ----
 //
-// Sa demande du 29/09 : « il faudrait un bouton pour le changement de sombre,
-// clair ou autre ; certaines personnes préfèrent la couleur sombre, d'autres le
-// blanc ». Le bureau l'a déjà (bloc « Palette » de sa barre de gauche,
-// store/useAtelierStore.ts) : même aspect, même clé de mémoire, même défaut
-// (sombre), mêmes trois palettes (ui/theme-bureau.css).
-// Le choix est gardé dans le navigateur du téléphone / du PC : un confort, rien
-// ne casse s'il se perd.
+// Loi 1 de l'administrateur (30/09/2026) : « Design lumineux, propre, tons ivoire,
+// cuivre et vert amande (aucun thème sombre) ». Avant : « Sombre » était la palette par
+// défaut du site (demande du 29/09, d'avant sa maquette claire). Maintenant, comme à
+// l'Ancestria du PC depuis la 1.6.38 : « Lumière » par défaut (ui/theme-lumiere.css,
+// copie exacte de celle du PC), Ivoire et Parchemin au choix, et plus aucun thème
+// sombre — ni proposé, ni repris d'un ancien choix (la clé de mémoire change).
+// Le choix est gardé dans le navigateur : un confort, rien ne casse s'il se perd.
 
 import { useState } from 'react';
 
-export type Palette = 'ivoire' | 'parchemin' | 'sombre';
+export type Palette = 'lumiere' | 'ivoire' | 'parchemin';
 export const PALETTES: { cle: Palette; libelle: string }[] = [
-    { cle: 'sombre', libelle: 'Sombre' },
+    { cle: 'lumiere', libelle: 'Lumière' },
     { cle: 'ivoire', libelle: 'Ivoire' },
     { cle: 'parchemin', libelle: 'Parchemin' },
 ];
-const CLE_PALETTE = 'ancestria.palette.v2';
+/** Même clé qu'au PC : un ancien choix « sombre » (clé v2) n'est plus lu. */
+const CLE_PALETTE = 'ancestria.palette.v3';
 
 function lire(): Palette {
     try {
         const p = localStorage.getItem(CLE_PALETTE);
-        return p === 'parchemin' || p === 'ivoire' ? p : 'sombre';
+        return p === 'parchemin' || p === 'ivoire' ? p : 'lumiere';
     } catch {
-        return 'sombre';
+        return 'lumiere';
     }
 }
 
 export function appliquerPalette(p: Palette) {
     try {
         document.documentElement.dataset.theme = p;
-        // Barres de défilement, cases, listes natives : clair ou sombre selon la palette.
-        document.documentElement.style.colorScheme = p === 'sombre' ? 'dark' : 'light';
+        // Barres de défilement, cases, listes natives : toujours claires.
+        document.documentElement.style.colorScheme = 'light';
     } catch {
         /* rendu hors navigateur (essais) */
     }
@@ -40,7 +41,7 @@ export function appliquerPalette(p: Palette) {
 // Posée dès le chargement du module (importé tôt dans main.tsx) : pas d'éclair d'une autre palette.
 if (typeof document !== 'undefined') appliquerPalette(lire());
 
-/** Le bloc « Palette » du bureau. `compact` : sans le titre, pour une barre d'en-tête. */
+/** Le bloc « Palette » du bureau. `compact` : sans le titre, boutons à hauteur de doigt (téléphone). */
 export function ChoixPalette({ compact = false }: { compact?: boolean }) {
     const [palette, setPalette] = useState<Palette>(lire);
     const changer = (p: Palette) => {
@@ -60,7 +61,7 @@ export function ChoixPalette({ compact = false }: { compact?: boolean }) {
                     type="button"
                     onClick={() => changer(p.cle)}
                     aria-pressed={palette === p.cle}
-                    className={`flex-1 h-7 px-2 rounded-lg text-[12px] font-medium transition-all ${palette === p.cle ? 'bg-blanc shadow-onglet text-encre' : 'text-encre-2'}`}
+                    className={`flex-1 ${compact ? 'h-11' : 'h-7'} px-2 rounded-lg text-[12px] font-medium transition-all ${palette === p.cle ? 'bg-blanc shadow-onglet text-encre' : 'text-encre-2'}`}
                 >
                     {p.libelle}
                 </button>

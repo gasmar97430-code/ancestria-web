@@ -4,6 +4,8 @@
    et les polices sont CELLES DU BUREAU (arbre-bureau/ui/theme-bureau.css, trois
    palettes) : chaque nom d'ici renvoie à sa variable, la palette choisie change tout. */
 @import './arbre-bureau/ui/theme-bureau.css';
+/* 30/09, loi 1 : design lumineux, aucun thème sombre — palette « Lumière » du PC, par défaut (ChoixPalette.tsx). */
+@import './arbre-bureau/ui/theme-lumiere.css';
 @theme {
     --color-nuit: var(--papier);
     --color-papier: var(--papier);
@@ -36,10 +38,10 @@ html, body, #racine {
     height: 100%;
 }
 
-/* Thème sombre déclaré au navigateur : barres de défilement, cases à cocher,
-   listes déroulantes natives suivent (elles restaient blanches). */
+/* Thème clair déclaré au navigateur (loi 1 : aucun thème sombre) : barres de
+   défilement, cases à cocher, listes déroulantes natives suivent. */
 :root {
-    color-scheme: dark;
+    color-scheme: light;
     accent-color: var(--color-sepia);
 }
 

@@ -1156,6 +1156,94 @@ begin
 end;
 $$;
 
+-- ---------------------------------------------------------------------
+-- 7 bis. INSCRIPTION OBLIGATOIRE ET VERROU DES CONTRIBUTIONS
+-- ---------------------------------------------------------------------
+-- Règle de l'administrateur, 30/09/2026 :
+--   « toute personne souhaitant ajouter une famille ou contribuer doit
+--     obligatoirement s'inscrire en fournissant son Nom, Prénom et Adresse
+--     e-mail ou Numéro de téléphone. Aucune contribution anonyme ou sans
+--     traçabilité ne doit être tolérée. »
+--   « chaque contribution validée est verrouillée et tracée »
+-- L'inscrit voyage dans la proposition : contenu -> 'inscrit' { nom, prenom }
+-- et la colonne contact (e-mail OU téléphone). La règle est tenue ICI, dans
+-- la base : l'écran peut être contourné, la base non.
+
+-- Nature d'un contact : 'email', 'telephone', ou null (ni l'un ni l'autre).
+-- Mêmes règles, lettre pour lettre, que src/inscription/contact.ts (essai de
+-- parité tests/sql/inscription.test.ts) : classes ASCII seulement, lues
+-- pareil par PostgreSQL et par le navigateur.
+--   e-mail    : nom@domaine.extension (extension de 2 lettres au moins) ;
+--   téléphone : 8 à 15 chiffres (norme E.164 : 15 au plus), « + » en tête
+--               permis, espaces, points, tirets et parenthèses permis.
+create or replace function public.genre_contact(p text)
+returns text
+language sql immutable set search_path = ''
+as $$
+    select case
+        when p is null or char_length(p) > 200 then null
+        when btrim(p, ' ') ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$' then 'email'
+        when btrim(p, ' ') ~ '^\+?[0-9(][0-9 .()-]*$'
+             and char_length(regexp_replace(p, '[^0-9]', '', 'g')) between 8 and 15 then 'telephone'
+        else null
+    end;
+$$;
+
+-- Ce qui manque à l'inscription ; null = elle est complète.
+create or replace function public.defaut_inscription(p_contenu jsonb, p_contact text)
+returns text
+language sql immutable set search_path = ''
+as $$
+    select case
+        when p_contenu is null or jsonb_typeof(p_contenu -> 'inscrit') is distinct from 'object' then 'inscription_requise'
+        when jsonb_typeof(p_contenu -> 'inscrit' -> 'nom') is distinct from 'string'
+             or char_length(btrim(p_contenu -> 'inscrit' ->> 'nom', ' ')) not between 1 and 80 then 'inscription_requise'
+        when jsonb_typeof(p_contenu -> 'inscrit' -> 'prenom') is distinct from 'string'
+             or char_length(btrim(p_contenu -> 'inscrit' ->> 'prenom', ' ')) not between 1 and 80 then 'inscription_requise'
+        when public.genre_contact(p_contact) is null then 'inscription_requise'
+        else null
+    end;
+$$;
+
+-- Filet sur la table elle-même : quel que soit le chemin d'écriture,
+--   · aucune proposition n'entre sans inscription complète ;
+--   · ce qui a été envoyé ne se modifie plus (contenu, contact, origine,
+--     date, identifiant d'envoi) : seule la décision de l'administrateur
+--     s'écrit, une seule fois.
+-- (invitation_id peut passer à null : c'est la suppression du partage.)
+create or replace function public.controler_contribution()
+returns trigger
+language plpgsql security definer set search_path = ''
+as $$
+begin
+    if tg_op = 'INSERT' then
+        if public.defaut_inscription(new.contenu, new.contact) is not null then
+            raise exception 'Contribution refusée : l''inscription est obligatoire (nom, prénom, et e-mail ou téléphone).'
+                using errcode = '23514', hint = 'INSCRIPTION_REQUISE';
+        end if;
+        return new;
+    end if;
+    if new.contenu is distinct from old.contenu
+       or new.contact is distinct from old.contact
+       or new.arbre_id is distinct from old.arbre_id
+       or new.origine is distinct from old.origine
+       or new.uid is distinct from old.uid
+       or new.cree_le is distinct from old.cree_le
+       or (new.invitation_id is distinct from old.invitation_id and new.invitation_id is not null) then
+        raise exception 'Une contribution envoyée est verrouillée : elle ne se modifie plus.'
+            using errcode = '23514', hint = 'CONTRIBUTION_VERROUILLEE';
+    end if;
+    if old.statut <> 'en_attente' and new.statut is distinct from old.statut then
+        raise exception 'Cette proposition a déjà été traitée.' using errcode = '23514';
+    end if;
+    return new;
+end;
+$$;
+
+drop trigger if exists controler_contribution on public.contributions;
+create trigger controler_contribution before insert or update on public.contributions
+    for each row execute function public.controler_contribution();
+
 -- Dépôt d'une proposition par le public. Contrôle tout : lien, PIN,
 -- débit (30 par heure et par adresse — une réunion de famille partage
 -- souvent le même wifi —, 200 par heure et par partage), forme du
@@ -1238,6 +1326,10 @@ begin
     end if;
     if char_length(coalesce(p_contact, '')) > 200 then
         return jsonb_build_object('ok', false, 'raison', 'contenu_invalide');
+    end if;
+    -- 7 bis : aucune contribution anonyme (nom, prénom, e-mail ou téléphone)
+    if public.defaut_inscription(p_contenu, p_contact) is not null then
+        return jsonb_build_object('ok', false, 'raison', 'inscription_requise');
     end if;
 
     insert into public.contributions (arbre_id, invitation_id, contenu, contact, origine, uid)
@@ -1781,7 +1873,8 @@ create policy "contributions lues" on public.contributions for select to authent
 drop policy if exists "contributions modifiees" on public.contributions;
 create policy "contributions modifiees" on public.contributions for update to authenticated using (public.peut_ecrire(arbre_id)) with check (public.peut_ecrire(arbre_id));
 drop policy if exists "contributions supprimees" on public.contributions;
-create policy "contributions supprimees" on public.contributions for delete to authenticated using (public.peut_ecrire(arbre_id) and statut <> 'en_attente');
+-- 7 bis : une contribution VALIDÉE reste (elle est la trace de qui a apporté quoi) ; seule une refusée se retire.
+create policy "contributions supprimees" on public.contributions for delete to authenticated using (public.peut_ecrire(arbre_id) and statut = 'refusee');
 
 drop policy if exists "exports lus" on public.exports_certifies;
 create policy "exports lus" on public.exports_certifies for select to authenticated using (public.peut_ecrire(arbre_id));

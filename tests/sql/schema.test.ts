@@ -512,6 +512,9 @@ describe('sécurité par ligne', () => {
 
 // ---------------------------------------------------------------------
 describe('partage public : invitation, PIN, propositions, modération', () => {
+    // Inscription inventée (règle du 30/09/2026 : nom, prénom, e-mail ou téléphone — voir inscription.test.ts).
+    const INSCRIT = { nom: 'Fictif', prenom: 'Inscrit' };
+    const CONTACT = 'inscrit@exemple.re';
     let jeton: string;
     let vivante: string;
     let defunt: string;
@@ -558,8 +561,9 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
     });
     it('contenu contrôlé par la base', async () => {
         await anonyme(db, '198.51.100.8');
-        const envoyer = async (contenu: unknown, contact: string | null = null) =>
-            (await une<{ r: { ok: boolean; raison?: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, $3) as r`, [jeton, JSON.stringify(contenu), contact])).r;
+        // 30/09 : l'inscription (inscrit + contact) est obligatoire ; ces essais portent sur le RESTE du contenu, ils envoient donc une inscription complète.
+        const envoyer = async (contenu: Record<string, unknown>, contact: string | null = CONTACT) =>
+            (await une<{ r: { ok: boolean; raison?: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, $3) as r`, [jeton, JSON.stringify({ inscrit: INSCRIT, ...contenu }), contact])).r;
         const invalide = { ok: false, raison: 'contenu_invalide' };
         expect(await envoyer({ contributeur: { prenom: '' }, lien: { relation: 'inconnu' } })).toEqual(invalide);
         expect(await envoyer({ contributeur: 'texte', lien: { relation: 'inconnu' } })).toEqual(invalide);
@@ -576,14 +580,14 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
     });
     it('un renvoi du même envoi (réponse perdue en route) n\'entre qu\'une fois', async () => {
         await anonyme(db, '198.51.100.30');
-        const contenu = JSON.stringify({ contributeur: { prenom: 'Renvoi' }, lien: { relation: 'inconnu' } });
+        const contenu = JSON.stringify({ inscrit: INSCRIT, contributeur: { prenom: 'Renvoi' }, lien: { relation: 'inconnu' } });
         const uid = 'a1b2c3d4-0000-4000-8000-00000000abcd';
-        const r1 = (await une<{ r: { ok: boolean; id: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, null, $3) as r`, [jeton, contenu, uid])).r;
-        const r2 = (await une<{ r: { ok: boolean; id: string; deja_recue: boolean } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, null, $3) as r`, [jeton, contenu, uid])).r;
+        const r1 = (await une<{ r: { ok: boolean; id: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, $4, $3) as r`, [jeton, contenu, uid, CONTACT])).r;
+        const r2 = (await une<{ r: { ok: boolean; id: string; deja_recue: boolean } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, $4, $3) as r`, [jeton, contenu, uid, CONTACT])).r;
         expect(r1.ok && r2.ok).toBe(true);
         expect(r2.id).toBe(r1.id);
         expect(r2.deja_recue).toBe(true);
-        expect((await une<{ r: { raison: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, null, 'pas un uid !') as r`, [jeton, contenu])).r.raison).toBe('contenu_invalide');
+        expect((await une<{ r: { raison: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, $3, 'pas un uid !') as r`, [jeton, contenu, CONTACT])).r.raison).toBe('contenu_invalide');
         await admin(db);
         expect((await une<{ n: number }>(db, `select count(*)::int as n from contributions where contenu -> 'contributeur' ->> 'prenom' = 'Renvoi'`)).n).toBe(1);
     });
@@ -598,9 +602,9 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
     });
     it('débit : 30 propositions par heure et par adresse, la 31e refusée', async () => {
         await anonyme(db, '203.0.113.50');
-        const contenu = JSON.stringify({ contributeur: { prenom: 'Robot' }, lien: { relation: 'inconnu' } });
+        const contenu = JSON.stringify({ inscrit: INSCRIT, contributeur: { prenom: 'Robot' }, lien: { relation: 'inconnu' } });
         let r: { ok: boolean; raison?: string } = { ok: true };
-        for (let i = 0; i < 31; i++) r = (await une<{ r: typeof r }>(db, `select soumettre_contribution($1, '2468', $2::jsonb) as r`, [jeton, contenu])).r;
+        for (let i = 0; i < 31; i++) r = (await une<{ r: typeof r }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, $3) as r`, [jeton, contenu, CONTACT])).r;
         expect(r).toEqual({ ok: false, raison: 'trop_d_envois' });
         await admin(db);
         expect((await une<{ n: number }>(db, `select count(*)::int as n from contributions where contenu -> 'contributeur' ->> 'prenom' = 'Robot'`)).n).toBe(30);
@@ -630,8 +634,8 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
         await utilisateur(db, editeur);
         const vieux = await individu('Ancêtre 1700', { vivant: false, naissance: '1700-01-01', deces: '1760-01-01' });
         await anonyme(db, '203.0.113.60');
-        const envoi = await une<{ r: { ok: boolean; id: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb) as r`, [
-            jeton, JSON.stringify({ contributeur: { prenom: 'Zoé', naissance_annee: 1990 }, lien: { relation: 'enfant', individu_id: vieux } }),
+        const envoi = await une<{ r: { ok: boolean; id: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, $3) as r`, [
+            jeton, JSON.stringify({ inscrit: INSCRIT, contributeur: { prenom: 'Zoé', naissance_annee: 1990 }, lien: { relation: 'enfant', individu_id: vieux } }), CONTACT,
         ]);
         await utilisateur(db, editeur);
         const avant = (await une<{ n: number }>(db, 'select count(*)::int as n from individus')).n;
@@ -648,8 +652,8 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
         await lien(pere, frere);
         await lien(mereAdoptive, frere, 'adoptive');
         await anonyme(db, '203.0.113.77');
-        const envoi = await une<{ r: { ok: boolean; id: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, 'tel 0692') as r`, [
-            jeton, JSON.stringify({ contributeur: { prenom: 'Paul' }, lien: { relation: 'frere_soeur', individu_id: frere }, proches: [{ prenom: 'Léa', relation: 'enfant' }, { prenom: 'Nora', relation: 'conjoint' }] }),
+        const envoi = await une<{ r: { ok: boolean; id: string } }>(db, `select soumettre_contribution($1, '2468', $2::jsonb, '0692 00 00 00') as r`, [
+            jeton, JSON.stringify({ inscrit: INSCRIT, contributeur: { prenom: 'Paul' }, lien: { relation: 'frere_soeur', individu_id: frere }, proches: [{ prenom: 'Léa', relation: 'enfant' }, { prenom: 'Nora', relation: 'conjoint' }] }),
         ]);
         expect(envoi.r.ok).toBe(true);
         await utilisateur(db, editeur);

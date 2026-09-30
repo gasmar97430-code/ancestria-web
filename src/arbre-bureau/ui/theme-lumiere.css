@@ -1,0 +1,56 @@
+/* ---- PALETTE « LUMIÈRE » ----
+ *
+ * Sa maquette du 30/09/2026 (« Incomplete mockup request/Ancestria.dc.html ») et son
+ * texte : fond clair ivoire nacré, cartes blanches, texte gris ardoise, bleu ciel et
+ * vert amande pour les éléments secondaires, cuivre / or pour les titres et le logo.
+ * Couleurs relevées dans la maquette (REFONTE_CLAIRE_2026-09-30.md). Seule l'apparence
+ * change : ce fichier ne pose que des couleurs ; aucun écran n'est réécrit.
+ * Posé par une ligne @import en tête de theme.css.
+ */
+
+:root[data-theme='lumiere'] {
+    --papier: #FBF8F1;        /* fond des écrans (maquette) */
+    --carte: #FFFDF8;         /* panneaux, barre latérale (maquette) */
+    --blanc: #FFFFFF;         /* cartes, champs : « blanc pur » */
+    --trait-leger: #EDE7D9;
+    --trait: #DDD5C3;
+    --trait-carte: #E6DFCF;
+    --piste-fond: #F2EDE2;
+    --points: #E6DFCF;        /* trame de l'arbre */
+    --lien: #C9BFA8;          /* arêtes de l'arbre (maquette) */
+    --caret: #8A9294;
+    --inactif: #C9CFD1;
+
+    --encre: #1F2A2E;         /* gris ardoise foncé */
+    --encre-2: #5B6668;
+    --encre-3: #7A8487;
+
+    /* Accents cuivrés / dorés : titres, logo, éléments précieux. */
+    --sepia: #A8672B;
+    --sepia-deep: #83501F;
+    --sepia-tint: #F7E9CF;
+    --sepia-halo: rgba(200, 140, 60, 0.22);
+    --sepia-voile: rgba(200, 140, 60, 0.07);
+
+    /* Origines : bleu ciel et vert amande de la maquette, le reste dans la même fraîcheur. */
+    --o-europe: #2E6A93;      --o-europe-t: #DCEBF6;
+    --o-madagascar: #3F6B45;  --o-madagascar-t: #DDEDD5;
+    --o-inde: #C0742B;        --o-inde-t: #F8E6D2;
+    --o-afrique: #A4513A;     --o-afrique-t: #F4E0D9;
+    --o-chine: #2F7A70;       --o-chine-t: #DCEEEA;
+
+    --c-prouve: #3F6B45;      --c-prouve-t: #DDEDD5;   --c-prouve-surface: #F1F7EE;
+    --c-probable: #A5701F;    --c-probable-t: #F7E9CF;
+    --c-hypothese: #6F6A8C;   --c-hypothese-t: #ECEAF3; --c-hypothese-bord: #B5B0C9;
+    --c-hypothese-surface: rgba(255, 253, 248, 0.6);
+
+    --ombre-carte: 0 4px 14px -8px rgba(60, 50, 30, 0.25);
+    --ombre-carte-choisie: 0 0 0 3px rgba(46, 106, 147, 0.18), 0 14px 28px -14px rgba(60, 50, 30, 0.35);
+    --ombre-champ: 0 6px 20px -10px rgba(46, 106, 147, 0.25);
+    --ombre-piste: 0 10px 24px -16px rgba(60, 50, 30, 0.3);
+    --ombre-piste-probable: 0 6px 18px -14px rgba(60, 50, 30, 0.25);
+    --ombre-onglet: 0 1px 3px rgba(60, 50, 30, 0.15);
+    --masque-minimap: rgb(251 248 241 / 0.7);
+}
+
+/* ---- FIN PALETTE « LUMIÈRE » ---- */

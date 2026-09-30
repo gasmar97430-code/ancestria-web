@@ -14,6 +14,9 @@ import { Alerte, Bouton, Case, Champ, Chargement, Choix } from '../ui/ui';
 import { defautProches, liensPossibles } from '../domaine/anneesPlausibles';
 import { ChoixPalette } from '../arbre-bureau/ChoixPalette';
 import { Signature } from '../arbre-bureau/Signature';
+import { lireInscription, type Inscrit } from '../inscription/contact';
+import { VERSION_CHARTE, charteAcceptee } from '../inscription/charte';
+import { Inscription, Prudence, RappelInscription, Verrou } from '../inscription/Inscription'; // règle du 30/09 : on s'inscrit pour contribuer
 
 interface PersonnePublique {
     id: string;
@@ -32,12 +35,13 @@ interface Invitation {
 
 const RAISONS: Record<string, string> = {
     lien_invalide: 'Ce lien n’est pas complet. Demandez-le à nouveau à la personne qui vous l’a envoyé.',
-    lien_ferme: 'Ce partage est fermé ou a expiré. Demandez un nouveau lien à la famille.',
+    lien_ferme: 'Ce partage est fermé ou a expiré. Demandez un nouveau lien à l’administrateur.',
     pin_faux: 'Code incorrect.',
     trop_d_essais: 'Trop d’essais de code : réessayez dans une heure.',
     trop_d_envois: 'Beaucoup d’envois depuis ce réseau : réessayez dans une heure.',
     contenu_invalide: 'Une information envoyée n’est pas au bon format.',
     individu_inconnu: 'La personne choisie n’est plus dans l’arbre partagé.',
+    inscription_requise: 'Pour contribuer, l’inscription est obligatoire : nom, prénom, et e-mail ou téléphone.',
 };
 
 const VIDE: SaisieContribution = {
@@ -74,6 +78,7 @@ export function Contribuer() {
     const [envoi, setEnvoi] = useState(false);
     const [fini, setFini] = useState<'envoye' | 'en_attente' | null>(null);
     const [recherche, setRecherche] = useState('');
+    const [inscrit, setInscrit] = useState<Inscrit | null>(() => (charteAcceptee(localStorage) ? lireInscription(localStorage) : null)); // inscription/ : gardée dans ce téléphone ; charte changée = redemandée
 
     const ouvrir = useCallback(async (code: string | null) => {
         setErreur(null);
@@ -130,7 +135,8 @@ export function Contribuer() {
         const dp = defautProches(s.naissance_annee, s.proches);
         if (dp) { setErreurs({ proches: dp }); setEtape(4); return; }
         setErreurs({});
-        const e: EnvoiEnAttente = { uid: crypto.randomUUID(), jeton, pin: pinValide, contenu: v.donnees.contenu, contact: v.donnees.contact, le: new Date().toISOString() };
+        if (!inscrit) return; // jamais d'envoi sans inscription (l'écran ne montre pas le formulaire sans elle ; la base refuse de toute façon)
+        const e: EnvoiEnAttente = { uid: crypto.randomUUID(), jeton, pin: pinValide, contenu: { ...v.donnees.contenu, inscrit: { nom: inscrit.nom, prenom: inscrit.prenom, charte: VERSION_CHARTE } }, contact: inscrit.contact, le: new Date().toISOString() };
         setEnvoi(true);
         try {
             const r = await envoyerALaBase(e);
@@ -153,7 +159,8 @@ export function Contribuer() {
             <header className="text-center pt-2">
                 <div className="mb-4"><Signature centre /></div>
                 <div className="text-xs uppercase tracking-widest text-encre-3">Ancestria</div>
-                <h1 className="font-display text-3xl mt-1">{inv?.arbre_nom ?? 'Arbre de famille'}</h1>
+                {/* 30/09, sa règle de neutralité : aucun nom de famille en vedette — le titre n'est plus le nom de l'arbre partagé */}
+                <h1 className="font-display text-3xl mt-1">L’Arbre de Lumière</h1>
             </header>
             {contenu}
             <div className="mt-auto pt-6 self-center w-[230px]"><ChoixPalette compact /></div>
@@ -165,7 +172,7 @@ export function Contribuer() {
     if (!inv.ok) {
         return cadre(
             <form className="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); void ouvrir(pin.trim()); }} noValidate>
-                <p className="text-encre-2">Ce partage est protégé par un code donné par la famille.</p>
+                <p className="text-encre-2">Ce partage est protégé par un code donné par l’administrateur.</p>
                 <Champ libelle="Code" valeur={pin} onChange={(v) => setPin(v.replace(/\D/g, '').slice(0, 8))} mode="numeric" autoComplete="one-time-code" autoFocus
                     erreur={erreur ?? (inv.raison === 'trop_d_essais' ? RAISONS.trop_d_essais : undefined)} />
                 <Bouton variante="principal" type="submit" disabled={pin.length < 4}>Entrer</Bouton>
@@ -173,14 +180,20 @@ export function Contribuer() {
         );
     }
 
+    // Règle du 30/09 : on s'inscrit AVANT de contribuer (nom, prénom, e-mail ou téléphone).
+    if (!inscrit) {
+        return cadre(<Inscription depart={lireInscription(localStorage)} onInscrit={(i) => { setInscrit(i); setS((x) => ({ ...x, prenom: x.prenom || i.prenom, nom: x.nom || i.nom })); setEtape(0); }} />);
+    }
+
     if (fini) {
         return cadre(
             <div className="flex flex-col gap-4 text-center">
                 <p className="font-display text-2xl">Merci {s.prenom.trim()} !</p>
                 <Alerte genre="succes">
-                    {fini === 'envoye' ? 'Votre proposition est arrivée. La famille la vérifiera avant de l’ajouter à l’arbre.'
+                    {fini === 'envoye' ? 'Votre proposition est arrivée. L’administrateur la vérifiera avant de l’ajouter à l’arbre.'
                         : 'Pas de réseau pour l’instant : votre proposition est gardée dans ce téléphone et partira toute seule dès le retour du réseau (laissez cette page ouverte ou revenez-y).'}
                 </Alerte>
+                <div className="text-left"><Verrou /></div>{/* inscription/Inscription.tsx : verrouillé ; correction = écrire à l'administrateur */}
                 {enAttente(localStorage).length > 0 && <p className="text-xs text-encre-3">{enAttente(localStorage).length} envoi(s) en attente de réseau.</p>}
                 <Bouton variante="secondaire" onClick={() => { setS({ ...VIDE }); setFini(null); setEtape(1); }}>Proposer une autre personne</Bouton>
             </div>,
@@ -190,12 +203,13 @@ export function Contribuer() {
     const etapes = [
         // 0 — accueil
         <div key="0" className="flex flex-col gap-4">
-            <p className="text-lg">La famille vous invite à compléter son arbre.</p>
+            <p className="text-lg">Vous êtes inscrit : vous pouvez enrichir l’Arbre de Lumière.</p>
             <ul className="text-encre-2 text-sm flex flex-col gap-2 list-disc pl-5">
                 <li>Dites qui vous êtes et à qui vous êtes relié(e).</li>
-                <li><b>Tout est vérifié par la famille</b> avant d’entrer dans l’arbre.</li>
+                <li><b>Tout est vérifié par l’administrateur</b> avant d’entrer dans l’arbre.</li>
                 <li>Aucune personne vivante n’est montrée publiquement.</li>
             </ul>
+            <Prudence />{/* inscription/Inscription.tsx : son message de prudence, mot pour mot */}
             <Bouton variante="principal" onClick={() => setEtape(1)}>Commencer</Bouton>
         </div>,
         // 1 — qui êtes-vous
@@ -244,7 +258,7 @@ export function Contribuer() {
         <div key="4" className="flex flex-col gap-4">
             <h2 className="font-display text-2xl">Vos proches (facultatif)</h2>
             {s.relation === 'inconnu' && (
-                <Champ libelle="Comment êtes-vous relié(e) à cette famille ?" valeur={s.texte_lien} onChange={(v) => maj({ texte_lien: v })} erreur={erreurs.texte_lien} multiligne lignes={3} max={300}
+                <Champ libelle="À quelle famille de l’arbre êtes-vous relié(e), et comment ?" valeur={s.texte_lien} onChange={(v) => maj({ texte_lien: v })} erreur={erreurs.texte_lien} multiligne lignes={3} max={300}
                     placeholder="ex. mon grand-père s’appelait Paul Martin, né à Saint-Pierre" />
             )}
             {s.proches.map((p, k) => {
@@ -271,9 +285,10 @@ export function Contribuer() {
         // 5 — contact et envoi
         <form key="5" className="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); void envoyer(); }} noValidate>
             <h2 className="font-display text-2xl">Un dernier mot</h2>
-            <Champ libelle="Message pour la famille (facultatif)" valeur={s.message} onChange={(v) => maj({ message: v })} erreur={erreurs.message} multiligne lignes={4} max={2000} />
-            <Champ libelle="Téléphone ou e-mail pour vous recontacter (facultatif)" valeur={s.contact} onChange={(v) => maj({ contact: v })} erreur={erreurs.contact} max={200} autoComplete="email" />
-            <Case libelle="J’accepte que la famille garde ces informations pour son arbre." coche={s.consentement} onChange={(v) => maj({ consentement: v })} erreur={erreurs.consentement} />
+            <Champ libelle="Message pour l’administrateur (facultatif)" valeur={s.message} onChange={(v) => maj({ message: v })} erreur={erreurs.message} multiligne lignes={4} max={2000} />
+            <RappelInscription inscrit={inscrit} onModifier={() => setInscrit(null)} />{/* l'inscrit et son contact (plus de « contact facultatif ») */}
+            <Prudence />
+            <Case libelle="J’accepte qu’Ancestria garde ces informations pour l’Arbre de Lumière." coche={s.consentement} onChange={(v) => maj({ consentement: v })} erreur={erreurs.consentement} />
             {erreur && <Alerte>{erreur}</Alerte>}
             <Bouton variante="principal" type="submit" enCours={envoi} disabled={!s.consentement}>Envoyer ma proposition</Bouton>
         </form>,
