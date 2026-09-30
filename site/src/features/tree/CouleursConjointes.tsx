@@ -9,15 +9,16 @@ type U = {
     partenaire2Id: Id;
 };
 type Rang = Parameters<typeof rangDe>[0][number];
-export function rangsDesUnions(unions: U[], rangs: Rang[]): Map<Id, number> {
+export function rangsDesUnions(unions: U[], rangs: Rang[], choisi: Id | null = null): Map<Id, number> {
     const parPersonne = new Map<Id, U[]>();
     for (const u of unions)
         for (const p of [u.partenaire1Id, u.partenaire2Id])
             parPersonne.set(p, [...(parPersonne.get(p) ?? []), u]);
     const m = new Map<Id, number>();
     for (const u of unions) {
-        const qui = [u.partenaire1Id, u.partenaire2Id].filter((p) => (parPersonne.get(p)?.length ?? 0) >= 2)
-            .sort((a, b) => (parPersonne.get(b)!.length - parPersonne.get(a)!.length) || a - b)[0];
+        const multiples = [u.partenaire1Id, u.partenaire2Id].filter((p) => (parPersonne.get(p)?.length ?? 0) >= 2);
+        const qui = choisi !== null && multiples.includes(choisi) ? choisi
+            : multiples.sort((a, b) => (parPersonne.get(b)!.length - parPersonne.get(a)!.length) || a - b)[0];
         if (qui === undefined)
             continue;
         const dit = rangDe(rangs, qui, u.id);
@@ -31,17 +32,20 @@ export function rangsDesUnions(unions: U[], rangs: Rang[]): Map<Id, number> {
     return m;
 }
 export const couleurDuRang = (rang: number) => COULEURS_RANG[(rang - 1) % COULEURS_RANG.length];
-export const CouleursConjointes = memo(({ unions }: {
+export const CouleursConjointes = memo(({ unions, choisi = null }: {
     unions: U[];
+    choisi?: Id | null;
 }) => {
     const rangs = useRangsUnions((s) => s.rangs);
     let css = '';
     try {
-        const r = rangsDesUnions(unions, rangs);
+        const r = rangsDesUnions(unions, rangs, choisi);
         css = [...r].map(([id, rang]) => {
             const c = couleurDuRang(rang);
             return `.react-flow__edge[data-testid^="rf__edge-spouse-${id}-"] .react-flow__edge-path,\n`
-                + `.react-flow__edge[data-testid^="rf__edge-spouse-${id}-"] .lien-lumineux__coeur { stroke: ${c} !important; }\n`
+                + `.react-flow__edge[data-testid^="rf__edge-spouse-${id}-"] .lien-lumineux__coeur,\n`
+                + `.react-flow__edge[data-testid^="rf__edge-child-${id}-"] .react-flow__edge-path,\n`
+                + `.react-flow__edge[data-testid^="rf__edge-child-${id}-"] .lien-lumineux__coeur { stroke: ${c} !important; }\n`
                 + `.react-flow__node[data-id="u-${id}"] > div { border-color: ${c} !important; box-shadow: 0 0 0 1.5px ${c}; }`;
         }).join('\n');
     }
