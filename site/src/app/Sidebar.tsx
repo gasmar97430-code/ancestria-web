@@ -9,6 +9,7 @@ import { BoutonGedcom } from '../features/gedcom/EchangesGedcom';
 import { Ecran, PALETTES, useAtelierStore } from '../store/useAtelierStore';
 import { usePatronymeStore } from '../store/usePatronymeStore';
 import { nomLisible, teinteDe } from '../lib/origins';
+import { useLectureSeule } from '../lib/lectureSeule';
 import { MONTRER_RECENTS } from '../features/home/accueilNeutre';
 const ENTREES: {
     ecran: Ecran;
@@ -25,6 +26,7 @@ export const Sidebar = ({ rail }: {
 }) => {
     const { ecran, aller, recents, palette, changerPalette } = useAtelierStore();
     const { patronymes } = usePatronymeStore();
+    const lecture = useLectureSeule((s) => s.actif);
     if (rail) {
         return (<aside className="w-16 flex-none bg-carte border-r border-trait-leger flex flex-col items-center py-[22px] gap-1.5">
                 <button onClick={() => aller('accueil')} title="M'astel.974 — L'Arbre de Lumière" className="w-9 h-9 rounded-[10px] border border-sepia grid place-items-center text-sepia text-[19px] mb-[18px]">
@@ -34,11 +36,11 @@ export const Sidebar = ({ rail }: {
                         <I />
                     </button>))}
                 <BoutonRecherche rail/>
-                <BoutonSuggestions rail/>
+                {!lecture && <><BoutonSuggestions rail/>
                 <BoutonIncoherences rail/>
                 <BoutonSauvegarde rail/>
                 <BoutonCarnet rail/>
-                <BoutonGedcom rail/>
+                <BoutonGedcom rail/></>}
             </aside>);
     }
     return (<aside className="w-[272px] flex-none bg-carte border-r border-trait-leger px-[18px] py-7 flex flex-col gap-8">
@@ -61,8 +63,8 @@ export const Sidebar = ({ rail }: {
                     </button>))}
             </nav>
             <BoutonRecherche rail={false}/>
-            <BoutonSuggestions rail={false}/>
-            <BoutonIncoherences rail={false}/>
+            {!lecture && <><BoutonSuggestions rail={false}/>
+            <BoutonIncoherences rail={false}/></>}
 
             {MONTRER_RECENTS && recents.length > 0 && (<div className="flex flex-col gap-2.5 px-3">
                     <div className="text-[10.5px] tracking-[.12em] uppercase text-encre-3">Récemment consultés</div>
@@ -75,9 +77,9 @@ export const Sidebar = ({ rail }: {
             })}
                 </div>)}
 
-            <BoutonSauvegarde rail={false}/>
+            {!lecture && <><BoutonSauvegarde rail={false}/>
             <BoutonCarnet rail={false}/>
-            <BoutonGedcom rail={false}/>
+            <BoutonGedcom rail={false}/></>}
             <div className="flex flex-col gap-2 p-3 border border-trait-leger rounded-xl text-xs text-encre-2">
                 <span className="text-encre font-medium">Palette</span>
                 <div className="flex bg-papier rounded-[10px] p-[3px] gap-0.5">

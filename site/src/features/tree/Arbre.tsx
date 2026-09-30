@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import ReactFlow, { Background, BackgroundVariant, MiniMap, Node, ReactFlowProvider, useReactFlow, useStore, } from 'reactflow';
+import ReactFlow, { Background, BackgroundVariant, Node, ReactFlowProvider, useReactFlow, useStore, } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Binoculars, CornersOut, Image, Minus, Plus, UserPlus } from '@phosphor-icons/react';
 import { usePatronymeStore } from '../../store/usePatronymeStore';
@@ -41,6 +41,7 @@ import { avecNaturesTraits, useAvecFamillesFormes } from './FamillesFormes';
 import { avecPoubelle, BoutonSupprimerCarte } from './SupprimerSurCarte';
 import { useAncrage } from './ancrage';
 import { usePositionsValides, GardeCamera } from './positionsValides';
+import { MessageLectureSeule, useLectureSeule } from '../../lib/lectureSeule';
 import { definitionOrigine } from '../../lib/origineEtablie';
 const nodeTypes = { carte: PersonMemorialNode, pastille: UnionPillNode };
 const edgeTypes = { lumineux: LienLumineux };
@@ -59,6 +60,7 @@ const ArbreInterieur = () => {
     const [branche, setBranche] = useState<Branche>('Toutes');
     const [eteintes, setEteintes] = useState<Set<string>>(new Set());
     const [ajout, setAjout] = useState(false);
+    const lecture = useLectureSeule((s) => s.actif);
     const sources = useRattachements(people.length);
     const index = useMemo(() => new Map<string, Patronyme>(patronymes.map((p) => [normaliser(p.nom), p])), [patronymes]);
     useArriveeDansArbre(nomDansArbre, people, setChoisi);
@@ -117,7 +119,9 @@ const ArbreInterieur = () => {
             setChoisi(null);
     }, [choisi, people]);
     const ancres = useAncrage(usePositionsValides(affiche.nodes), choisi);
-    const noeudsGlisses = useGlissement(avecPoubelle(avecPastillesCoparents(avecRangsDesUnions(avecCartesInconnues(avecBoutonsEpouses(avecBarre(ancres, choisi, CARTE.width), choisi, people, unionsEnregistrees(unions), CARTE.width), tree.inconnus)))));
+    const avecEdition = lecture ? ancres : avecBoutonsEpouses(avecBarre(ancres, choisi, CARTE.width), choisi, people, unionsEnregistrees(unions), CARTE.width);
+    const decores = avecPastillesCoparents(avecRangsDesUnions(avecCartesInconnues(avecEdition, tree.inconnus)));
+    const noeudsGlisses = useGlissement(lecture ? decores : avecPoubelle(decores));
     const noeudsAffiches = useTaillesConnues(noeudsGlisses);
     return (<div className="flex-1 min-w-0 flex flex-col">
             
@@ -160,10 +164,10 @@ const ArbreInterieur = () => {
         })}
                 </div>
 
-                <button onClick={() => setAjout(true)} className="flex items-center gap-2 h-9 px-3.5 rounded-[10px] border border-sepia text-sepia-deep text-[13px] font-medium hover:bg-sepia-tint flex-none">
+                {!lecture && <button onClick={() => setAjout(true)} className="flex items-center gap-2 h-9 px-3.5 rounded-[10px] border border-sepia text-sepia-deep text-[13px] font-medium hover:bg-sepia-tint flex-none">
                     <UserPlus size={16}/>
                     Ajouter un membre
-                </button>
+                </button>}
             </div>
 
             <FilAriane people={people} choisi={choisi} onChoisir={setChoisi}/>
@@ -176,7 +180,7 @@ const ArbreInterieur = () => {
                     setChoisi((n.data as DonneesCarte).individu.id);
             }} onPaneClick={() => setChoisi(null)} nodesConnectable={false} nodesDraggable={false} fitView fitViewOptions={{ padding: 0.15 }} minZoom={0.1} maxZoom={1.6} proOptions={{ hideAttribution: true }}>
                             <Background variant={BackgroundVariant.Dots} gap={22} size={1.2} color="var(--points)"/>
-                            <MiniMap pannable zoomable nodeColor={(n) => (n.type === 'carte' ? teinteDe((n.data as DonneesCarte).origine).c : 'transparent')} nodeStrokeWidth={0} nodeBorderRadius={3} className="atelier-minimap" style={{ width: 200, height: 132 }}/>
+                            
                             <ZoomDock />
                             <CadrageFocus nodes={ancres} noyau={noyau} pivot={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi}/>
                             <BoiteNoireArbre />
@@ -187,9 +191,9 @@ const ArbreInterieur = () => {
                 {personne && (<PersonDrawer personne={personne} origine={origineDuNom(personne.nom, index)} sources={sources.get(personne.id) ?? 0} onTraquer={() => traquer(personne.nom)}/>)}
             </div>
 
-            <EditeurFamille />
-            <EnfantsAussiSiens />
-            {ajout && <FormulaireMembre nomInitial={nomDansArbre ?? undefined} onFermer={() => setAjout(false)}/>}
+            {!lecture && <EditeurFamille />}
+            {!lecture && <EnfantsAussiSiens />}
+            {!lecture && ajout && <FormulaireMembre nomInitial={nomDansArbre ?? undefined} onFermer={() => setAjout(false)}/>}
         </div>);
 };
 const ZoomDock = () => {
@@ -219,6 +223,7 @@ const PersonDrawer = ({ personne: p, origine, sources, onTraquer, }: {
 }) => {
     const t = teinteDe(origine);
     const lieu = p.lieuNaissance ?? p.lieuDeces;
+    const lecture = useLectureSeule((s) => s.actif);
     return (<aside className="w-[300px] flex-none bg-carte border-l border-trait-leger px-6 py-7 flex flex-col gap-5 overflow-y-auto *:shrink-0">
             <div className="h-[150px] rounded-[14px] border border-trait-leger grid place-items-center relative overflow-hidden" style={{ background: t.t }}>
                 <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: t.c }}/>
@@ -227,7 +232,7 @@ const PersonDrawer = ({ personne: p, origine, sources, onTraquer, }: {
                     Portrait ou document
                 </div>
             </div>
-            <PhotoFiche personne={p} origine={origine}/>
+            {!lecture && <PhotoFiche personne={p} origine={origine}/>}
             <div className="flex flex-col gap-1.5">
                 <div className="font-display text-[34px] leading-none font-medium">
                     {p.prenom} {nomLisible(p.nom)}
@@ -247,6 +252,7 @@ const PersonDrawer = ({ personne: p, origine, sources, onTraquer, }: {
                 </div>
             </div>
             {p.notes && <p className="text-[13px] leading-normal text-encre-2 m-0 whitespace-pre-line">{p.notes}</p>}
+            {lecture ? <MessageLectureSeule /> : <>
             <ActionsFiche personne={p}/>
             <PistesPersonne personne={p}/>
             <RechercheWeb personne={p}/>
@@ -256,6 +262,7 @@ const PersonDrawer = ({ personne: p, origine, sources, onTraquer, }: {
                     Traquer ce nom
                 </button>
             </div>
+            </>}
         </aside>);
 };
 const ArbreVide = ({ onAjouter, charge }: {

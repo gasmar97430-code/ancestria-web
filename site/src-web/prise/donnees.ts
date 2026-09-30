@@ -9,6 +9,7 @@
 
 import { supabase } from './supabase';
 import { traduire, type Correspondance, type DonneesSupabase } from './traduction';
+import { jetonVisiteur } from '../visiteur/visiteur'; // visiteur.ts : un visiteur lit arbre_public (décédés seulement)
 
 const PAGE = 1000;
 
@@ -36,6 +37,16 @@ export async function arbreCourant(): Promise<string> {
 }
 
 export async function chargerArbre() {
+    const jeton = jetonVisiteur();
+    if (jeton) {
+        const { data, error } = await supabase.rpc('arbre_public', { p_jeton: jeton });
+        if (error) throw new Error(error.message);
+        const r = data as { ok: boolean; raison?: string } & Partial<DonneesSupabase>;
+        if (!r.ok) throw new Error(r.raison === 'lien_ferme' ? 'Ce partage est fermé ou a expiré.' : 'Ce lien n’ouvre pas d’arbre.');
+        const t = traduire({ individus: r.individus ?? [], unions: r.unions ?? [], filiations: r.filiations ?? [] });
+        derniere = t.correspondance;
+        return t.arbre;
+    }
     const id = await arbreCourant();
     const [individus, unions, filiations] = await Promise.all([
         toutLire<DonneesSupabase['individus'][number]>('individus', id),

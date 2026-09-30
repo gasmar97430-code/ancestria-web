@@ -8,6 +8,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { adressePublique, configurationPrete, supabase } from './prise/supabase';
+import { entrerEnVisiteur, jetonVisiteur } from './visiteur/visiteur'; // visiteur.ts : le lien partagé s'ouvre sans connexion, en lecture seule
 
 export function Porte({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -18,6 +19,7 @@ export function Porte({ children }: { children: ReactNode }) {
         return () => data.subscription.unsubscribe();
     }, []);
 
+    if (configurationPrete && jetonVisiteur()) { entrerEnVisiteur(); return <>{children}</>; }
     if (!configurationPrete) return <Cadre><p className="text-encre-2 text-sm">Le site n’est pas encore relié à sa base.</p></Cadre>;
     if (session === undefined) return <div className="h-screen bg-papier" />;
     if (!session) return <Connexion />;

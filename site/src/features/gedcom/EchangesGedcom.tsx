@@ -109,7 +109,7 @@ const Exporter = () => {
     return (<section className="flex flex-col gap-3">
             <div className={titre}>Exporter l'arbre</div>
             <p className="m-0 text-[13px] text-encre-2 leading-relaxed">
-                Un fichier <b>GEDCOM 5.5.1</b> (UTF-8), lisible par Geneanet et les logiciels de généalogie : toutes les personnes,
+                Un fichier <b>GEDCOM 5.5.1</b> (UTF-8), le format standard d'échange, lisible par les logiciels de généalogie : toutes les personnes,
                 couples, filiations et notes.
             </p>
             <label className="flex items-start gap-2 text-[13px] text-encre-2 cursor-pointer">
@@ -208,9 +208,9 @@ const Importer = () => {
     const nonRepris = apercu ? Object.entries(apercu.nonRepris).sort((a, b) => b[1] - a[1]) : [];
     const r = etat?.resultat;
     return (<section className="flex flex-col gap-3 min-h-0">
-            <div className={titre}>Importer un arbre (Geneanet…)</div>
+            <div className={titre}>Importer un arbre (GEDCOM)</div>
             <p className="m-0 text-[13px] text-encre-2 leading-relaxed">
-                Choisissez le fichier <b>.ged</b> exporté depuis Geneanet (de préférence en UTF-8) ou un autre logiciel. Vous verrez d'abord
+                Choisissez le fichier <b>.ged</b> exporté depuis un logiciel de généalogie (de préférence en UTF-8). Vous verrez d'abord
                 ce qu'il contient : <b>rien n'est écrit</b> avant votre clic sur « Importer ».
             </p>
             <input ref={entree} type="file" accept=".ged,.gedcom" className="hidden" onChange={(e) => void choisir(e.target.files?.[0])}/>
@@ -313,7 +313,7 @@ export const EchangesGedcom = ({ onFermer }: {
             <div className="flex items-center gap-3 px-8 pt-7 pb-4">
                 <ArrowsLeftRight size={26} className="text-sepia"/>
                 <h2 className="font-display text-[34px] font-medium leading-none m-0">GEDCOM</h2>
-                <span className="text-[13px] text-encre-3 mt-2">échanger l'arbre avec Geneanet et les logiciels de généalogie</span>
+                <span className="text-[13px] text-encre-3 mt-2">le format standard d'échange entre logiciels de généalogie</span>
                 <button onClick={onFermer} className="ml-auto text-encre-3 hover:text-encre" title="Fermer">
                     <X size={20}/>
                 </button>
@@ -331,11 +331,11 @@ export const BoutonGedcom = ({ rail }: {
 }) => {
     const [ouvert, setOuvert] = useState(false);
     return (<>
-            {rail ? (<button onClick={() => setOuvert(true)} title="GEDCOM : importer / exporter l'arbre (Geneanet…)" className="w-10 h-10 rounded-[10px] grid place-items-center text-[19px] text-encre-2 hover:bg-papier">
+            {rail ? (<button onClick={() => setOuvert(true)} title="Import / Export GEDCOM (Standard)" className="w-10 h-10 rounded-[10px] grid place-items-center text-[19px] text-encre-2 hover:bg-papier">
                     <ArrowsLeftRight />
                 </button>) : (<button onClick={() => setOuvert(true)} className="flex items-center justify-center gap-2 h-9 rounded-[10px] border border-trait text-encre text-[12.5px] font-medium hover:bg-sepia-tint">
                     <ArrowsLeftRight size={15}/>
-                    GEDCOM (Geneanet)
+                    Import / Export GEDCOM (Standard)
                 </button>)}
             {ouvert && <EchangesGedcom onFermer={() => setOuvert(false)}/>}
         </>);

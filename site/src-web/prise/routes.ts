@@ -10,6 +10,7 @@
 import { chargerArbre } from './donnees';
 import repertoire from '../copie-serveur/patronymes.json';
 import { sourcesDesOrigines } from './sources-origines';
+import { jetonVisiteur, REFUS_VISITEUR } from '../visiteur/visiteur'; // visiteur.ts : un visiteur n'écrit rien
 
 export interface Reponse {
     status: number;
@@ -65,6 +66,7 @@ export async function repondre(methode: string, chemin: string, params: Record<s
             if (chemin.startsWith('/pistes-personne')) return ok({ rattachees: [], possibles: [], possiblesEnTout: 0, auNomSeul: 0, horsEpoque: 0 });
             return pasEncore();
         }
+        if (jetonVisiteur()) return { status: 403, data: { error: REFUS_VISITEUR } };
         if (chemin === '/sauvegarde') return pasEnLigne('La sauvegarde de la base');
         if (chemin.startsWith('/traque')) return pasEnLigne('La traque dans les archives');
         if (chemin.startsWith('/boite-noire')) return ok({ ok: true });
