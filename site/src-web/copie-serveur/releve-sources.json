@@ -1,0 +1,164 @@
+[
+  {
+    "cle": "gallica",
+    "titre": "Gallica (BnF)",
+    "domaine": "gallica.bnf.fr",
+    "etat": "utilisable",
+    "mesure": "200 en 1556 ms, 35 691 résultats (API SRU, XML)",
+    "note": "Journaux, registres et ouvrages anciens numérisés. Le fonds le plus riche.",
+    "branchee": true
+  },
+  {
+    "cle": "anom",
+    "titre": "ANOM — état civil de La Réunion",
+    "domaine": "anom.archivesnationales.culture.gouv.fr",
+    "etat": "utilisable",
+    "mesure": "200 en 477 ms, formulaire commune/année présent (HTML)",
+    "note": "Registres d'état civil par commune et par année. Pièce primaire.",
+    "branchee": true
+  },
+  {
+    "cle": "portail-esclavage",
+    "titre": "Portail de l’esclavage à La Réunion",
+    "domaine": "portail-esclavage-reunion.fr",
+    "etat": "utilisable",
+    "mesure": "200 en 1034 ms, 106 110 o (HTML)",
+    "note": "Mesuré le 26/09 : pas de base de noms (site du musée de Villèle), mais ~950 documentaires d'historiens qui nomment des personnes. Contexte, jamais pièce primaire ; les registres de 1832/1848 renvoient aux Archives départementales.",
+    "branchee": true
+  },
+  {
+    "cle": "cherchemg",
+    "titre": "cherchemg.fr — engagés",
+    "domaine": "cherchemg.fr",
+    "etat": "utilisable",
+    "mesure": "200 en 1324 ms, formulaire de recherche présent (HTML)",
+    "note": "Engagés, numéro de matricule général.",
+    "branchee": true
+  },
+  {
+    "cle": "imr",
+    "titre": "imr.re",
+    "domaine": "imr.re",
+    "etat": "utilisable",
+    "mesure": "200 en 1723 ms, 102 898 o (HTML)",
+    "note": "Recherche d'esclaves et d'engagés.",
+    "branchee": true
+  },
+  {
+    "cle": "esclavage-indemnites",
+    "titre": "Indemnités de 1849",
+    "domaine": "esclavage-indemnites.fr",
+    "etat": "protege",
+    "mesure": "200, mais recherche en POST avec jeton de session ; mentions légales relues le 26/09",
+    "note": "ÉCARTÉE. Les conditions d'utilisation interdisent d'« utiliser, extraire, copier » sans autorisation écrite du CNRS. À revoir seulement avec cette autorisation.",
+    "branchee": false
+  },
+  {
+    "cle": "ad974",
+    "titre": "Archives départementales de La Réunion",
+    "domaine": "departement974.fr",
+    "etat": "utilisable",
+    "mesure": "200 en 4545 ms, 105 564 o (HTML)",
+    "note": "De nouveau en ligne en 2026. La plus lente : prévoir un délai large.",
+    "branchee": true
+  },
+  {
+    "cle": "wikipedia",
+    "titre": "Wikipédia FR",
+    "domaine": "fr.wikipedia.org",
+    "etat": "utilisable",
+    "mesure": "200 en 841 ms, 484 résultats (API JSON)",
+    "note": "Contexte seulement. Jamais une pièce primaire.",
+    "branchee": true
+  },
+  {
+    "cle": "wikidata",
+    "titre": "Wikidata",
+    "domaine": "www.wikidata.org",
+    "etat": "utilisable",
+    "mesure": "200 en 845 ms, entités renvoyées (API JSON)",
+    "note": "Personnes connues et patronymes.",
+    "branchee": true
+  },
+  {
+    "cle": "hal",
+    "titre": "HAL",
+    "domaine": "api.archives-ouvertes.fr",
+    "etat": "utilisable",
+    "mesure": "200 en 677 ms, 270 résultats (API JSON)",
+    "note": "Travaux universitaires sur les familles et les fonds.",
+    "branchee": true
+  },
+  {
+    "cle": "archive",
+    "titre": "Internet Archive",
+    "domaine": "archive.org",
+    "etat": "utilisable",
+    "mesure": "200 en 1563 ms, 6 résultats (API JSON)",
+    "note": "Livres numérisés.",
+    "branchee": true
+  },
+  {
+    "cle": "europeana",
+    "titre": "Europeana",
+    "domaine": "api.europeana.eu",
+    "etat": "utilisable",
+    "mesure": "200 en 1389 ms, 1719 résultats avec la clé de démo (API JSON)",
+    "note": "La clé `api2demo` ne sert qu'aux essais : créer une clé personnelle gratuite.",
+    "branchee": true
+  },
+  {
+    "cle": "openalex",
+    "titre": "OpenAlex",
+    "domaine": "api.openalex.org",
+    "etat": "utilisable",
+    "mesure": "200 en 2697 ms, 522 résultats (API JSON)",
+    "note": "Intérêt généalogique faible : sur « un nom + Réunion » il rend de l'écologie corallienne.",
+    "branchee": true
+  },
+  {
+    "cle": "duckduckgo",
+    "titre": "DuckDuckGo",
+    "domaine": "html.duckduckgo.com",
+    "etat": "protege",
+    "mesure": "HTTP 202 et défi anti-robot (« Select all squares containing a duck ») au 5e appel, le 26/09",
+    "note": "ÉCARTÉE. Défi anti-robot, et ses conditions interdisent d’afficher le service dans un autre. Jamais contourné.",
+    "branchee": false
+  },
+  {
+    "cle": "francearchives",
+    "titre": "FranceArchives",
+    "domaine": "francearchives.gouv.fr",
+    "etat": "protege",
+    "mesure": "200 mais 249 o : redirection JavaScript avec jeton anti-robot, « This website requires JS enabled and cookies »",
+    "note": "ÉCARTÉE. Suivre ce jeton serait un contournement de protection. À revoir seulement si le site ouvre une API déclarée.",
+    "branchee": false
+  },
+  {
+    "cle": "memoire-des-hommes",
+    "titre": "Mémoire des hommes",
+    "domaine": "memoiredeshommes.sga.defense.gouv.fr",
+    "etat": "certificat expire",
+    "mesure": "échec TLS : CERT_HAS_EXPIRED (vérification jamais désactivée)",
+    "note": "À retester plus tard. Ne jamais désactiver la vérification du certificat.",
+    "branchee": false
+  },
+  {
+    "cle": "geneanet",
+    "titre": "Geneanet",
+    "domaine": "www.geneanet.org",
+    "etat": "protege",
+    "mesure": "403 : accès automatique interdit par ses conditions",
+    "note": "ÉCARTÉE par ses conditions d’utilisation.",
+    "branchee": false
+  },
+  {
+    "cle": "familysearch",
+    "titre": "FamilySearch",
+    "domaine": "www.familysearch.org",
+    "etat": "compte obligatoire",
+    "mesure": "compte utilisateur exigé",
+    "note": "ÉCARTÉE : pas de compte, pas de contournement.",
+    "branchee": false
+  }
+]

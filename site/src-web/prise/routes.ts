@@ -10,6 +10,7 @@
 import { chargerArbre } from './donnees';
 import repertoire from '../copie-serveur/patronymes.json';
 import { sourcesDesOrigines } from './sources-origines';
+import releveDesFonds from '../copie-serveur/releve-sources.json'; // relevé des fonds du bureau (écran « Sources »), copié par scripts/copier-bureau.mjs
 import { jetonVisiteur, REFUS_VISITEUR } from '../visiteur/visiteur'; // visiteur.ts : un visiteur n'écrit rien
 
 export interface Reponse {
@@ -47,6 +48,7 @@ const LECTURES: Record<string, (params: Record<string, string>) => Promise<Repon
     '/traque/variantes': () => ok([]),
     '/traque/zones': () => ok([]),
     '/traque/sources': () => ok([]),
+    '/traque/sources/releve': () => ok(releveDesFonds), // l'écran « Sources » : le même relevé qu'au PC
     '/traque/recherches': () => ok([]),
     '/traque/rattachements': () => ok([]), // compteur « pistes rattachées » des cartes : aucune en ligne
     '/carnet/notes': () => ok([]),

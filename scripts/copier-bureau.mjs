@@ -8,6 +8,7 @@
 // Les essais (*.test.ts) du bureau ne sont pas copiés (ils vivent au bureau).
 // Usage : node scripts/copier-bureau.mjs [chemin du frontend du bureau]
 
+import { createRequire } from 'node:module';
 import { cpSync, existsSync, readdirSync, rmSync, statSync, writeFileSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, relative, sep } from 'node:path';
@@ -89,6 +90,28 @@ try {
     process.exitCode = 1;
 }
 // ---- FIN 2 quater. SOURCES DES ORIGINES ----
+
+// ---- 2 quinquies. RELEVÉ DES FONDS (écran « Sources ») ----
+// Au bureau, /api/traque/sources/releve rend SOURCES_MESUREES (backend/src/traque/sources/contrat.ts,
+// relevé mesuré le 25/09/2026) avec « branchee » = la source est au CATALOGUE de la traque. Ici, les
+// MÊMES lignes, lues dans le serveur compilé du bureau (backend/dist), écrites pour la prise du site.
+try {
+    const dist = join(source, '..', '..', 'backend', 'dist', 'traque');
+    const req = createRequire(join(dist, 'x.js'));
+    const { SOURCES_MESUREES } = req('./sources/contrat.js');
+    const { CATALOGUE } = req('./catalogue.js');
+    const branchees = new Set(CATALOGUE.map((x) => x.cle));
+    // Dépôt PUBLIC : un exemple de recherche écrit dans une note (« NOM Réunion ») peut être un nom de sa
+    // famille ; il est remplacé par « un nom + Réunion » (le sens de la note ne change pas).
+    const neutre = (t) => (typeof t === 'string' ? t.replace(/« [^»]{1,40} Réunion »/g, '« un nom + Réunion »') : t);
+    const lignes = SOURCES_MESUREES.map((x) => ({ ...x, note: neutre(x.note), mesure: neutre(x.mesure), branchee: branchees.has(x.cle) }));
+    writeFileSync(join(copieServeur, 'releve-sources.json'), JSON.stringify(lignes, null, 2) + '\n');
+    console.log(`Relevé des fonds copié : ${lignes.length} sources, ${lignes.filter((l) => l.branchee).length} branchées.`);
+} catch (e) {
+    console.error(`Relevé des fonds NON copié : ${e.message}`);
+    process.exitCode = 1;
+}
+// ---- FIN 2 quinquies. RELEVÉ DES FONDS ----
 
 // 3. Tampon : d'où vient la copie.
 let version = 'inconnue';
