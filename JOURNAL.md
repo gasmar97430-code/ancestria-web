@@ -2,6 +2,15 @@
 
 Relevé de ce qui est fait, mesuré, et de ce qui reste. Le plus récent en haut.
 
+## ▶ 30/09/2026 14:41 — SA RÈGLE DES VISITEURS (NOTÉE, PAS COMMENCÉE) — À APPLIQUER À L'ÉTAPE 1b / 3
+
+Son texte (mot pour mot dans Ancestria/SES_PROMPTS, 30/09 ~14:40) :
+1. **Droit d'ajout initial** : les visiteurs peuvent utiliser « Ajouter une famille » pour soumettre de nouvelles données.
+2. **Verrouillage après validation** : une fois l'ajout ou la fiche validé et enregistré, le visiteur ne peut plus le modifier ni le manipuler librement.
+3. **Demande de modification par e-mail** : pour toute correction d'une donnée déjà validée, l'interface BLOQUE l'édition directe et affiche un message invitant à écrire par e-mail à l'administrateur, qui valide et fait la modification lui-même.
+
+Ce que cela fixe pour la construction : le visiteur n'a qu'UNE écriture — la proposition (formulaire « Ajouter une famille », déjà modérée : rien n'entre sans l'accord du propriétaire) ; aucune route de modification ni de suppression ne lui est ouverte, ni sur ses propres propositions une fois validées, ni sur les fiches de l'arbre ; tout bouton d'édition de l'écran du bureau (Modifier, + Parent, + Conjoint, + Enfant, Retirer, photo…) est remplacé pour lui par le message « écrire à l'administrateur ». À tenir DANS LA BASE (sécurité par ligne : le public n'a ni update ni delete), pas seulement à l'écran, avec un essai SQL qui le prouve. Point à lui demander au moment de construire : l'adresse e-mail à afficher au public (ne pas en publier une de ma propre initiative). Avant la validation (proposition en attente) : son texte ne le dit pas — par défaut, pas de modification non plus (une nouvelle proposition remplace), à lui confirmer.
+
 ## ▶ 30/09/2026 14:29 — EMPLACEMENTS DE BANNIÈRES POSÉS DANS site/ (NON ENVOYÉ, NON EN LIGNE) — REPRENDRE ICI
 
 Sa demande de ~14:12 (mot pour mot dans Ancestria/SES_PROMPTS) : emplacements de bannières « stratégiques », réservés à des entreprises ou régies qui rapportent, thématiques cohérentes ou à fort rendement, propres dans l'interface. Relevé des règles et des programmes (sources) : `D:\lab\Projets\Ancestria\BANNIERES_PARTENAIRES.md` (hors de ce dépôt public) — LE RELIRE avant d'y retoucher.
