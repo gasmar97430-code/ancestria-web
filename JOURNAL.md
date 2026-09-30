@@ -2,7 +2,13 @@
 
 Relevé de ce qui est fait, mesuré, et de ce qui reste. Le plus récent en haut.
 
-## ▶ 30/09/2026 ~12:40 — ÉTAPE 1a FAITE (NON PUBLIÉE) : L'ÉCRAN DU BUREAU DANS site/ — REPRENDRE ICI
+## ▶ 30/09/2026 ~13:00 — HISTORIQUE EFFACÉ (SON OUI) + arbre_public — REPRENDRE ICI
+
+- Historique du dépôt public remplacé par UN enregistrement (9ae2f89), après contrôle de tous les fichiers (0 nom de sa famille, hors répertoire public des patronymes et fichier INSEE des prénoms ; noms de famille du journal neutralisés). Ancien historique (27 enregistrements) gardé EN LOCAL : D:/tmp/ancestria-web-historique/historique-avant-effacement-20260930.bundle. 0 fork, 0 PR. Limite mesurée : les anciennes versions restent joignables par leur code chez GitHub (cache) → doc officielle : seul le support GitHub les purge, à la demande du propriétaire → message prêt : Ancestria/MESSAGE_SUPPORT_GITHUB.md (à envoyer par LUI).
+- Base : `arbre_public(p_jeton)` (1e17430) = décédés + couples et liens ENTRE décédés, sans vivants, fiches « à trouver », notes ni lieux, dates à l'année ; lien fermé / inventé / avec PIN → rien ; public autorisé à l'appeler (liste de fumee.test.ts). 3 essais ; 128/128. Script mis dans son presse-papiers ; À LUI : Supabase → SQL Editor → coller → Run.
+- Suite : 1b dans site/ (visiteur via /c/<jeton> → prise lit arbre_public ; écritures refusées avec « Ajouter une famille »), puis écritures du propriétaire, puis bascule de la mise en ligne sur site/.
+
+## 30/09/2026 ~12:40 — ÉTAPE 1a FAITE (NON PUBLIÉE) : L'ÉCRAN DU BUREAU DANS site/ — REPRENDRE ICI
 
 **Fait (778661a)** : `site/` = le frontend du bureau copié par `scripts/copier-bureau.mjs` (99 fichiers, version b893d44), MÊMES OUTILS que le bureau (Vite 4, React 18, Tailwind 3, package-lock du bureau + @supabase/supabase-js). La copie est faite SANS COMMENTAIRES (compilateur TypeScript, removeComments) : les commentaires du bureau citent des personnes réelles de sa famille (vivantes comprises) et le dépôt est PUBLIC. Preuve que le fonctionnement est intact : les 242 essais du bureau passent sur la copie sans commentaires (essais recopiés puis retirés). Contrôle des noms sur tout ce qui part : 0 (hors répertoire public des patronymes et fichier INSEE des prénoms).
 Seule pièce du site dans la copie : `site/src/api/client.ts` = axios avec adaptateur → `site/src-web/prise/routes.ts` (mêmes adresses que le serveur du PC) : /tree (arbre unique = 1er de mes_arbres, lu par pages, ordre cree_le → traduit au format du bureau par `traduction.ts`), /patronymes (répertoire copié du bureau, rangé comme lui), le reste vide ou « pas disponible en ligne ». `site/src-web/Porte.tsx` : connexion du propriétaire (lien e-mail), `entree.tsx` : démarrage du bureau + porte.
