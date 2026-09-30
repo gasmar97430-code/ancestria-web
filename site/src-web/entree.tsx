@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 import App from '../src/App';
 import '../src/index.css';
 import '../src/ui/theme.css';
+import './telephone/telephone.css'; // telephone.css : sous 760 px de large, les mêmes blocs rangés pour un téléphone
 import { Porte } from './Porte';
 import { CadrePartenaires } from './partenaires/Partenaires';
 

@@ -1,0 +1,243 @@
+/* ---- L'ÉCRAN À LA TAILLE D'UN TÉLÉPHONE ----
+ *
+ * Ses demandes du 30/09/2026 : « je dois pouvoir tester sur le telephone avant de le lancer
+ * sur les reseaux » et « n'oubli que l'appli doit etre identique que sur le pc ».
+ * L'écran du site est celui du PC, copié tel quel (site/src) : il a été dessiné pour une
+ * fenêtre large. Ici, et seulement sous 760 px de large, les MÊMES blocs — mêmes couleurs,
+ * mêmes mots, même logo, même signature — sont rangés pour un téléphone :
+ *   - le logo et la signature en haut à gauche, « Ancestria » à côté ;
+ *   - le menu en bas (Accueil, Arbre, Traque des Noms, Sources) ;
+ *   - la recherche, puis la fiche du nom en dessous ;
+ *   - l'arbre sur toute la largeur, et la fiche de la personne choisie SOUS l'arbre.
+ * Aucun fichier de la copie du PC n'est modifié ; au-dessus de 760 px, rien ne change.
+ * Posé par une ligne dans entree.tsx. Retirer ce fichier et cette ligne : l'écran d'avant.
+ *
+ * Les blocs sont reconnus par leur place dans la coquille du PC (app/AppShell.tsx : barre du
+ * haut, puis [menu | écran] ; menu large w-[272px] sur l'Accueil, étroit w-16 ailleurs).
+ * Si la coquille change au PC, le banc téléphone (mesures) le dit.
+ */
+
+@media (max-width: 760px) {
+    /* La coquille : la hauteur réelle du téléphone (barre d'adresse comprise). */
+    #root .h-screen.w-screen {
+        height: 100dvh;
+        width: 100%;
+    }
+
+    /* ---- Barre du haut : logo + signature à gauche, « Ancestria » à droite ---- */
+    #root header.h-\[64px\] {
+        height: 50px;
+        place-items: center end;
+        padding-right: 16px;
+    }
+    #root header.h-\[64px\] > button {
+        font-size: 25px;
+    }
+    /* Le logo vit dans le menu du PC : il est amené dans la barre du haut, avec sa signature. */
+    #root header.h-\[64px\] + div > aside.w-\[272px\] > button[title='Accueil'],
+    #root header.h-\[64px\] + div > aside.w-16 > button[title^="M'astel"] {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        position: fixed;
+        top: 8px;
+        left: 12px;
+        z-index: 40;
+        width: auto;
+        height: 34px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 18px;
+    }
+    #root header.h-\[64px\] + div > aside.w-\[272px\] > button[title='Accueil'] > span:first-child {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 18px;
+    }
+    #root header.h-\[64px\] + div > aside.w-\[272px\] > button[title='Accueil'] > span:last-child {
+        font-size: 9px;
+        line-height: 1.45;
+    }
+    /* Menu étroit : le bouton du logo n'a que le dessin ; on lui rend son cadre et sa signature. */
+    #root header.h-\[64px\] + div > aside.w-16 > button[title^="M'astel"] > svg {
+        box-sizing: content-box;
+        width: 18px;
+        height: 18px;
+        padding: 7px;
+        border: 1px solid var(--sepia);
+        border-radius: 10px;
+    }
+    #root header.h-\[64px\] + div > aside.w-16 > button[title^="M'astel"]::after {
+        content: "M'astel.974\A L'Arbre de Lumière";
+        white-space: pre;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 9px;
+        line-height: 1.45;
+        color: var(--encre-3);
+    }
+
+    /* ---- [menu | écran] devient [écran au-dessus, menu en bas] ---- */
+    #root header.h-\[64px\] + div {
+        flex-direction: column;
+    }
+    #root header.h-\[64px\] + div > aside:first-child {
+        order: 2;
+        width: 100%;
+        height: 60px;
+        flex: none;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: space-around;
+        gap: 0;
+        padding: 0 4px;
+        border-right: 0;
+        border-top: 1px solid var(--trait-leger);
+    }
+    #root header.h-\[64px\] + div > aside:first-child + * {
+        order: 1;
+        flex: 1 1 0;
+        min-height: 0;
+        min-width: 0;
+        width: 100%;
+    }
+    /* Le menu : ses quatre entrées (les outils du PC — sauvegarde, carnet, GEDCOM… — n'y sont pas). */
+    #root header.h-\[64px\] + div > aside:first-child > * {
+        display: none;
+    }
+    /* … menu large (Accueil) : les entrées sont dans <nav>. */
+    #root header.h-\[64px\] + div > aside.w-\[272px\] > nav {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        gap: 0;
+    }
+    #root header.h-\[64px\] + div > aside.w-\[272px\] > nav > button,
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Accueil'],
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Arbre'],
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Traque des Noms'],
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Sources'] {
+        display: flex;
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
+        height: auto;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        margin: 5px 2px;
+        padding: 0 2px;
+        border-radius: 10px;
+        font-size: 10.5px;
+        line-height: 1.1;
+        text-align: center;
+    }
+    /* … menu étroit (les autres écrans) : le libellé vient du titre du bouton, comme au menu large. */
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Accueil'] > svg,
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Arbre'] > svg,
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Traque des Noms'] > svg,
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Sources'] > svg {
+        width: 18px;
+        height: 18px;
+    }
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Accueil']::after,
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Arbre']::after,
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Traque des Noms']::after,
+    #root header.h-\[64px\] + div > aside.w-16 > button[title='Sources']::after {
+        content: attr(title);
+    }
+
+    /* ---- Accueil : la recherche, puis la fiche du nom en dessous ---- */
+    #root main.px-16 {
+        padding: 18px 16px 28px;
+        gap: 20px;
+    }
+    #root main.px-16 h1 {
+        font-size: 34px;
+        line-height: 1.05;
+    }
+    #root main.px-16 > header a {
+        display: inline-flex;
+        margin-left: 0;
+        margin-top: 4px;
+    }
+    #root main.px-16 > .grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+    #root main.px-16 article {
+        padding: 22px 18px;
+        border-radius: 16px;
+    }
+    /* Les filtres : assez hauts pour le doigt. */
+    #root main.px-16 button.rounded-\[15px\] {
+        height: 40px;
+        padding: 0 14px;
+        font-size: 13.5px;
+    }
+
+    /* ---- Arbre : l'en-tête resserré, l'arbre sur toute la largeur, la fiche SOUS l'arbre ---- */
+    #root .min-h-\[72px\] {
+        min-height: 0;
+        padding: 10px 12px;
+        column-gap: 8px;
+        row-gap: 8px;
+    }
+    #root .min-h-\[72px\] > div:first-child {
+        max-width: 100%;
+        flex: 1 1 100%;
+    }
+    #root .min-h-\[72px\] > div:first-child > div:first-child {
+        font-size: 22px;
+    }
+    /* Les pastilles d'origine : UNE ligne à elles, rangées à gauche ; s'il y en a trop, elle se fait défiler du doigt. */
+    #root .min-h-\[72px\] > .ml-auto {
+        margin-left: 0;
+        min-width: 0;
+        flex: 1 1 100%;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    #root .min-h-\[72px\] button.rounded-\[15px\] {
+        height: 34px;
+        flex: none;
+    }
+    #root .react-flow__minimap {
+        display: none;
+    }
+    /* [arbre | fiche] devient [arbre au-dessus, fiche en dessous] : l'arbre se recadre dans la place qui reste. */
+    #root div:has(> aside.w-\[300px\]) {
+        flex-direction: column;
+    }
+    #root aside.w-\[300px\] {
+        width: 100%;
+        flex: none;
+        max-height: 34dvh;
+        padding: 14px 18px 18px;
+        gap: 14px;
+        border-left: 0;
+        border-top: 1px solid var(--trait);
+        border-radius: 18px 18px 0 0;
+        box-shadow: 0 -8px 24px rgba(60, 40, 20, 0.12);
+    }
+    /* La zone de la photo : moins haute (elle prenait à elle seule la moitié de la fiche). */
+    #root aside.w-\[300px\] .h-\[150px\] {
+        height: 84px;
+    }
+    #root aside.w-\[300px\] .text-\[34px\] {
+        font-size: 26px;
+    }
+
+    /* ---- Traque des Noms, Sources : les marges du PC ramenées à celles d'un téléphone ---- */
+    #root main.px-12 {
+        padding: 18px 16px 28px;
+    }
+}
+
+/* ---- FIN L'ÉCRAN À LA TAILLE D'UN TÉLÉPHONE ---- */
