@@ -14,6 +14,7 @@ import { ArbreDeVieAccueil } from './ArbreDeVieAccueil';
 import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
 import { DEGRES, definitionOrigine } from '../../lib/origineEtablie';
 import { SourceOrigine } from './SourceOrigine';
+import { EmplacementAjouterFamille } from '../../lib/ajouterFamille';
 const MAX_RESULTATS = 7;
 const CERTITUDES: Record<string, string> = {
     Documentee: 'origine documentée',
@@ -135,6 +136,7 @@ export const Accueil = () => {
                         {charge && resultats.length === 0 && (<div className="px-4 py-7 text-sm text-encre-3">
                                 Aucun patronyme ne correspond. Essayez une variante orthographique.
                             </div>)}
+                        {charge && resultats.length === 0 && <EmplacementAjouterFamille nom={saisie.trim()}/>}
                     </div>
                     <PersonnesTapees saisie={saisie} aucunNom={charge && resultats.length === 0}/>
                 </div>

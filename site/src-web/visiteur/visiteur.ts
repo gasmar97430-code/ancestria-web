@@ -15,6 +15,8 @@
 // Lignes d'appel : Porte.tsx, prise/donnees.ts, prise/routes.ts.
 
 import { useLectureSeule } from '../../src/lib/lectureSeule';
+import { useAjouterFamille } from '../../src/lib/ajouterFamille';
+import { AjouterFamille } from '../ajouter-famille/AjouterFamille'; // « Ajouter cette famille » quand un nom n'est pas trouvé
 
 /** Le jeton du lien partagé si la page est ouverte par /c/<jeton>, sinon null. */
 export function jetonVisiteur(chemin: string = window.location.pathname, base: string = import.meta.env.BASE_URL): string | null {
@@ -33,6 +35,7 @@ export function emailAdministrateur(): string | null {
 /** À l'arrivée d'un visiteur : l'écran passe en lecture seule. */
 export function entrerEnVisiteur(): void {
     useLectureSeule.setState({ actif: true, email: emailAdministrateur() });
+    if (useAjouterFamille.getState().composant !== AjouterFamille) useAjouterFamille.setState({ composant: AjouterFamille });
 }
 
 export const REFUS_VISITEUR =
