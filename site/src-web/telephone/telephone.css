@@ -24,60 +24,30 @@
         width: 100%;
     }
 
-    /* ---- Barre du haut : logo + signature à gauche, « Ancestria » à droite ---- */
-    #root header.h-\[64px\] {
+    /* ---- Barre du haut : logo + signature à gauche, « Ancestria » à droite ----
+       Depuis le 01/10 la signature est DANS l'en-tête du PC (TitreCentre.tsx, sa demande) :
+       plus besoin d'aller la chercher dans le menu ; on la resserre pour le téléphone. */
+    #root header[data-bloc='en-tete'] {
         height: 50px;
-        place-items: center end;
-        padding-right: 16px;
+        grid-template-columns: auto 1fr;
+        padding: 0 16px 0 12px;
     }
-    #root header.h-\[64px\] > button {
+    #root header[data-bloc='en-tete'] > button {
         font-size: 25px;
+        justify-self: end;
     }
-    /* Le logo vit dans le menu du PC : il est amené dans la barre du haut, avec sa signature. */
-    #root header.h-\[64px\] + div > aside.w-\[272px\] > button[title='Accueil'],
-    #root header.h-\[64px\] + div > aside.w-16 > button[title^="M'astel"] {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        position: fixed;
-        top: 8px;
-        left: 12px;
-        z-index: 40;
-        width: auto;
-        height: 34px;
-        margin: 0;
-        padding: 0;
-        border: 0;
-        font-size: 18px;
+    #root header[data-bloc='en-tete'] > span:last-child {
+        display: none;
     }
-    #root header.h-\[64px\] + div > aside.w-\[272px\] > button[title='Accueil'] > span:first-child {
+    #root header[data-bloc='en-tete'] [data-signature='logo'] {
         width: 34px;
         height: 34px;
         border-radius: 10px;
         font-size: 18px;
     }
-    #root header.h-\[64px\] + div > aside.w-\[272px\] > button[title='Accueil'] > span:last-child {
+    #root header[data-bloc='en-tete'] [data-bloc='signature'] > span:last-child {
         font-size: 9px;
         line-height: 1.45;
-    }
-    /* Menu étroit : le bouton du logo n'a que le dessin ; on lui rend son cadre et sa signature. */
-    #root header.h-\[64px\] + div > aside.w-16 > button[title^="M'astel"] > svg {
-        box-sizing: content-box;
-        width: 18px;
-        height: 18px;
-        padding: 7px;
-        border: 1px solid var(--sepia);
-        border-radius: 10px;
-    }
-    #root header.h-\[64px\] + div > aside.w-16 > button[title^="M'astel"]::after {
-        content: "M'astel.974\A L'Arbre de Lumière";
-        white-space: pre;
-        text-align: left;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        font-size: 9px;
-        line-height: 1.45;
-        color: var(--encre-3);
     }
 
     /* ---- [menu | écran] devient [écran au-dessus, menu en bas] ---- */

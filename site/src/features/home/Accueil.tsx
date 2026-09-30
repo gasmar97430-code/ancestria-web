@@ -14,6 +14,7 @@ import { ArbreDeVieAccueil } from './ArbreDeVieAccueil';
 import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
 import { DEGRES, definitionOrigine } from '../../lib/origineEtablie';
 import { SourceOrigine } from './SourceOrigine';
+import { PlaceDansLesArbres } from './PlaceDansLesArbres';
 import { EmplacementAjouterFamille } from '../../lib/ajouterFamille';
 const MAX_RESULTATS = 7;
 const CERTITUDES: Record<string, string> = {
@@ -196,6 +197,8 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
                         <Repere titre="Procédé d'attribution" valeur={p.procede}/>
                     </>)}
             </div>
+
+            <PlaceDansLesArbres nom={p.nom}/>
 
             <div className="flex flex-col gap-2.5">
                 <div className="text-[10.5px] tracking-[.12em] uppercase text-sepia">Note historique</div>

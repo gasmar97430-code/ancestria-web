@@ -1,4 +1,4 @@
-import { Binoculars, Books, HouseSimple, Tree, TreeStructure } from '@phosphor-icons/react';
+import { Binoculars, Books, HouseSimple, TreeStructure } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
 import { BoutonSauvegarde } from './BoutonSauvegarde';
 import { BoutonRecherche } from './RechercheGlobale';
@@ -31,9 +31,8 @@ export const Sidebar = ({ rail }: {
     const lecture = useLectureSeule((s) => s.actif);
     if (rail) {
         return (<aside className="w-16 flex-none bg-carte border-r border-trait-leger flex flex-col items-center py-[22px] gap-1.5">
-                <button onClick={() => aller('accueil')} title="M'astel.974 — L'Arbre de Lumière" className="w-9 h-9 rounded-[10px] border border-sepia grid place-items-center text-sepia text-[19px] mb-[18px]">
-                    <Tree />
-                </button>
+                
+                <span className="h-[18px]"/>
                 {ENTREES.map(({ ecran: e, libelle, icone: I }) => (<button key={e} onClick={() => aller(e)} title={libelle} className={`w-10 h-10 rounded-[10px] grid place-items-center text-[19px] transition-colors ${ecran === e ? 'bg-sepia-tint text-sepia-deep' : 'text-encre-2 hover:bg-papier'}`}>
                         <I />
                     </button>))}
@@ -49,17 +48,6 @@ export const Sidebar = ({ rail }: {
     }
     return (<aside className="w-[272px] flex-none bg-carte border-r border-trait-leger px-[18px] py-7 flex flex-col gap-8">
             
-            <button onClick={() => aller('accueil')} title="Accueil" className="flex gap-3 items-center px-2 text-left">
-                <span className="w-[38px] h-[38px] flex-none rounded-[11px] border border-sepia grid place-items-center text-sepia text-xl">
-                    <Tree />
-                </span>
-                <span className="text-[10px] leading-[1.5] text-encre-3 tracking-[.12em] uppercase">
-                    M'astel.974
-                    <br />
-                    L'Arbre de Lumière
-                </span>
-            </button>
-
             <nav className="flex flex-col gap-0.5">
                 {ENTREES.map(({ ecran: e, libelle, icone: I }) => (<button key={e} onClick={() => aller(e)} className={`flex gap-3 items-center h-10 px-3 rounded-[10px] text-sm transition-colors text-left ${ecran === e ? 'bg-sepia-tint text-sepia-deep font-medium' : 'text-encre-2 hover:bg-papier'}`}>
                         <I size={18}/>
