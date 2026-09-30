@@ -234,9 +234,63 @@
         font-size: 26px;
     }
 
-    /* ---- Traque des Noms, Sources : les marges du PC ramenées à celles d'un téléphone ---- */
+    /* ---- Traque des Noms : la barre de saisie sur toute la largeur, champs au doigt ---- */
+    #root main > form.px-12 {
+        padding: 12px 16px;
+        gap: 8px;
+    }
+    #root main > form.px-12 > input,
+    #root main > form.px-12 > select,
+    #root main > form.px-12 > button {
+        height: 42px;
+        font-size: 15px;
+    }
+    /* Nom : toute la ligne. Prénom + Commune, De + À : deux par ligne. Zone, bouton, traques précédentes : toute la ligne. */
+    #root main > form.px-12 > .w-44,
+    #root main > form.px-12 > .w-52,
+    #root main > form.px-12 > .w-56,
+    #root main > form.px-12 > button {
+        flex: 1 1 100%;
+        width: auto;
+        margin-left: 0;
+        justify-content: center;
+    }
+    #root main > form.px-12 > .w-32,
+    #root main > form.px-12 > .w-36,
+    #root main > form.px-12 > .w-20 {
+        flex: 1 1 calc(50% - 4px);
+        width: auto;
+        min-width: 0;
+    }
+    /* Le reste de la Traque (titre, pistes) : marges et titre d'un téléphone. */
+    #root main > form.px-12 ~ * {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    #root main > form.px-12 ~ * h1 {
+        font-size: 36px;
+        line-height: 1.05;
+    }
+
+    /* ---- Sources : marges, titre, champs l'un sous l'autre, fiches sur une colonne ---- */
     #root main.px-12 {
         padding: 18px 16px 28px;
+        gap: 22px;
+    }
+    #root main.px-12 h1 {
+        font-size: 36px;
+        line-height: 1.05;
+    }
+    #root main.px-12 .grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #root main.px-12 .grid > input {
+        height: 42px;
+        font-size: 15px;
+    }
+    #root main.px-12 section > .flex.items-baseline {
+        flex-wrap: wrap;
+        row-gap: 2px;
     }
 }
 
