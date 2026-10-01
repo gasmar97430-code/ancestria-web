@@ -42,13 +42,14 @@ import { avecRangsDesUnions, useAvecOrdreUnions } from './OrdreUnions';
 import { avecNaturesTraits, useAvecFamillesFormes } from './FamillesFormes';
 import { avecPoubelle, BoutonSupprimerCarte } from './SupprimerSurCarte';
 import { avecCorbeillesDoublons, BoutonCorbeilleDoublon } from './CorbeilleDoublons';
+import { PastilleReglable } from './ReglerUnion';
 import { useAncrage } from './ancrage';
 import { usePositionsValides, GardeCamera } from './positionsValides';
 import { MessageLectureSeule, useLectureSeule } from '../../lib/lectureSeule';
 import { definitionOrigine } from '../../lib/origineEtablie';
 const nodeTypes = { carte: PersonMemorialNode, pastille: UnionPillNode };
 const edgeTypes = { lumineux: LienLumineux };
-const nodeTypesEdition = { ...nodeTypes, edition: BarreEdition, enfantEpouse: BoutonEnfantEpouse, editionSansEnfant: BarreSansEnfant, inconnu: CarteInconnue, supprimerCarte: BoutonSupprimerCarte, corbeilleDoublon: BoutonCorbeilleDoublon };
+const nodeTypesEdition = { ...nodeTypes, edition: BarreEdition, enfantEpouse: BoutonEnfantEpouse, editionSansEnfant: BarreSansEnfant, inconnu: CarteInconnue, supprimerCarte: BoutonSupprimerCarte, corbeilleDoublon: BoutonCorbeilleDoublon, pastille: PastilleReglable };
 type Branche = 'Toutes' | 'Paternelle' | 'Maternelle';
 export const Arbre = () => (<ReactFlowProvider>
         <ArbreInterieur />
@@ -121,7 +122,7 @@ const ArbreInterieur = () => {
     const ancres = useAncrage(usePositionsValides(affiche.nodes), choisi);
     const avecEdition = lecture ? ancres : avecBoutonsEpouses(avecBarre(ancres, choisi, CARTE.width), choisi, people, unionsEnregistrees(unions), CARTE.width);
     const decores = avecPastillesCoparents(avecRangsDesUnions(avecCartesInconnues(avecEdition, tree.inconnus)));
-    const noeudsGlisses = useGlissement(lecture ? decores : avecCorbeillesDoublons(avecPoubelle(decores), people));
+    const noeudsGlisses = useGlissement(lecture ? decores : avecCorbeillesDoublons(avecPoubelle(decores)));
     const noeudsAffiches = useTaillesConnues(noeudsGlisses);
     return (<div className="flex-1 min-w-0 flex flex-col">
             

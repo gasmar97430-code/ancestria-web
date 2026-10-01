@@ -1788,6 +1788,90 @@ revoke all on all tables in schema public from anon, authenticated;
 revoke all on all sequences in schema public from anon, authenticated;
 revoke execute on all functions in schema public from public, anon, authenticated;
 
+-- ---- PORTE PUBLIQUE DU SITE (01/10/2026) ----
+-- Sa demande : « pour qu'une personne puisse y accéder il faut un bloc de formule pour
+-- l'inscription selon les restrictions formulées dans le journal ». L'adresse du site
+-- s'ouvre sur l'inscription (nom, prénom, e-mail ou téléphone, Charte) ; une fois
+-- inscrit, le visiteur lit l'arbre public par le chemin des liens partagés
+-- (arbre_public : décédés seulement, sans notes ni lieux), et sa demande d'accès
+-- arrive dans les propositions (soumettre_contribution : inscription obligatoire).
+-- Ce lien est l'invitation « Porte du site » de l'arbre qui a le plus de fiches
+-- (le sien), créée une fois pour 365 jours (la règle des partages) ; expirée ou
+-- fermée par lui comme n'importe quel lien partagé, la porte en ouvre une neuve.
+create or replace function public.jeton_porte_publique()
+returns text
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_arbre public.arbres;
+    v_jeton text;
+begin
+    select a.* into v_arbre from public.arbres a
+        left join public.individus i on i.arbre_id = a.id
+        group by a.id order by count(i.id) desc, a.cree_le limit 1;
+    if not found then
+        return null;
+    end if;
+    select jeton into v_jeton from public.invitations
+        where arbre_id = v_arbre.id and libelle = 'Porte du site' and not ferme and expire_le > now()
+        order by cree_le limit 1;
+    if v_jeton is null then
+        insert into public.invitations (arbre_id, libelle, expire_le, cree_par)
+            values (v_arbre.id, 'Porte du site', now() + interval '365 days', v_arbre.proprietaire)
+            returning jeton into v_jeton;
+    end if;
+    return v_jeton;
+end;
+$$;
+
+-- Les inscrits de la porte (loi 2 : zéro anonymat). Même règle que les propositions
+-- (defaut_inscription : nom, prénom, e-mail ou téléphone valides) ; la version de la
+-- Charte acceptée est gardée. Lui seul (propriétaire / éditeurs de l'arbre) les lit ;
+-- personne ne les écrit autrement que par inscrire_visiteur.
+create table if not exists public.inscriptions_acces (
+    id        uuid primary key default gen_random_uuid(),
+    arbre_id  uuid not null references public.arbres (id) on delete cascade,
+    nom       text not null check (char_length(btrim(nom)) between 1 and 80),
+    prenom    text not null check (char_length(btrim(prenom)) between 1 and 80),
+    contact   text not null check (char_length(contact) between 3 and 200),
+    charte    text not null check (char_length(btrim(charte)) between 1 and 40),
+    origine   text,
+    cree_le   timestamptz not null default now()
+);
+create index if not exists inscriptions_acces_arbre on public.inscriptions_acces (arbre_id, cree_le desc);
+alter table public.inscriptions_acces enable row level security;
+drop policy if exists "lecture par lui" on public.inscriptions_acces;
+create policy "lecture par lui" on public.inscriptions_acces for select to authenticated using (public.peut_ecrire(arbre_id));
+revoke all on public.inscriptions_acces from anon, public;
+grant select on public.inscriptions_acces to authenticated;
+
+create or replace function public.inscrire_visiteur(p_jeton text, p_nom text, p_prenom text, p_contact text, p_charte text)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_ouverture jsonb := public.ouvrir_invitation(p_jeton, null);
+    v_origine   text := public.origine_appel();
+    v_id        uuid;
+begin
+    if not (v_ouverture ->> 'ok')::boolean then
+        return v_ouverture;
+    end if;
+    if public.defaut_inscription(jsonb_build_object('inscrit', jsonb_build_object('nom', p_nom, 'prenom', p_prenom)), p_contact) is not null
+       or p_charte is null or char_length(btrim(p_charte)) not between 1 and 40 then
+        return jsonb_build_object('ok', false, 'raison', 'inscription_requise');
+    end if;
+    if (select count(*) from public.inscriptions_acces where origine = v_origine and cree_le > now() - interval '1 hour') >= 10 then
+        return jsonb_build_object('ok', false, 'raison', 'trop_d_envois');
+    end if;
+    insert into public.inscriptions_acces (arbre_id, nom, prenom, contact, charte, origine)
+        values ((v_ouverture ->> 'arbre_id')::uuid, btrim(p_nom), btrim(p_prenom), btrim(p_contact), btrim(p_charte), v_origine)
+        returning id into v_id;
+    return jsonb_build_object('ok', true, 'id', v_id);
+end;
+$$;
+-- ---- FIN PORTE PUBLIQUE DU SITE ----
+
 grant select on public.limites_offres to anon, authenticated;
 grant select on public.abonnements to authenticated;
 grant select, insert, update, delete on public.arbres to authenticated;
@@ -1819,7 +1903,8 @@ grant execute on function
     public.plat(text), public.date_max(date, text), public.thematiques_valides(text[]),
     public.invitation_publique(text, text), public.arbre_public(text), public.soumettre_contribution(text, text, jsonb, text, text),
     public.patrimoine_public(text), public.patrimoine_recherche(text, text, text, boolean, text),
-    public.patrimoine_individu(text, uuid), public.patrimoine_carte(text), public.verifier_export(text)
+    public.patrimoine_individu(text, uuid), public.patrimoine_carte(text), public.verifier_export(text),
+    public.jeton_porte_publique(), public.inscrire_visiteur(text, text, text, text, text) -- porte publique du site (01/10)
     to anon, authenticated;
 
 -- Politiques : lecture pour les membres, écriture pour propriétaire et éditeurs.

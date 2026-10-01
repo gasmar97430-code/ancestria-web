@@ -9,7 +9,7 @@ describe('schéma : chargement', () => {
         const t = await db.query<{ tablename: string }>(`select tablename from pg_tables where schemaname = 'public' order by 1`);
         expect(t.rows.map((r) => r.tablename)).toEqual([
             'abonnements', 'arbres', 'contributions', 'document_individus', 'documents', 'essais_pin', 'exports_certifies',
-            'familles_historiques', 'filiations', 'foyer_parents', 'foyers', 'individus', 'invitations', 'limites_offres', 'membres', 'unions',
+            'familles_historiques', 'filiations', 'foyer_parents', 'foyers', 'individus', 'inscriptions_acces', 'invitations', 'limites_offres', 'membres', 'unions',
         ]);
         const sansRls = await db.query<{ relname: string }>(`select relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
             where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity`);
@@ -33,7 +33,7 @@ describe('schéma : chargement', () => {
         const r = await db.query<{ proname: string }>(`select distinct p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
             where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute') order by 1`);
         expect(r.rows.map((x) => x.proname)).toEqual([
-            'arbre_public', 'date_max', 'invitation_publique', 'patrimoine_carte', 'patrimoine_individu', 'patrimoine_public',
+            'arbre_public', 'date_max', 'inscrire_visiteur', 'invitation_publique', 'jeton_porte_publique', 'patrimoine_carte', 'patrimoine_individu', 'patrimoine_public',
             'patrimoine_recherche', 'plat', 'soumettre_contribution', 'thematiques_valides', 'verifier_export',
         ]);
     });

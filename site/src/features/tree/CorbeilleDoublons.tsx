@@ -105,7 +105,7 @@ export function avecCorbeillesDoublons(nodes: Node[], people: {
     id: number;
     prenom: string;
     nom: string;
-}[]): Node[] {
+}[] = useTreeStore.getState().people as never[]): Node[] {
     const doubles = idsEnDouble(people);
     if (doubles.size === 0)
         return nodes;
@@ -113,12 +113,13 @@ export function avecCorbeillesDoublons(nodes: Node[], people: {
     for (const n of nodes) {
         if (n.type !== 'carte' || n.hidden)
             continue;
-        const id = (n.data as {
+        const brut = (n.data as {
             individu?: {
-                id: number;
+                id?: number | string;
             };
-        })?.individu?.id;
-        if (id === undefined || !doubles.has(id))
+        })?.individu?.id ?? (n.id.startsWith('p-') ? n.id.slice(2) : undefined);
+        const id = Number(brut);
+        if (!Number.isFinite(id) || !doubles.has(id))
             continue;
         ajouts.push({
             id: `doublon-${id}`,

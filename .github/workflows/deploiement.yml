@@ -31,25 +31,24 @@ jobs:
         run: npm test
       - name: Contrôle des types (site + fonctions Supabase)
         run: npm run typecheck
-      - name: Construction
-        run: npm run build
-        env:
-          # L'adresse du projet n'est pas secrète : une variable du dépôt suffit (un secret du même nom l'emporte).
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_ADRESSE_PUBLIQUE: ${{ vars.VITE_ADRESSE_PUBLIQUE }}
-          VITE_STRIPE_ACTIF: ${{ vars.VITE_STRIPE_ACTIF }}
-          # Adresse de l'administrateur montrée au public (message « écrire à l'administrateur », avis sur les données) : c'est lui qui la choisit.
-          VITE_EMAIL_ADMINISTRATEUR: ${{ vars.VITE_EMAIL_ADMINISTRATEUR }}
-          VITE_BASE: /${{ github.event.repository.name }}/
-      # ---- ADRESSE D'ESSAI : le nouveau site (site/ = l'écran du PC), À PART, sous /<dépôt>/essai/ (son oui du 01/10) ----
+      # ---- BASCULE (01/10/2026, sa demande : « le site au miroir de l'appli ») ----
+      # L'adresse principale sert le NOUVEAU site (site/ = l'écran du PC) ; l'ancien (src/) n'est plus
+      # publié — ses essais de base ci-dessus restent rejoués. L'adresse d'essai /essai/ reste servie.
       - name: Nouveau site — dépendances
         run: npm ci
         working-directory: site
       - name: Nouveau site — essais et types
         run: npx vitest run && npx tsc --noEmit -p .
         working-directory: site
-      - name: Nouveau site — construction dans dist/essai
+      - name: Nouveau site — construction à l'adresse principale
+        run: npx vite build --outDir ../dist --emptyOutDir
+        working-directory: site
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_EMAIL_ADMINISTRATEUR: ${{ vars.VITE_EMAIL_ADMINISTRATEUR }}
+          VITE_BASE: /${{ github.event.repository.name }}/
+      - name: Nouveau site — même construction sous /essai/ (le lien déjà donné)
         run: npx vite build --outDir ../dist/essai --emptyOutDir
         working-directory: site
         env:
@@ -57,9 +56,9 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_EMAIL_ADMINISTRATEUR: ${{ vars.VITE_EMAIL_ADMINISTRATEUR }}
           VITE_BASE: /${{ github.event.repository.name }}/essai/
-      - name: Nouveau site — liens directs (/essai/c/…)
-        run: node scripts/essai-404.mjs /${{ github.event.repository.name }}/essai/
-      # ---- FIN ADRESSE D'ESSAI ----
+      - name: Liens directs (/c/…) aux deux adresses
+        run: node scripts/bascule-404.mjs /${{ github.event.repository.name }}/
+      # ---- FIN BASCULE ----
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

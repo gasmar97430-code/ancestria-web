@@ -1,21 +1,31 @@
 // ---- PORTE DU SITE ----
 //
 // Étape 1a (30/09) : l'écran du bureau s'ouvre pour le propriétaire connecté
-// (lecture de son arbre). Sans session : la page de connexion, aux couleurs du
-// bureau (lien par e-mail, sans mot de passe). Les visiteurs du lien partagé
-// arrivent à l'étape 3.
+// (lecture de son arbre). Les visiteurs du lien partagé arrivent à l'étape 3.
+// Bloc refait le 01/10/2026 (sa demande : « pour qu'une personne puisse y accéder
+// il faut un bloc de formule pour l'inscription selon les restrictions formulées
+// dans le journal ») :
+//   - adresse du site, sans connexion : l'INSCRIPTION (porte-inscription/), puis
+//     l'arbre public (décédés) par le lien de la porte, en lecture seule ;
+//   - lien partagé (/c/<jeton>) : l'inscription d'abord si l'appareil n'est pas
+//     encore inscrit, puis le même arbre public ;
+//   - « Administrateur : se connecter » (discret) : sa connexion par e-mail, inchangée.
 
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { adressePublique, configurationPrete, supabase } from './prise/supabase';
 import { entrerEnProprietaire } from './propositions/Propositions'; // Propositions.tsx : sa porte « Propositions », lui seul
 import { entrerEnVisiteur, jetonVisiteur } from './visiteur/visiteur'; // visiteur.ts : le lien partagé s'ouvre sans connexion, en lecture seule
+import { PorteInscription, dejaInscrit } from './porte-inscription/PorteInscription'; // l'inscription avant d'entrer (01/10)
 import { useAssistantIA } from '../src/app/AssistantIA';
+import { TitreCentre } from '../src/app/TitreCentre'; // l'en-tête de l'appli, tel quel (01/10)
 
 useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (IA locale) : pas dans le site en ligne
 
 export function Porte({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null | undefined>(undefined);
+    const [, setTour] = useState(0); // relit l'adresse après l'inscription (/c/<jeton> posé sans recharger)
+    const [administrateur, setAdministrateur] = useState(false);
 
     useEffect(() => {
         void supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -23,30 +33,35 @@ export function Porte({ children }: { children: ReactNode }) {
         return () => data.subscription.unsubscribe();
     }, []);
 
-    if (configurationPrete && jetonVisiteur()) { entrerEnVisiteur(); return <>{children}</>; }
-    if (!configurationPrete) return <Cadre><p className="text-encre-2 text-sm">Le site n’est pas encore relié à sa base.</p></Cadre>;
+    const jeton = configurationPrete ? jetonVisiteur() : null;
+    const entrer = (j: string) => {
+        if (jetonVisiteur() !== j) window.history.replaceState(null, '', `${import.meta.env.BASE_URL}c/${j}`);
+        setTour((t) => t + 1);
+    };
+
+    if (!configurationPrete) return <Cadre titre="Bienvenue"><p className="text-encre-2 text-sm">Le site n’est pas encore relié à sa base.</p></Cadre>;
+    if (jeton && dejaInscrit()) { entrerEnVisiteur(); return <>{children}</>; }
     if (session === undefined) return <div className="h-screen bg-papier" />;
-    if (!session) return <Connexion />;
-    entrerEnProprietaire();
-    return <>{children}</>;
+    if (session && !jeton) { entrerEnProprietaire(); return <>{children}</>; }
+    if (administrateur && !jeton) return <Connexion onRetour={() => setAdministrateur(false)} />;
+    return <PorteInscription jeton={jeton} onEntree={entrer} onAdministrateur={() => setAdministrateur(true)} />;
 }
 
-function Cadre({ children }: { children: ReactNode }) {
+function Cadre({ children, titre = 'Connexion' }: { children: ReactNode; titre?: string }) {
     return (
-        <main className="min-h-screen bg-papier text-encre font-sans grid place-items-center p-6">
-            <div className="w-full max-w-sm flex flex-col gap-6">
-                <div className="flex items-center gap-3">
-                    <img src={`${import.meta.env.BASE_URL}icon.svg`} alt="" className="w-11 h-11" />
-                    <div className="text-[11px] tracking-[.14em] uppercase text-encre-3 leading-relaxed">M’astel.974<br />L’Arbre de Lumière</div>
+        <div className="min-h-screen bg-papier text-encre font-sans flex flex-col">
+            <TitreCentre />
+            <main className="flex-1 grid place-items-center p-6">
+                <div className="w-full max-w-sm flex flex-col gap-6">
+                    <h1 className="font-display text-[40px] leading-none font-medium m-0">{titre}</h1>
+                    {children}
                 </div>
-                <h1 className="font-display text-[44px] leading-none font-medium m-0">Ancestria</h1>
-                {children}
-            </div>
-        </main>
+            </main>
+        </div>
     );
 }
 
-function Connexion() {
+function Connexion({ onRetour }: { onRetour: () => void }) {
     const [email, setEmail] = useState('');
     const [etat, setEtat] = useState<'saisie' | 'envoi' | 'envoye'>('saisie');
     const [erreur, setErreur] = useState<string | null>(null);
@@ -79,6 +94,7 @@ function Connexion() {
                     </button>
                 </form>
             )}
+            <button type="button" onClick={onRetour} className="self-start text-xs text-encre-3 underline underline-offset-4 min-h-11">← Retour à l’inscription</button>
         </Cadre>
     );
 }
