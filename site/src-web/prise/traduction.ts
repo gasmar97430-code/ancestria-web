@@ -6,6 +6,8 @@
 // Numéros : dans l'ordre de création des fiches (cree_le, puis id), comme les
 // numéros de fiche du bureau, qui servent d'ordre de rangement.
 
+import { enfantsDesCouples } from './enfantsDesCouples'; // le couple de naissance de chaque enfant (01/10)
+
 export type Uuid = string;
 
 export interface LigneIndividu {
@@ -95,8 +97,9 @@ export function traduire(d: DonneesSupabase) {
         .filter((f) => c.versBureau.has(f.parent_id) && c.versBureau.has(f.enfant_id))
         .map((f) => ({ parentId: c.versBureau.get(f.parent_id)!, enfantId: c.versBureau.get(f.enfant_id)!, typeLien: LIEN[f.nature] ?? 'Biological' }));
 
-    // Le bureau déduit le couple de naissance d'un enfant par la paire de ses parents quand rien n'est rattaché.
-    return { arbre: { people, unions, relationships, unionChildren: [] as { enfantId: number; unionId: number }[] }, correspondance: c };
+    // Le couple de naissance de chaque enfant : la paire de ses parents (enfantsDesCouples.ts, 01/10 — la liste vide d'avant
+    // rangeait l'arbre autrement qu'au PC).
+    return { arbre: { people, unions, relationships, unionChildren: enfantsDesCouples(relationships, unions) }, correspondance: c };
 }
 
 // ---- FIN PRISE : TRADUCTION ----
