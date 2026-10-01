@@ -16,7 +16,8 @@ import type { Session } from '@supabase/supabase-js';
 import { adressePublique, configurationPrete, supabase } from './prise/supabase';
 import { entrerEnProprietaire } from './propositions/Propositions'; // Propositions.tsx : sa porte « Propositions », lui seul
 import { entrerEnVisiteur, jetonVisiteur } from './visiteur/visiteur'; // visiteur.ts : le lien partagé s'ouvre sans connexion, en lecture seule
-import { PorteInscription, dejaInscrit } from './porte-inscription/PorteInscription'; // l'inscription avant d'entrer (01/10)
+import { PorteInscription, dejaInscrit } from './porte-inscription/PorteInscription';
+import { ChoisirMotDePasse, ConnexionMotDePasse, useChoixDuMotDePasse } from './connexion-mot-de-passe/ConnexionMotDePasse'; // 01/10 : sa connexion par mot de passe // l'inscription avant d'entrer (01/10)
 import { useAssistantIA } from '../src/app/AssistantIA';
 import { TitreCentre } from '../src/app/TitreCentre'; // l'en-tête de l'appli, tel quel (01/10)
 
@@ -26,6 +27,7 @@ export function Porte({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null | undefined>(undefined);
     const [, setTour] = useState(0); // relit l'adresse après l'inscription (/c/<jeton> posé sans recharger)
     const [administrateur, setAdministrateur] = useState(false);
+    const [choixMotDePasse, finChoixMotDePasse] = useChoixDuMotDePasse(); // arrivée par le lien « choisir mon mot de passe »
 
     useEffect(() => {
         void supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -40,10 +42,11 @@ export function Porte({ children }: { children: ReactNode }) {
     };
 
     if (!configurationPrete) return <Cadre titre="Bienvenue"><p className="text-encre-2 text-sm">Le site n’est pas encore relié à sa base.</p></Cadre>;
+    if (choixMotDePasse) return <ChoisirMotDePasse onFini={finChoixMotDePasse} />;
     if (jeton && dejaInscrit()) { entrerEnVisiteur(); return <>{children}</>; }
     if (session === undefined) return <div className="h-screen bg-papier" />;
     if (session && !jeton) { entrerEnProprietaire(); return <>{children}</>; }
-    if (administrateur && !jeton) return <Connexion onRetour={() => setAdministrateur(false)} />;
+    if (administrateur && !jeton) return <ConnexionMotDePasse onRetour={() => setAdministrateur(false)} />; // 01/10 : mot de passe (l'ancienne Connexion par lien reste ci-dessous)
     return <PorteInscription jeton={jeton} onEntree={entrer} onAdministrateur={() => setAdministrateur(true)} />;
 }
 
@@ -61,7 +64,7 @@ function Cadre({ children, titre = 'Connexion' }: { children: ReactNode; titre?:
     );
 }
 
-function Connexion({ onRetour }: { onRetour: () => void }) {
+export function Connexion({ onRetour }: { onRetour: () => void }) {
     const [email, setEmail] = useState('');
     const [etat, setEtat] = useState<'saisie' | 'envoi' | 'envoye'>('saisie');
     const [erreur, setErreur] = useState<string | null>(null);
