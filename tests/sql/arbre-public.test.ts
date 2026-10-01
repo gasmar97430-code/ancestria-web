@@ -39,7 +39,7 @@ async function lien(pin: string | null = null) {
 }
 
 describe('arbre public d’un lien partagé', () => {
-    it('un visiteur voit les décédés et les liens entre eux, rien d’autre', async () => {
+    it('un visiteur voit les décédés, les vivants en cases protégées (règle de l’art, 01/10) et tous les liens', async () => {
         const jeton = await lien();
         await anonyme(db);
         const r = (await une<{ r: Record<string, unknown> }>(db, 'select arbre_public($1) as r', [jeton])).r as {
@@ -47,13 +47,18 @@ describe('arbre public d’un lien partagé', () => {
         };
         expect(r.ok).toBe(true);
         expect(r.arbre_nom).toBe('Famille Essaiville');
-        expect(r.individus.map((i) => i.prenom)).toEqual(['Essaijean', 'Essaimarie', 'Essaipaul']); // ni la vivante, ni la fiche « à trouver »
+        expect(r.individus.map((i) => i.prenom)).toEqual(['Essaijean', 'Essaimarie', 'Essaipaul', 'Fiche protégée', 'Fiche protégée']); // jamais la fiche « à trouver »
+        const protegees = r.individus.filter((i) => i.vivant === true);
+        expect(protegees.map((i) => i.id).sort()).toEqual([id.lea, id.tom].sort());
+        expect(protegees.every((i) => i.nom === '' && i.genre === 'inconnu' && i.naissance === null && i.deces === null && i.lieu_naissance === null && i.notes === null)).toBe(true);
+        const texte = JSON.stringify(r);
+        for (const secret of ['Essaiéa', 'Essaitom', '1990', '1945', 'Saint-Essai', 'note privée']) expect(texte).not.toContain(secret);
         const jean = r.individus[0];
         expect([jean.naissance, jean.deces, jean.naissance_precision]).toEqual(['1850-01-01', '1920-01-01', 'annee']); // l'année seulement
         expect([jean.notes, jean.lieu_naissance, jean.vivant]).toEqual([null, null, false]);
-        expect(r.unions).toHaveLength(1); // le couple décédé ; pas celui avec la vivante
+        expect(r.unions).toHaveLength(2); // le couple décédé, et celui avec la vivante (case protégée)
         expect(r.unions[0].debut).toBeNull();
-        expect(r.filiations.map((f) => `${f.parent_id}>${f.enfant_id}`).sort()).toEqual([`${id.jean}>${id.paul}`, `${id.marie}>${id.paul}`].sort());
+        expect(r.filiations.map((f) => `${f.parent_id}>${f.enfant_id}`).sort()).toEqual([`${id.jean}>${id.paul}`, `${id.marie}>${id.paul}`, `${id.paul}>${id.tom}`].sort()); // pas le lien de la fiche « à trouver »
     });
 
     it('lien fermé, lien inventé, lien avec PIN : rien n’est montré', async () => {

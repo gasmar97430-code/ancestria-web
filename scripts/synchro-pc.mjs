@@ -5,12 +5,17 @@
 // (SQLite d'Ancestria) et fabrique un script SQL que LUI colle dans Supabase (SQL Editor → Run).
 // Aucune clé secrète, aucun envoi automatique : il valide à la main (ordre de mission, point 4).
 //
-// CE QUI PART EN LIGNE : les personnes DÉCÉDÉES seulement (données sensibles des vivants gardées
-// sur le PC — ordre de mission point 0, loi 6) :
+// CE QUI PART EN LIGNE, AVEC LE NOM : les personnes DÉCÉDÉES (données des vivants gardées sur le PC —
+// ordre de mission point 0, loi 6) :
 //   · « décédé » coché, OU une date de décès, OU statut non dit ET née il y a 100 ans ou plus
-//     (convention des généalogistes) ; « vivant » coché ne part JAMAIS ;
-//   · jamais les fiches « ? » (parent inconnu), jamais les notes du PC (seulement le repère « pc:<n°> ») ;
-//   · les couples et les liens parent → enfant ENTRE ces personnes.
+//     (convention des généalogistes), OU statut non dit ET ancêtre d'une personne née il y a 100 ans
+//     ou plus (même règle que les logiciels de généalogie, Gramps « probablement vivant ») ;
+//   · jamais les fiches « ? » (parent inconnu), jamais les notes du PC (seulement le repère « pc:<n°> »).
+// RÈGLE DE L'ART (01/10, 18:05 — « arborescence coupée » sur le site, une de ses familles : 17 morceaux
+// au lieu d'un) : toute AUTRE personne reliée (vivante, statut non dit) part comme une CASE PROTÉGÉE
+// — « Fiche protégée », sans nom, sans date, sans lieu, genre inconnu — pour que les ancêtres restent
+// reliés, comme l'arbre du PC. Son nom ne quitte JAMAIS le PC. Une personne sans aucun lien ne part pas.
+//   · les couples et les liens parent → enfant ENTRE toutes les personnes envoyées.
 // En ligne, l'arbre visé est celui de la porte du site (invitation « Porte du site »). Chaque fiche
 // venue du PC porte le repère « pc:<n°> » dans ses notes (jamais montrées au public) : rejouer le
 // script met à jour, ajoute, et retire ce qui a quitté le PC — sans toucher à ce qui a été saisi
@@ -35,6 +40,8 @@ const precision = (d) => (d && d.endsWith('-01-01') ? 'annee' : 'jour'); // sa c
 const GENRES = { F: 'femme', M: 'homme' };
 const NATURES = { Marriage: 'mariage', Civil_Partnership: 'pacs', Informal: 'union_libre', Other: 'autre' };
 const STATUTS = { Active: 'en_cours', Divorced: 'divorces', Separated: 'separes', Widowed: 'veuvage' };
+/** Ce que voit le site à la place d'une personne vivante (ou au statut non dit) : jamais son nom. */
+export const FICHE_PROTEGEE = 'Fiche protégée';
 const LIENS = { Biological: 'biologique', Adoptive: 'adoptive', Adopted: 'adoptive', Step: 'beau_parent', Foster: 'accueil' };
 
 /** La personne part-elle en ligne ? (décédée selon la règle ci-dessus) */
@@ -48,11 +55,34 @@ export function estPublique(p, anneeCourante = new Date().getFullYear()) {
 }
 
 /** Les données à envoyer, tirées des lignes du PC (individus, unions, parentes). */
-export function donneesSynchro({ individus, unions, parentes }, anneeCourante) {
-    const publics = individus.filter((p) => estPublique(p, anneeCourante));
-    const ids = new Set(publics.map((p) => p.id));
+export function donneesSynchro({ individus, unions, parentes }, anneeCourante = new Date().getFullYear()) {
+    const estFicheInconnue = (p) => !p.prenom || p.prenom.trim() === '' || p.prenom.trim() === '?';
+    // Statut non dit, ancêtre d'une personne née il y a 100 ans ou plus : décédée (règle de l'art).
+    const parentsDe = new Map();
+    for (const l of parentes) parentsDe.set(l.enfant_id, [...(parentsDe.get(l.enfant_id) ?? []), l.parent_id]);
+    const ancetresAnciens = new Set();
+    for (const p of individus) {
+        const n = jour(p.date_naissance);
+        if (n === null || Number(n.slice(0, 4)) > anneeCourante - 100) continue;
+        for (const f = [...(parentsDe.get(p.id) ?? [])]; f.length;) {
+            const x = f.pop();
+            if (!ancetresAnciens.has(x)) { ancetresAnciens.add(x); f.push(...(parentsDe.get(x) ?? [])); }
+        }
+    }
+    const nommee = (p) => estPublique(p, anneeCourante)
+        || (!estFicheInconnue(p) && (p.decede === null || p.decede === undefined) && ancetresAnciens.has(p.id));
+    // Les autres (vivants, statut non dit) : case protégée, si elles ont au moins un lien.
+    const relies = new Set();
+    for (const l of parentes) { relies.add(l.parent_id); relies.add(l.enfant_id); }
+    for (const u of unions) if (u.partenaire_1_id !== u.partenaire_2_id) { relies.add(u.partenaire_1_id); relies.add(u.partenaire_2_id); }
+    const envoyes = individus.filter((p) => !estFicheInconnue(p) && (nommee(p) || relies.has(p.id)));
+    const ids = new Set(envoyes.map((p) => p.id));
     return {
-        individus: publics.map((p) => {
+        individus: envoyes.map((p) => {
+            if (!nommee(p)) {
+                return { id: uuidDe('individu', p.id), pc: p.id, protegee: true, prenom: FICHE_PROTEGEE, nom: '', genre: 'inconnu',
+                    naissance: null, naissance_precision: 'annee', lieu_naissance: null, deces: null, deces_precision: 'annee', lieu_deces: null };
+            }
             const n = jour(p.date_naissance), d = jour(p.date_deces);
             return {
                 id: uuidDe('individu', p.id), pc: p.id,
@@ -79,8 +109,8 @@ export function sqlSynchro(donnees, quand = new Date().toISOString()) {
     return `-- =====================================================================
 -- ANCESTRIA — SYNCHRONISATION DE L'ARBRE DU PC (${quand})
 -- À coller dans Supabase → SQL Editor → Run. Rejouable.
--- ${donnees.individus.length} personnes décédées, ${donnees.unions.length} couples, ${donnees.filiations.length} liens parent → enfant.
--- Aucune personne vivante. Le résultat (en bas) dit ce qui est fait et ce qui est refusé.
+-- ${donnees.individus.filter((p) => !p.protegee).length} personnes décédées (avec leur nom), ${donnees.individus.filter((p) => p.protegee).length} fiches protégées (vivantes : ni nom, ni date, ni lieu),
+-- ${donnees.unions.length} couples, ${donnees.filiations.length} liens parent → enfant. Le résultat (en bas) dit ce qui est fait et ce qui est refusé.
 -- =====================================================================
 create temporary table if not exists synchro_releve (quoi text, detail text) on commit preserve rows;
 truncate synchro_releve;
@@ -122,11 +152,11 @@ begin
                                           deces, deces_precision, lieu_deces, vivant, notes)
             values ((r ->> 'id')::uuid, v_arbre, r ->> 'prenom', r ->> 'nom', r ->> 'genre',
                     (r ->> 'naissance')::date, r ->> 'naissance_precision', r ->> 'lieu_naissance',
-                    (r ->> 'deces')::date, r ->> 'deces_precision', r ->> 'lieu_deces', false, 'pc:' || (r ->> 'pc'))
+                    (r ->> 'deces')::date, r ->> 'deces_precision', r ->> 'lieu_deces', coalesce((r ->> 'protegee')::boolean, false), 'pc:' || (r ->> 'pc'))
             on conflict (id) do update set prenom = excluded.prenom, nom = excluded.nom, genre = excluded.genre,
                 naissance = excluded.naissance, naissance_precision = excluded.naissance_precision, lieu_naissance = excluded.lieu_naissance,
                 deces = excluded.deces, deces_precision = excluded.deces_precision, lieu_deces = excluded.lieu_deces,
-                vivant = false, notes = excluded.notes;
+                vivant = excluded.vivant, notes = excluded.notes;
             n_ok := n_ok + 1;
         exception when others then
             n_refus := n_refus + 1;
@@ -180,6 +210,6 @@ if (process.argv[1] && process.argv[1].replaceAll('\\', '/').endsWith('/scripts/
     const lire = (t) => db.prepare(`select * from ${t}`).all();
     const d = donneesSynchro({ individus: lire('individus'), unions: lire('unions'), parentes: lire('parentes') });
     writeFileSync(sortie, sqlSynchro(d), 'utf8');
-    console.log(`${sortie} : ${d.individus.length} personnes décédées, ${d.unions.length} couples, ${d.filiations.length} liens`);
+    console.log(`${sortie} : ${d.individus.filter((p) => !p.protegee).length} personnes décédées, ${d.individus.filter((p) => p.protegee).length} fiches protégées, ${d.unions.length} couples, ${d.filiations.length} liens`);
 }
 // ---- FIN SYNCHRONISATION ----

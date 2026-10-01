@@ -1116,10 +1116,13 @@ $$;
 
 -- L'ARBRE PUBLIC D'UN LIEN PARTAGÉ (30/09/2026, sa demande : « les visiteurs
 -- peuvent chercher un nom et voir les branches et les personnes décédées »).
--- Le site montre l'écran de l'Ancestria du PC aux visiteurs du lien : il lui
--- faut les personnes DÉCÉDÉES et les liens ENTRE elles (couples, parent → enfant).
--- Jamais : les vivants, les fiches « à trouver », les notes, les lieux ; les dates
--- sont réduites à l'année (même prudence que invitation_publique).
+-- Le site montre l'écran de l'Ancestria du PC aux visiteurs du lien.
+-- Refait le 01/10 (« arborescence coupée », une de ses familles : sans les vivants, la chaîne
+-- se cassait en 17 morceaux) — RÈGLE DE L'ART des généalogistes : TOUTE la structure ;
+-- une personne VIVANTE reste une case de l'arbre, « Fiche protégée », sans nom, sans date,
+-- sans lieu, genre inconnu, quel que soit ce qui est écrit dans sa fiche (même saisie en
+-- ligne avec son nom). Les défunts : nom, prénom, genre, années seules. Jamais : les fiches
+-- « à trouver », les notes, les lieux.
 create or replace function public.arbre_public(p_jeton text)
 returns jsonb
 language plpgsql security definer set search_path = ''
@@ -1136,30 +1139,35 @@ begin
         'ok', true,
         'arbre_nom', (select a.nom from public.arbres a where a.id = v_arbre),
         'individus', coalesce((
-            select jsonb_agg(jsonb_build_object(
+            select jsonb_agg(case when i.vivant then jsonb_build_object(
+                       'id', i.id, 'prenom', 'Fiche protégée', 'nom', '', 'genre', 'inconnu',
+                       'naissance', null, 'naissance_precision', 'annee', 'lieu_naissance', null,
+                       'deces', null, 'deces_precision', 'annee', 'lieu_deces', null,
+                       'vivant', true, 'notes', null, 'cree_le', i.cree_le, 'maj_le', i.cree_le)
+                   else jsonb_build_object(
                        'id', i.id, 'prenom', i.prenom, 'nom', i.nom, 'genre', i.genre,
                        'naissance', case when i.naissance is null then null else make_date(extract(year from i.naissance)::integer, 1, 1) end,
                        'naissance_precision', 'annee', 'lieu_naissance', null,
                        'deces', case when i.deces is null then null else make_date(extract(year from i.deces)::integer, 1, 1) end,
                        'deces_precision', 'annee', 'lieu_deces', null,
-                       'vivant', false, 'notes', null, 'cree_le', i.cree_le, 'maj_le', i.cree_le)
+                       'vivant', false, 'notes', null, 'cree_le', i.cree_le, 'maj_le', i.cree_le) end
                    order by i.cree_le, i.id)
             from public.individus i
-            where i.arbre_id = v_arbre and not i.vivant and i.prenom <> 'Parent à trouver'
+            where i.arbre_id = v_arbre and i.prenom <> 'Parent à trouver'
         ), '[]'::jsonb),
         'unions', coalesce((
             select jsonb_agg(jsonb_build_object('id', u.id, 'partenaire_a', u.partenaire_a, 'partenaire_b', u.partenaire_b,
                        'nature', u.nature, 'statut', u.statut, 'debut', null, 'fin', null) order by u.cree_le, u.id)
             from public.unions u
-            join public.individus a on a.id = u.partenaire_a and not a.vivant and a.prenom <> 'Parent à trouver'
-            join public.individus b on b.id = u.partenaire_b and not b.vivant and b.prenom <> 'Parent à trouver'
+            join public.individus a on a.id = u.partenaire_a and a.prenom <> 'Parent à trouver'
+            join public.individus b on b.id = u.partenaire_b and b.prenom <> 'Parent à trouver'
             where u.arbre_id = v_arbre
         ), '[]'::jsonb),
         'filiations', coalesce((
             select jsonb_agg(jsonb_build_object('id', f.id, 'parent_id', f.parent_id, 'enfant_id', f.enfant_id, 'nature', f.nature) order by f.cree_le, f.id)
             from public.filiations f
-            join public.individus p on p.id = f.parent_id and not p.vivant and p.prenom <> 'Parent à trouver'
-            join public.individus e on e.id = f.enfant_id and not e.vivant and e.prenom <> 'Parent à trouver'
+            join public.individus p on p.id = f.parent_id and p.prenom <> 'Parent à trouver'
+            join public.individus e on e.id = f.enfant_id and e.prenom <> 'Parent à trouver'
             where f.arbre_id = v_arbre
         ), '[]'::jsonb)
     );
