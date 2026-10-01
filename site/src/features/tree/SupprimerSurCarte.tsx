@@ -1,28 +1,25 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import type { Node } from 'reactflow';
 import { Trash } from '@phosphor-icons/react';
-import { useEdition } from './edition';
+import { ConfirmationSurCarte } from './CorbeilleDoublons';
 const COTE = 28;
 export const BoutonSupprimerCarte = memo(({ data }: {
     data: {
         personneId: number;
     };
 }) => {
-    const ouvrir = useEdition((s) => s.ouvrir);
-    const clic = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        const b = document.querySelector<HTMLButtonElement>('[data-action=supprimer-fiche]');
-        if (b) {
-            b.click();
-            setTimeout(() => document.querySelector('[data-noeud=supprimer-fiche]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
-        }
-        else {
-            ouvrir({ type: 'modifier', personneId: data.personneId });
-        }
-    };
-    return (<button className="nodrag nopan grid place-items-center rounded-[8px] bg-carte border text-[11px] hover:bg-sepia-tint" style={{ width: COTE, height: COTE, borderColor: 'var(--o-afrique)', color: 'var(--o-afrique)' }} onClick={clic} title="Supprimer cette personne (la fiche dira ce qui part et proposera de fusionner si c'est un doublon)" data-action="supprimer-depuis-carte">
-            <Trash size={14}/>
-        </button>);
+    const [ouvert, setOuvert] = useState(false);
+    return (<div className="relative" style={{ width: COTE, height: COTE }}>
+            <button className="nodrag nopan grid place-items-center rounded-[8px] bg-carte border text-[11px] hover:bg-sepia-tint" style={{ width: COTE, height: COTE, borderColor: 'var(--o-afrique)', color: 'var(--o-afrique)' }} onClick={(e) => {
+            e.stopPropagation();
+            setOuvert((o) => !o);
+        }} title="Supprimer cette personne (la confirmation dit ce qui part et propose de fusionner si c'est un doublon)" data-action="supprimer-depuis-carte">
+                <Trash size={14}/>
+            </button>
+            {ouvert && (<div className="absolute left-0 w-[300px] h-0" style={{ top: COTE }}>
+                    <ConfirmationSurCarte personneId={data.personneId} fermer={() => setOuvert(false)}/>
+                </div>)}
+        </div>);
 });
 BoutonSupprimerCarte.displayName = 'BoutonSupprimerCarte';
 export function avecPoubelle(nodes: Node[]): Node[] {

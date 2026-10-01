@@ -12,6 +12,7 @@ import { PersonnesTapees } from './PersonnesTapees';
 import { BulleCommunes } from './BulleCommunes';
 import { ArbreDeVieAccueil } from './ArbreDeVieAccueil';
 import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
+import { useNomTapeAccueil } from '../tree/titreFamille';
 import { DEGRES, definitionOrigine } from '../../lib/origineEtablie';
 import { SourceOrigine } from './SourceOrigine';
 import { EmplacementAjouterFamille } from '../../lib/ajouterFamille';
@@ -71,6 +72,7 @@ export const Accueil = () => {
         ? undefined
         : resultats.find((p) => p.nom === nomChoisi) ?? resultats[0];
     useNomDemande(nomChoisi, resultats.map((p) => p.nom), saisie, setSaisie);
+    useNomTapeAccueil(choisi?.nom, saisie, people);
     const presentes = useMemo(() => {
         const s = new Set(patronymes.map((p) => p.origine));
         return ORDRE_ORIGINES.filter((o) => s.has(o));

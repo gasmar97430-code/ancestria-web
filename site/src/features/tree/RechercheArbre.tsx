@@ -4,6 +4,7 @@ import { MagnifyingGlass } from '@phosphor-icons/react';
 import { nomLisible, normaliser } from '../../lib/origins';
 import type { Id } from '../../types';
 import { Individu, periode } from './graphe';
+import { useNomCherche } from './titreFamille';
 const MAX = 8;
 export const sansLibelle = (saisie: string) => normaliser(saisie).replace(/^FAMILLE\s+/, '');
 export function chercherPersonnes(people: Individu[], saisie: string): Individu[] {
@@ -108,6 +109,7 @@ export const RechercheArbre = ({ people, onChoisir, parentsDe }: {
         p: Individu;
     }) => {
         onChoisir(p.id);
+        useNomCherche.getState().poser(famille ? famille.nom : p.nom);
         setSaisie(famille ? `Famille ${nomLisible(famille.nom)}` : `${p.prenom} ${nomLisible(p.nom)}`);
         setOuvert(false);
         champ.current?.blur();
@@ -117,6 +119,8 @@ export const RechercheArbre = ({ people, onChoisir, parentsDe }: {
                 <MagnifyingGlass size={16} className="text-sepia flex-none"/>
                 <input ref={champ} value={saisie} onChange={(e) => {
             setSaisie(e.target.value);
+            if (!e.target.value.trim())
+                useNomCherche.getState().poser(null);
             setOuvert(true);
             setActif(0);
         }} onFocus={() => setOuvert(true)} onMouseDown={(e) => {

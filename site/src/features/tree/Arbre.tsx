@@ -41,13 +41,14 @@ import { avecCartesInconnues, CarteInconnue, useAvecParentsInconnus } from './Pa
 import { avecRangsDesUnions, useAvecOrdreUnions } from './OrdreUnions';
 import { avecNaturesTraits, useAvecFamillesFormes } from './FamillesFormes';
 import { avecPoubelle, BoutonSupprimerCarte } from './SupprimerSurCarte';
+import { avecCorbeillesDoublons, BoutonCorbeilleDoublon } from './CorbeilleDoublons';
 import { useAncrage } from './ancrage';
 import { usePositionsValides, GardeCamera } from './positionsValides';
 import { MessageLectureSeule, useLectureSeule } from '../../lib/lectureSeule';
 import { definitionOrigine } from '../../lib/origineEtablie';
 const nodeTypes = { carte: PersonMemorialNode, pastille: UnionPillNode };
 const edgeTypes = { lumineux: LienLumineux };
-const nodeTypesEdition = { ...nodeTypes, edition: BarreEdition, enfantEpouse: BoutonEnfantEpouse, editionSansEnfant: BarreSansEnfant, inconnu: CarteInconnue, supprimerCarte: BoutonSupprimerCarte };
+const nodeTypesEdition = { ...nodeTypes, edition: BarreEdition, enfantEpouse: BoutonEnfantEpouse, editionSansEnfant: BarreSansEnfant, inconnu: CarteInconnue, supprimerCarte: BoutonSupprimerCarte, corbeilleDoublon: BoutonCorbeilleDoublon };
 type Branche = 'Toutes' | 'Paternelle' | 'Maternelle';
 export const Arbre = () => (<ReactFlowProvider>
         <ArbreInterieur />
@@ -120,14 +121,14 @@ const ArbreInterieur = () => {
     const ancres = useAncrage(usePositionsValides(affiche.nodes), choisi);
     const avecEdition = lecture ? ancres : avecBoutonsEpouses(avecBarre(ancres, choisi, CARTE.width), choisi, people, unionsEnregistrees(unions), CARTE.width);
     const decores = avecPastillesCoparents(avecRangsDesUnions(avecCartesInconnues(avecEdition, tree.inconnus)));
-    const noeudsGlisses = useGlissement(lecture ? decores : avecPoubelle(decores));
+    const noeudsGlisses = useGlissement(lecture ? decores : avecCorbeillesDoublons(avecPoubelle(decores), people));
     const noeudsAffiches = useTaillesConnues(noeudsGlisses);
     return (<div className="flex-1 min-w-0 flex flex-col">
             
             <div className="min-h-[72px] flex-none flex flex-wrap items-center gap-x-6 gap-y-2.5 py-3 px-7 border-b border-trait-leger bg-carte select-none">
                 <div className="flex flex-col gap-px min-w-0 flex-none max-w-[420px]">
                     <div className="font-display text-[28px] font-medium leading-none truncate">
-                        {famille ? `Famille ${nomLisible(famille)}` : 'Arbre'}
+                        {famille ? `Famille ${nomLisible(famille)}` : 'Famille …'}
                     </div>
                     <div className="text-xs text-encre-3">
                         {tree.totalPersonnes} individu{tree.totalPersonnes > 1 ? 's' : ''}
