@@ -44,7 +44,7 @@ beforeAll(async () => {
     arbre = (await une<{ id: string }>(db, `insert into arbres (nom, proprietaire) values ('Essai', $1) returning id`, [proprio])).id;
     await db.query(`insert into individus (arbre_id, prenom, nom, vivant) values ($1, 'Saisieenligne', 'Essaiville', false)`, [arbre]);
     await anonyme(db);
-    jeton = (await une<{ j: string }>(db, 'select jeton_porte_publique() as j')).j;
+    jeton = (await une<{ r: { jeton: string } }>(db, `select inscrire_visiteur(null, 'Essainom', 'Essaiprenom', 'essai@exemple.re', 'v1') as r`)).r.jeton; // le lien de la porte ne sort que de l'inscription (01/10)
 });
 
 describe('synchronisation PC → site', () => {

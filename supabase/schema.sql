@@ -1798,7 +1798,14 @@ revoke execute on all functions in schema public from public, anon, authenticate
 -- Ce lien est l'invitation « Porte du site » de l'arbre qui a le plus de fiches
 -- (le sien), créée une fois pour 365 jours (la règle des partages) ; expirée ou
 -- fermée par lui comme n'importe quel lien partagé, la porte en ouvre une neuve.
-create or replace function public.jeton_porte_publique()
+-- Bloc refait le 01/10 (audit de l'écosystème, point 2, son « CORRIGE ») : le lien ne
+-- sort QUE d'une inscription valide. Un anonyme ne peut plus le demander seul (l'ancienne
+-- jeton_porte_publique, ouverte au public, est retirée) ; porte_du_site est interne,
+-- appelée par inscrire_visiteur APRÈS le contrôle de l'inscription et du débit : un
+-- appel incomplet ne crée aucune invitation.
+drop function if exists public.jeton_porte_publique();
+
+create or replace function public.porte_du_site()
 returns text
 language plpgsql security definer set search_path = ''
 as $$
@@ -1823,6 +1830,7 @@ begin
     return v_jeton;
 end;
 $$;
+revoke execute on function public.porte_du_site() from public, anon, authenticated;
 
 -- Les inscrits de la porte (loi 2 : zéro anonymat). Même règle que les propositions
 -- (defaut_inscription : nom, prénom, e-mail ou téléphone valides) ; la version de la
@@ -1845,18 +1853,18 @@ create policy "lecture par lui" on public.inscriptions_acces for select to authe
 revoke all on public.inscriptions_acces from anon, public;
 grant select on public.inscriptions_acces to authenticated;
 
+-- p_jeton : le lien partagé reçu, ou null (adresse du site : le lien de la porte).
+-- Rend { ok, id, jeton } : le site entre avec ce jeton, et seulement après ce « ok ».
 create or replace function public.inscrire_visiteur(p_jeton text, p_nom text, p_prenom text, p_contact text, p_charte text)
 returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
 declare
-    v_ouverture jsonb := public.ouvrir_invitation(p_jeton, null);
     v_origine   text := public.origine_appel();
+    v_jeton     text := p_jeton;
+    v_ouverture jsonb;
     v_id        uuid;
 begin
-    if not (v_ouverture ->> 'ok')::boolean then
-        return v_ouverture;
-    end if;
     if public.defaut_inscription(jsonb_build_object('inscrit', jsonb_build_object('nom', p_nom, 'prenom', p_prenom)), p_contact) is not null
        or p_charte is null or char_length(btrim(p_charte)) not between 1 and 40 then
         return jsonb_build_object('ok', false, 'raison', 'inscription_requise');
@@ -1864,10 +1872,20 @@ begin
     if (select count(*) from public.inscriptions_acces where origine = v_origine and cree_le > now() - interval '1 hour') >= 10 then
         return jsonb_build_object('ok', false, 'raison', 'trop_d_envois');
     end if;
+    if v_jeton is null then
+        v_jeton := public.porte_du_site();
+        if v_jeton is null then
+            return jsonb_build_object('ok', false, 'raison', 'aucun_arbre');
+        end if;
+    end if;
+    v_ouverture := public.ouvrir_invitation(v_jeton, null);
+    if not (v_ouverture ->> 'ok')::boolean then
+        return v_ouverture;
+    end if;
     insert into public.inscriptions_acces (arbre_id, nom, prenom, contact, charte, origine)
         values ((v_ouverture ->> 'arbre_id')::uuid, btrim(p_nom), btrim(p_prenom), btrim(p_contact), btrim(p_charte), v_origine)
         returning id into v_id;
-    return jsonb_build_object('ok', true, 'id', v_id);
+    return jsonb_build_object('ok', true, 'id', v_id, 'jeton', v_jeton);
 end;
 $$;
 -- ---- FIN PORTE PUBLIQUE DU SITE ----
@@ -1904,7 +1922,7 @@ grant execute on function
     public.invitation_publique(text, text), public.arbre_public(text), public.soumettre_contribution(text, text, jsonb, text, text),
     public.patrimoine_public(text), public.patrimoine_recherche(text, text, text, boolean, text),
     public.patrimoine_individu(text, uuid), public.patrimoine_carte(text), public.verifier_export(text),
-    public.jeton_porte_publique(), public.inscrire_visiteur(text, text, text, text, text) -- porte publique du site (01/10)
+    public.inscrire_visiteur(text, text, text, text, text) -- porte publique du site (01/10 ; le lien ne sort que de l'inscription)
     to anon, authenticated;
 
 -- Politiques : lecture pour les membres, écriture pour propriétaire et éditeurs.

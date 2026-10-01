@@ -9,8 +9,9 @@
 // ses deux messages officiels mot pour mot ; l'avis sur les données (CNIL).
 // Ce bloc reprend les pièces existantes (src/inscription/ : validation, Charte,
 // messages — les mêmes que « Ajouter cette famille ») ; il ne les réécrit pas.
-// Envoi : inscrire_visiteur (la base refuse une inscription incomplète), sur le lien
-// de la porte (jeton_porte_publique) ou celui du lien partagé reçu. L'inscription est
+// Envoi : inscrire_visiteur (la base refuse une inscription incomplète), avec le lien
+// partagé reçu, ou sans lien (adresse du site) : la base rend alors le lien de la porte,
+// et seulement après une inscription valide (audit du 01/10, point 2). L'inscription est
 // gardée sur l'appareil : « Ajouter cette famille » ne la redemande pas.
 // Posé par Porte.tsx.
 
@@ -27,7 +28,8 @@ const bouton = 'min-h-11 px-4 rounded-[10px] border text-sm font-medium';
 
 const RAISONS: Record<string, string> = {
     inscription_requise: 'L’inscription est incomplète : nom, prénom, et un e-mail ou un téléphone valides.',
-    trop_d_envois: 'Trop d’inscriptions depuis cet appareil : réessayez dans une heure.',
+    aucun_arbre: 'Le site n’a pas encore d’arbre ouvert au public.',
+    trop_d_envois:'Trop d’inscriptions depuis cet appareil : réessayez dans une heure.',
     lien_invalide: 'Ce lien n’est pas (ou plus) valable.',
     lien_ferme: 'Ce lien a été fermé par l’administrateur.',
     pin_requis: 'Ce lien demande un code : utilisez le lien partagé reçu.',
@@ -69,22 +71,15 @@ export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton:
         setErreur(null);
         setEnvoi(true);
         try {
-            let j = jeton;
-            if (!j) {
-                const { data, error } = await supabase.rpc('jeton_porte_publique');
-                if (error) throw new Error(error.message);
-                j = (data as string | null) ?? null;
-                if (!j) return setErreur('Le site n’a pas encore d’arbre ouvert au public.');
-            }
             const { data, error } = await supabase.rpc('inscrire_visiteur', {
-                p_jeton: j, p_nom: r.inscrit.nom, p_prenom: r.inscrit.prenom, p_contact: r.inscrit.contact, p_charte: VERSION_CHARTE,
+                p_jeton: jeton, p_nom: r.inscrit.nom, p_prenom: r.inscrit.prenom, p_contact: r.inscrit.contact, p_charte: VERSION_CHARTE,
             });
             if (error) throw new Error(error.message);
-            const res = data as { ok: boolean; raison?: string };
-            if (!res.ok) return setErreur(RAISONS[res.raison ?? ''] ?? 'L’inscription n’a pas abouti.');
+            const res = data as { ok: boolean; raison?: string; jeton?: string };
+            if (!res.ok || !res.jeton) return setErreur(RAISONS[res.raison ?? ''] ?? 'L’inscription n’a pas abouti.');
             garderInscription(localStorage, r.inscrit);
             garderCharte(localStorage);
-            onEntree(j);
+            onEntree(res.jeton);
         } catch {
             setErreur('Le site ne répond pas pour l’instant : rien n’est perdu, réessayez dans un moment.');
         } finally {
