@@ -20,7 +20,7 @@
 --     ├─ familles_historiques  patronymes mis en valeur par un territoire
 --     ├─ invitations ─ contributions   partage public (QR, PIN, modération)
 --     └─ exports_certifies  empreintes SHA-256 des exports patrimoniaux
---   abonnements + limites_offres : gratuit / famille / institution
+--   abonnements + limites_offres : gratuit (les particuliers, sans limite) / institution (les professionnels) — loi 4
 --
 -- GARANTIES TENUES PAR LA BASE (aucun client ne peut les contourner)
 --   · un individu, un couple, un lien, un foyer, un document n'appartient
@@ -81,7 +81,7 @@ $$;
 -- ---------------------------------------------------------------------
 
 create table if not exists public.limites_offres (
-    offre                     text primary key check (offre in ('gratuit', 'famille', 'institution')),
+    offre                     text primary key check (offre in ('gratuit', 'institution')),   -- loi 4 : pas d'offre payante pour un particulier
     libelle                   text not null,
     max_individus             integer check (max_individus is null or max_individus > 0),                       -- null = illimité
     max_invitations_ouvertes  integer check (max_invitations_ouvertes is null or max_invitations_ouvertes > 0),
@@ -91,8 +91,7 @@ create table if not exists public.limites_offres (
 );
 
 insert into public.limites_offres (offre, libelle, max_individus, max_invitations_ouvertes, max_documents, patrimoine_public, export_certifie) values
-    ('gratuit',     'Gratuit',                     500,  1,    50,   false, false),
-    ('famille',     'Famille',                     null, null, null, false, false),
+    ('gratuit',     'Gratuit',                     null, null, null, false, false),   -- loi 4 (01/10) : sans limite
     ('institution', 'Licence collectivité',        null, null, null, true,  true)
 on conflict (offre) do update set
     libelle = excluded.libelle,
@@ -112,6 +111,17 @@ create table if not exists public.abonnements (
     fin_periode        timestamptz,
     maj_le             timestamptz not null default now()
 );
+
+-- ---- LOI 4 : GRATUIT POUR LES PARTICULIERS (01/10/2026, audit de l'écosystème, point 4) ----
+-- « Gratuit pour les particuliers, payant pour les professionnels seulement. » L'ancienne offre
+-- payante « Famille » (pour des particuliers) est retirée d'une base déjà en ligne : un abonnement
+-- qui la portait redevient « gratuit » (qui n'a plus aucune limite), puis l'offre et sa valeur
+-- dans le contrôle disparaissent. Rejouable.
+update public.abonnements set offre = 'gratuit', maj_le = now() where offre = 'famille';
+delete from public.limites_offres where offre = 'famille';
+alter table public.limites_offres drop constraint if exists limites_offres_offre_check;
+alter table public.limites_offres add constraint limites_offres_offre_check check (offre in ('gratuit', 'institution'));
+-- ---- FIN LOI 4 ----
 
 -- L'offre réellement en vigueur pour un utilisateur.
 create or replace function public.offre_de(p_utilisateur uuid)
@@ -435,7 +445,7 @@ begin
         if v_max is not null then
             select count(*) into v_nombre from public.individus i where i.arbre_id = new.arbre_id;
             if v_nombre >= v_max then
-                raise exception 'Limite de l''offre gratuite atteinte : % individus par arbre.', v_max
+                raise exception 'Limite atteinte : % individus par arbre.', v_max
                     using errcode = '23514', hint = 'OFFRE_LIMITE_INDIVIDUS';
             end if;
         end if;
@@ -877,7 +887,7 @@ begin
         if v_max is not null then
             select count(*) into v_nombre from public.documents d where d.arbre_id = new.arbre_id;
             if v_nombre >= v_max then
-                raise exception 'Limite de l''offre gratuite atteinte : % documents par arbre.', v_max
+                raise exception 'Limite atteinte : % documents par arbre.', v_max
                     using errcode = '23514', hint = 'OFFRE_LIMITE_DOCUMENTS';
             end if;
         end if;
@@ -971,7 +981,7 @@ begin
         select count(*) into v_ouvertes from public.invitations i
         where i.arbre_id = p_arbre and not i.ferme and i.expire_le > now();
         if v_ouvertes >= v_max then
-            raise exception 'L''offre gratuite permet % partage ouvert à la fois : fermez l''ancien ou passez à l''offre Famille.', v_max
+            raise exception 'Limite atteinte : % partage(s) ouvert(s) à la fois : fermez l''ancien.', v_max
                 using errcode = '23514', hint = 'OFFRE_LIMITE_INVITATIONS';
         end if;
     end if;
@@ -1008,7 +1018,7 @@ begin
             select count(*) into v_ouvertes from public.invitations i
             where i.arbre_id = new.arbre_id and not i.ferme and i.expire_le > now() and i.id <> new.id;
             if v_ouvertes >= v_max then
-                raise exception 'L''offre gratuite permet % partage ouvert à la fois : fermez l''autre ou passez à l''offre Famille.', v_max
+                raise exception 'Limite atteinte : % partage(s) ouvert(s) à la fois : fermez l''autre.', v_max
                     using errcode = '23514', hint = 'OFFRE_LIMITE_INVITATIONS';
             end if;
         end if;

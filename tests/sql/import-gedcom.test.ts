@@ -99,7 +99,7 @@ describe('import GEDCOM (fichier du bureau → arbre en ligne)', () => {
         await utilisateur(db, moi);
         const r = await importer(arbre, lireFichier(new TextEncoder().encode(GED)), ecrivainPglite(db));
         expect(r.personnes).toBe(3);
-        expect(r.arrete).toMatch(/Limite de l.offre gratuite/);
+        expect(r.arrete).toMatch(/Limite atteinte : 3 individus/); // le mécanisme reste (licences), sans offre payante (loi 4)
         expect([r.couples, r.liens]).toEqual([0, 0]);
     });
 

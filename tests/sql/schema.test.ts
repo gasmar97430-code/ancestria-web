@@ -31,7 +31,7 @@ async function union(a: string, b: string, extra: Record<string, unknown> = {}):
 async function nouvelArbre(nom: string): Promise<string> {
     return (await une<{ id: string }>(db, 'insert into arbres (nom) values ($1) returning id', [nom])).id;
 }
-async function licence(qui: string, offre: 'gratuit' | 'famille' | 'institution', finDans = '30 days'): Promise<void> {
+async function licence(qui: string, offre: 'gratuit' | 'institution', finDans = '30 days'): Promise<void> {
     await admin(db);
     await db.exec('set role service_role');
     await db.query(`insert into abonnements (utilisateur, offre, statut, fin_periode) values ($1, $2, 'actif', now() + $3::interval)
@@ -534,9 +534,10 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
         await expect(db.query('select pin_hash from invitations')).rejects.toThrow(/permission denied/);
         expect(await toutes(db, 'select avec_pin from invitations where arbre_id = $1', [arbre])).toEqual([{ avec_pin: true }]);
     });
-    it('offre gratuite : un seul partage ouvert ; PIN et durée contrôlés', async () => {
+    it('loi 4 : aucune limite de partages pour un particulier ; PIN et durée contrôlés', async () => {
         await utilisateur(db, proprietaire);
-        await expect(db.query(`select creer_invitation($1, 'Deuxième')`, [arbre])).rejects.toThrow(/1 partage ouvert/);
+        const deux = (await une<{ i: { jeton: string } }>(db, `select to_jsonb(creer_invitation($1, 'Deuxième')) as i`, [arbre])).i.jeton;
+        await db.query(`update invitations set ferme = true where jeton = $1`, [deux]); // les essais suivants gardent un seul lien ouvert
         await expect(db.query(`select creer_invitation($1, 'PIN court', '12')`, [arbre])).rejects.toThrow(/4 à 8 chiffres/);
         await expect(db.query(`select creer_invitation($1, 'PIN lettres', 'abcd')`, [arbre])).rejects.toThrow(/4 à 8 chiffres/);
         await expect(db.query(`select creer_invitation($1, 'Durée', null, 0)`, [arbre])).rejects.toThrow(/entre 1 et 365/);
@@ -678,17 +679,21 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
         await db.query(`select creer_invitation($1, 'Nouveau partage')`, [arbre]); // fermé → on peut en ouvrir un autre
     });
     it('rouvrir ou prolonger un partage respecte la même limite (pas de contournement)', async () => {
+        await admin(db);
+        await db.query(`update limites_offres set max_invitations_ouvertes = 1 where offre = 'gratuit'`); // limite d'essai : le mécanisme sert aux licences (loi 4 : aucune pour un particulier)
         await utilisateur(db, proprietaire);
         const ouvert = await toutes<{ id: string }>(db, 'select id from invitations where arbre_id = $1 and not ferme and expire_le > now()', [arbre]);
         expect(ouvert).toHaveLength(1);
         const ferme = await une<{ id: string }>(db, 'select id from invitations where arbre_id = $1 and ferme limit 1', [arbre]);
-        await expect(db.query('update invitations set ferme = false where id = $1', [ferme.id])).rejects.toThrow(/1 partage ouvert/);
+        await expect(db.query('update invitations set ferme = false where id = $1', [ferme.id])).rejects.toThrow(/1 partage\(s\) ouvert/);
         await expect(db.query(`update invitations set expire_le = now() + interval '2 years' where id = $1`, [ouvert[0].id])).rejects.toThrow(/365 jours/);
         // fermer l'ouvert, puis rouvrir l'ancien : permis
         await db.query('update invitations set ferme = true where id = $1', [ouvert[0].id]);
         await db.query('update invitations set ferme = false where id = $1', [ferme.id]);
         await db.query('update invitations set ferme = true where id = $1', [ferme.id]);
         await db.query('update invitations set ferme = false where id = $1', [ouvert[0].id]);
+        await admin(db);
+        await db.query(`update limites_offres set max_invitations_ouvertes = null where offre = 'gratuit'`);
     });
     it('un partage expiré se ferme tout seul', async () => {
         await admin(db);
@@ -711,10 +716,10 @@ describe('patrimoine : documents, publication, tourisme de racines', () => {
         await utilisateur(db, maire);
         commune = await nouvelArbre('Familles de Saint-Paul');
     });
-    it('offre gratuite : 50 documents au plus', async () => {
+    it('loi 4 : aucune limite de documents pour un particulier', async () => {
         await utilisateur(db, maire);
-        await db.query(`insert into documents (arbre_id, titre) select $1, 'Doc ' || g from generate_series(1, 50) g`, [commune]);
-        await expect(db.query(`insert into documents (arbre_id, titre) values ($1, 'Le 51e')`, [commune])).rejects.toThrow(/50 documents/);
+        await db.query(`insert into documents (arbre_id, titre) select $1, 'Doc ' || g from generate_series(1, 51) g`, [commune]);
+        expect((await une<{ n: number }>(db, 'select count(*)::int as n from documents where arbre_id = $1', [commune])).n).toBe(51);
         await db.query(`delete from documents where arbre_id = $1`, [commune]);
     });
     it('publication réservée à la licence collectivité, avec une adresse valide', async () => {
@@ -810,17 +815,28 @@ describe('tableau « mes arbres » (multi-arbres)', () => {
     });
 });
 
-describe('offres : gratuit / famille', () => {
-    it('500 individus au plus en gratuit ; le client ne s\'offre pas l\'abonnement ; l\'offre Famille lève la limite', async () => {
+describe('loi 4 : gratuit pour les particuliers, payant pour les professionnels seulement', () => {
+    it('l’offre des particuliers n’a aucune limite, et il n’existe aucune offre payante pour eux', async () => {
+        await admin(db);
+        expect(await toutes(db, 'select offre, max_individus, max_invitations_ouvertes, max_documents from limites_offres order by offre')).toEqual([
+            { offre: 'gratuit', max_individus: null, max_invitations_ouvertes: null, max_documents: null },
+            { offre: 'institution', max_individus: null, max_invitations_ouvertes: null, max_documents: null },
+        ]);
+        await db.exec('set role service_role');
+        await expect(db.query(`insert into abonnements (utilisateur, offre) values ($1, 'famille')`, [proprietaire])).rejects.toThrow();
+        await admin(db);
+    });
+    it('501 personnes dans un arbre gratuit ; le client ne s\'offre pas une licence', async () => {
         await utilisateur(db, proprietaire);
         const grand = await nouvelArbre('Grand arbre');
-        await db.query(`insert into individus (arbre_id, prenom) select $1, 'P' || g from generate_series(1, 500) g`, [grand]);
-        await expect(individu('Le 501e', {}, grand)).rejects.toThrow(/500 individus/);
-        expect((await une<{ e: Record<string, unknown> }>(db, 'select etat_offre($1) as e', [grand])).e).toMatchObject({ offre: 'gratuit', individus: 500, max_individus: 500 });
-        await expect(db.query(`insert into abonnements (utilisateur, offre) values ($1, 'famille')`, [proprietaire])).rejects.toThrow(/permission denied/);
-        await licence(proprietaire, 'famille');
-        await utilisateur(db, proprietaire);
-        await individu('Le 501e', {}, grand);
-        expect((await une<{ e: { offre: string } }>(db, 'select etat_offre($1) as e', [grand])).e.offre).toBe('famille');
+        await db.query(`insert into individus (arbre_id, prenom) select $1, 'P' || g from generate_series(1, 501) g`, [grand]);
+        expect((await une<{ e: Record<string, unknown> }>(db, 'select etat_offre($1) as e', [grand])).e).toMatchObject({ offre: 'gratuit', individus: 501, max_individus: null });
+        await expect(db.query(`insert into abonnements (utilisateur, offre) values ($1, 'institution')`, [proprietaire])).rejects.toThrow(/permission denied/);
+    });
+    it('aucune fonction de la base ne propose de payer à un particulier', async () => {
+        await admin(db);
+        const r = await db.query<{ proname: string }>(`select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+            where n.nspname = 'public' and (p.prosrc ilike '%offre famille%' or p.prosrc ilike '%offre gratuite%')`);
+        expect(r.rows).toEqual([]);
     });
 });
