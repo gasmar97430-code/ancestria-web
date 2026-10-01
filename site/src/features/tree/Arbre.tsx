@@ -112,9 +112,6 @@ const ArbreInterieur = () => {
     const affiche = useMemo(() => appliquerFocus(cercle && nets ? disposerFocus(nodes, nets, cercle, people, unions, relationsDePlacement(tree.relationships, unions, tree.unionChildren)) : nodes, edges, netsDeLaBranche(nets, dansLaBranche, unions), netsDeLaBranche(lignee, dansLaBranche, unions), lumineux), [nodes, edges, nets, lignee, lumineux, cercle, people, unions, tree.relationships, dansLaBranche]);
     const parentsChoisi = useMemo(() => (choisi === null ? [] : [...(liens.parentsDe.get(choisi) ?? [])].map((id) => `p-${id}`)), [choisi, liens]);
     const famille = useTitreFamille(people, nomDansArbre, choisi);
-    const doyen = useMemo(() => [...people]
-        .filter((p) => p.dateNaissance)
-        .sort((a, b) => +new Date(a.dateNaissance!) - +new Date(b.dateNaissance!))[0], [people]);
     const personne = people.find((p) => p.id === choisi) ?? null;
     useEffect(() => {
         if (choisi !== null && people.length > 0 && !people.some((p) => p.id === choisi))
@@ -135,7 +132,7 @@ const ArbreInterieur = () => {
                     <div className="text-xs text-encre-3">
                         {tree.totalPersonnes} individu{tree.totalPersonnes > 1 ? 's' : ''}
                         {generations > 0 && ` · ${generations} génération${generations > 1 ? 's' : ''}`}
-                        {doyen && ` · depuis ${doyen.prenom} ${nomLisible(doyen.nom)}`}
+                        
                         {tree.error && ` · arbre indisponible : ${tree.error}`}
                     </div>
                 </div>

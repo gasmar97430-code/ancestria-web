@@ -1,6 +1,8 @@
 
 
-.react-flow__node {
+.react-flow__node-carte,
+.react-flow__node-pastille,
+.react-flow__node-inconnu {
     z-index: 2 !important;
 }
 
