@@ -8,7 +8,7 @@ describe('schéma : chargement', () => {
         await db.exec(SCHEMA); // 2e passage : rejouable
         const t = await db.query<{ tablename: string }>(`select tablename from pg_tables where schemaname = 'public' order by 1`);
         expect(t.rows.map((r) => r.tablename)).toEqual([
-            'abonnements', 'arbres', 'contributions', 'document_individus', 'documents', 'essais_pin', 'exports_certifies',
+            'abonnements', 'arbres', 'contributions', 'corrections_proprietaire', 'document_individus', 'documents', 'essais_pin', 'exports_certifies',
             'familles_historiques', 'filiations', 'foyer_parents', 'foyers', 'individus', 'inscriptions_acces', 'invitations', 'limites_offres', 'membres', 'unions',
         ]);
         const sansRls = await db.query<{ relname: string }>(`select relname from pg_class c join pg_namespace n on n.oid = c.relnamespace

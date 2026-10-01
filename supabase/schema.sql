@@ -1908,6 +1908,225 @@ end;
 $$;
 -- ---- FIN PORTE PUBLIQUE DU SITE ----
 
+-- ---- ENVOI DU PC (01/10/2026) ----
+-- Sa demande : « une fois que j'aurai ajouté d'autres noms de famille, j'aurai juste à appuyer sur un
+-- bouton d'envoi vers le site ». L'appli du PC, connectée avec SON compte (mot de passe), envoie les
+-- données fabriquées comme la synchronisation (scripts/synchro-pc.mjs : défunts nommés, vivants en
+-- « Fiche protégée », repère « pc:<n°> »). Règles :
+--   · réservé au PROPRIÉTAIRE de l'arbre du site (aucune clé secrète sur le PC) ;
+--   · ajoute et met à jour ; ce qui a QUITTÉ le PC (fusion, suppression) est SIGNALÉ, et retiré
+--     seulement si p_retirer (son accord, demandé par l'appli) ;
+--   · ne touche jamais ce qui a été saisi en ligne (fiches sans repère « pc: ») ;
+--   · une ligne refusée par les règles de la base est sautée et listée ;
+--   · rend un compte rendu chiffré et les comptes EN LIGNE, que l'appli compare aux siens.
+create or replace function public.envoi_pc(p_donnees jsonb, p_retirer boolean default false)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_arbre    public.arbres;
+    v_ids      uuid[];
+    v_unions   uuid[];
+    r          jsonb;
+    v_avant    public.individus;
+    v_vivant   boolean;
+    n_aj       integer := 0;
+    n_mod      integer := 0;
+    n_caj      integer := 0;
+    n_laj      integer := 0;
+    n_ret      integer := 0;
+    n          integer;
+    v_refus    jsonb := '[]'::jsonb;
+    v_retirer  integer[];
+    v_lret     integer;
+    v_cret     integer;
+begin
+    if auth.uid() is null then
+        raise exception 'Connexion requise.' using errcode = '42501';
+    end if;
+    select a.* into v_arbre from public.invitations i join public.arbres a on a.id = i.arbre_id
+        where i.libelle = 'Porte du site' and not i.ferme and i.expire_le > now() order by i.cree_le limit 1;
+    if not found then
+        select a.* into v_arbre from public.arbres a left join public.individus i on i.arbre_id = a.id
+            group by a.id order by count(i.id) desc, a.cree_le limit 1;
+    end if;
+    if not found or v_arbre.proprietaire <> auth.uid() then
+        return jsonb_build_object('ok', false, 'raison', 'pas_proprietaire');
+    end if;
+    perform set_config('ancestria.envoi', 'oui', true); -- ses écritures ne sont pas des corrections du site (noter_correction)
+    if jsonb_typeof(p_donnees -> 'individus') <> 'array' then
+        return jsonb_build_object('ok', false, 'raison', 'donnees_invalides');
+    end if;
+    v_ids := array(select (x ->> 'id')::uuid from jsonb_array_elements(p_donnees -> 'individus') x);
+    v_unions := array(select (x ->> 'id')::uuid from jsonb_array_elements(coalesce(p_donnees -> 'unions', '[]')) x);
+
+    -- 1. les personnes : ajoutées ou mises à jour
+    for r in select * from jsonb_array_elements(p_donnees -> 'individus') loop
+        v_vivant := coalesce((r ->> 'protegee')::boolean, false);
+        begin
+            select * into v_avant from public.individus where id = (r ->> 'id')::uuid and arbre_id = v_arbre.id;
+            if not found then
+                insert into public.individus (id, arbre_id, prenom, nom, genre, naissance, naissance_precision, lieu_naissance,
+                                              deces, deces_precision, lieu_deces, vivant, notes)
+                values ((r ->> 'id')::uuid, v_arbre.id, r ->> 'prenom', coalesce(r ->> 'nom', ''), coalesce(r ->> 'genre', 'inconnu'),
+                        (r ->> 'naissance')::date, coalesce(r ->> 'naissance_precision', 'annee'), r ->> 'lieu_naissance',
+                        (r ->> 'deces')::date, coalesce(r ->> 'deces_precision', 'annee'), r ->> 'lieu_deces', v_vivant, 'pc:' || (r ->> 'pc'));
+                n_aj := n_aj + 1;
+            elsif (v_avant.prenom, v_avant.nom, v_avant.genre, v_avant.naissance, v_avant.naissance_precision, v_avant.lieu_naissance,
+                   v_avant.deces, v_avant.deces_precision, v_avant.lieu_deces, v_avant.vivant)
+                  is distinct from
+                  (r ->> 'prenom', coalesce(r ->> 'nom', ''), coalesce(r ->> 'genre', 'inconnu'), (r ->> 'naissance')::date,
+                   coalesce(r ->> 'naissance_precision', 'annee'), r ->> 'lieu_naissance', (r ->> 'deces')::date,
+                   coalesce(r ->> 'deces_precision', 'annee'), r ->> 'lieu_deces', v_vivant) then
+                update public.individus set prenom = r ->> 'prenom', nom = coalesce(r ->> 'nom', ''), genre = coalesce(r ->> 'genre', 'inconnu'),
+                    naissance = (r ->> 'naissance')::date, naissance_precision = coalesce(r ->> 'naissance_precision', 'annee'),
+                    lieu_naissance = r ->> 'lieu_naissance', deces = (r ->> 'deces')::date,
+                    deces_precision = coalesce(r ->> 'deces_precision', 'annee'), lieu_deces = r ->> 'lieu_deces', vivant = v_vivant
+                    where id = v_avant.id;
+                n_mod := n_mod + 1;
+            end if;
+        exception when others then
+            v_refus := v_refus || jsonb_build_array('personne pc:' || (r ->> 'pc') || ' — ' || sqlerrm);
+        end;
+    end loop;
+
+    -- 2. les couples
+    for r in select * from jsonb_array_elements(coalesce(p_donnees -> 'unions', '[]')) loop
+        begin
+            insert into public.unions (id, arbre_id, partenaire_a, partenaire_b, nature, statut, debut, fin)
+            values ((r ->> 'id')::uuid, v_arbre.id, (r ->> 'a')::uuid, (r ->> 'b')::uuid, r ->> 'nature', r ->> 'statut', (r ->> 'debut')::date, (r ->> 'fin')::date)
+            on conflict (id) do update set nature = excluded.nature, statut = excluded.statut, debut = excluded.debut, fin = excluded.fin;
+            get diagnostics n = row_count;
+            if not exists (select 1 from public.unions where id = (r ->> 'id')::uuid and cree_le < now()) then n_caj := n_caj + n; end if;
+        exception when others then
+            v_refus := v_refus || jsonb_build_array('couple ' || (r ->> 'id') || ' — ' || sqlerrm);
+        end;
+    end loop;
+
+    -- 3. les liens parent → enfant
+    for r in select * from jsonb_array_elements(coalesce(p_donnees -> 'filiations', '[]')) loop
+        begin
+            insert into public.filiations (arbre_id, parent_id, enfant_id, nature)
+            values (v_arbre.id, (r ->> 'parent')::uuid, (r ->> 'enfant')::uuid, coalesce(r ->> 'nature', 'biologique'))
+            on conflict (arbre_id, parent_id, enfant_id) do nothing;
+            get diagnostics n = row_count;
+            n_laj := n_laj + n;
+        exception when others then
+            v_refus := v_refus || jsonb_build_array('lien ' || (r ->> 'parent') || ' → ' || (r ->> 'enfant') || ' — ' || sqlerrm);
+        end;
+    end loop;
+
+    -- 4. ce qui a quitté le PC : signalé ; retiré seulement avec son accord
+    v_retirer := array(select substr(notes, 4)::integer from public.individus
+        where arbre_id = v_arbre.id and notes ~ '^pc:[0-9]+$' and id <> all (v_ids) order by 1);
+    select count(*) into v_lret from public.filiations f join public.individus p on p.id = f.parent_id join public.individus e on e.id = f.enfant_id
+        where f.arbre_id = v_arbre.id and p.notes like 'pc:%' and e.notes like 'pc:%' and p.id = any (v_ids) and e.id = any (v_ids)
+          and not exists (select 1 from jsonb_array_elements(coalesce(p_donnees -> 'filiations', '[]')) x
+                          where (x ->> 'parent')::uuid = f.parent_id and (x ->> 'enfant')::uuid = f.enfant_id);
+    select count(*) into v_cret from public.unions u join public.individus a on a.id = u.partenaire_a join public.individus b on b.id = u.partenaire_b
+        where u.arbre_id = v_arbre.id and a.notes like 'pc:%' and b.notes like 'pc:%' and u.id <> all (v_unions);
+    if p_retirer then
+        delete from public.individus where arbre_id = v_arbre.id and notes ~ '^pc:[0-9]+$' and id <> all (v_ids);
+        get diagnostics n_ret = row_count;
+        delete from public.filiations f using public.individus p, public.individus e
+            where f.arbre_id = v_arbre.id and p.id = f.parent_id and e.id = f.enfant_id and p.notes like 'pc:%' and e.notes like 'pc:%'
+              and not exists (select 1 from jsonb_array_elements(coalesce(p_donnees -> 'filiations', '[]')) x
+                              where (x ->> 'parent')::uuid = f.parent_id and (x ->> 'enfant')::uuid = f.enfant_id);
+        delete from public.unions u using public.individus a, public.individus b
+            where u.arbre_id = v_arbre.id and a.id = u.partenaire_a and b.id = u.partenaire_b and a.notes like 'pc:%' and b.notes like 'pc:%'
+              and u.id <> all (v_unions);
+    end if;
+
+    return jsonb_build_object('ok', true, 'ajoutees', n_aj, 'modifiees', n_mod, 'couples_ajoutes', n_caj, 'liens_ajoutes', n_laj,
+        'a_retirer', to_jsonb(v_retirer), 'liens_a_retirer', v_lret, 'couples_a_retirer', v_cret, 'retirees', n_ret, 'refus', v_refus,
+        'en_ligne', jsonb_build_object(
+            'personnes', (select count(*) from public.individus where arbre_id = v_arbre.id),
+            'couples', (select count(*) from public.unions where arbre_id = v_arbre.id),
+            'liens', (select count(*) from public.filiations where arbre_id = v_arbre.id)),
+        'quand', now());
+end;
+$$;
+revoke execute on function public.envoi_pc(jsonb, boolean) from public, anon;
+grant execute on function public.envoi_pc(jsonb, boolean) to authenticated;
+-- ---- FIN ENVOI DU PC ----
+
+-- ---- CORRECTIONS DU PROPRIÉTAIRE FAITES SUR LE SITE (01/10/2026) ----
+-- Sa demande : « sur le site j'aurai le droit de corriger si besoin, en me connectant avec un mot de
+-- passe ». Le PC est le maître : une correction faite en ligne sur une fiche venue du PC serait écrasée
+-- au prochain envoi. Le déclencheur la met donc de côté (seuls les champs changés) ; l'appli du PC la
+-- rapatrie à l'ouverture (corrections_a_rapatrier), l'applique à sa base avec une sauvegarde avant,
+-- puis la marque (marquer_rapatriees). Les écritures de envoi_pc ne comptent pas (drapeau ancestria.envoi).
+create table if not exists public.corrections_proprietaire (
+    id            uuid primary key default gen_random_uuid(),
+    arbre_id      uuid not null references public.arbres (id) on delete cascade,
+    individu_id   uuid not null,
+    pc            integer not null,
+    champs        jsonb not null,
+    auteur        uuid,
+    cree_le       timestamptz not null default now(),
+    rapatriee_le  timestamptz
+);
+alter table public.corrections_proprietaire enable row level security;
+revoke all on public.corrections_proprietaire from public, anon, authenticated;
+
+create or replace function public.noter_correction()
+returns trigger
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_champs jsonb := '{}'::jsonb;
+    v_avant  jsonb := to_jsonb(old);
+    v_apres  jsonb := to_jsonb(new);
+    c        text;
+begin
+    if coalesce(current_setting('ancestria.envoi', true), '') = 'oui' or auth.uid() is null then
+        return new;
+    end if;
+    foreach c in array array['prenom', 'nom', 'genre', 'naissance', 'naissance_precision', 'lieu_naissance',
+                             'deces', 'deces_precision', 'lieu_deces', 'vivant', 'profession', 'biographie'] loop
+        if (v_avant -> c) is distinct from (v_apres -> c) then
+            v_champs := v_champs || jsonb_build_object(c, v_apres -> c);
+        end if;
+    end loop;
+    if v_champs <> '{}'::jsonb then
+        insert into public.corrections_proprietaire (arbre_id, individu_id, pc, champs, auteur)
+        values (new.arbre_id, new.id, substr(old.notes, 4)::integer, v_champs, auth.uid());
+    end if;
+    return new;
+end;
+$$;
+revoke execute on function public.noter_correction() from public, anon, authenticated;
+drop trigger if exists noter_correction on public.individus;
+create trigger noter_correction after update on public.individus
+    for each row when (old.notes ~ '^pc:[0-9]+$') execute function public.noter_correction();
+
+create or replace function public.corrections_a_rapatrier()
+returns jsonb
+language sql stable security definer set search_path = ''
+as $$
+    select coalesce(jsonb_agg(jsonb_build_object('id', c.id, 'pc', c.pc, 'champs', c.champs, 'cree_le', c.cree_le) order by c.cree_le), '[]'::jsonb)
+    from public.corrections_proprietaire c join public.arbres a on a.id = c.arbre_id
+    where a.proprietaire = auth.uid() and c.rapatriee_le is null;
+$$;
+
+create or replace function public.marquer_rapatriees(p_ids uuid[])
+returns integer
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    n integer;
+begin
+    update public.corrections_proprietaire c set rapatriee_le = now()
+        from public.arbres a
+        where a.id = c.arbre_id and a.proprietaire = auth.uid() and c.id = any (p_ids) and c.rapatriee_le is null;
+    get diagnostics n = row_count;
+    return n;
+end;
+$$;
+revoke execute on function public.corrections_a_rapatrier(), public.marquer_rapatriees(uuid[]) from public, anon;
+grant execute on function public.corrections_a_rapatrier(), public.marquer_rapatriees(uuid[]) to authenticated;
+-- ---- FIN CORRECTIONS DU PROPRIÉTAIRE ----
+
 grant select on public.limites_offres to anon, authenticated;
 grant select on public.abonnements to authenticated;
 grant select, insert, update, delete on public.arbres to authenticated;
