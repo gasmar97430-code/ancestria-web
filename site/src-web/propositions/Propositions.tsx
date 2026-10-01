@@ -11,6 +11,7 @@
 // Porte posée dans l'emplacement vide du PC (src/lib/portesDuSite.tsx) pour le propriétaire
 // seulement : ligne d'appel dans Porte.tsx. Un visiteur ne la voit jamais.
 
+import { BoutonInscrits } from './Inscrits'; // les inscrits de la porte, pour lui seul (01/10)
 import { useCallback, useEffect, useState } from 'react';
 import { Tray, X } from '@phosphor-icons/react';
 import { supabase } from '../prise/supabase';
@@ -157,6 +158,7 @@ const Fenetre = ({ onFermer, onChange }: { onFermer: () => void; onChange: () =>
             <div className="w-[820px] max-w-full bg-carte border border-trait rounded-2xl shadow-carte flex flex-col max-h-[88vh]" onMouseDown={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-3 px-5 pt-4 pb-3 border-b border-trait-leger">
                     <h2 className="font-display text-2xl m-0 flex-1">Propositions des visiteurs</h2>
+                    <BoutonInscrits /> {/* Inscrits.tsx : les inscrits de la porte (01/10) */}
                     <button onClick={onFermer} title="Fermer" className="w-10 h-10 rounded-[10px] grid place-items-center text-encre-2 hover:bg-papier"><X /></button>
                 </div>
                 <div className="flex flex-wrap gap-2 px-5 pt-3" role="tablist">

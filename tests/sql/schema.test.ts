@@ -181,7 +181,7 @@ describe('dates absurdes (y compris corrigées après coup)', () => {
     it('parent né après l\'enfant : refusé, quelle que soit la nature du lien', async () => {
         await utilisateur(db, editeur);
         const enfant = await individu('Aîné', { naissance: '1950-03-01' });
-        const parent = await individu('Cadet', { naissance: '1960-03-01' });
+        const parent = await individu('Essaicadet', { naissance: '1960-03-01' });
         await expect(lien(parent, enfant)).rejects.toThrow(/né\(e\) après/);
         await expect(lien(parent, enfant, 'adoptive')).rejects.toThrow(/né\(e\) après/);
     });
@@ -368,8 +368,8 @@ describe('ajouts en une transaction (tout ou rien)', () => {
         const aine = await individu('Aîné');
         await lien(pere, aine);
         await lien(mere, aine, 'adoptive');
-        const cadet = (await une<{ id: string }>(db, `select ajouter_frere_soeur($1, $2, '{"prenom":"Cadet"}'::jsonb) as id`, [arbre, aine])).id;
-        expect(await toutes(db, 'select parent_id, nature from filiations where enfant_id = $1 order by nature', [cadet]))
+        const puine = (await une<{ id: string }>(db, `select ajouter_frere_soeur($1, $2, '{"prenom":"Essaicadet"}'::jsonb) as id`, [arbre, aine])).id;
+        expect(await toutes(db, 'select parent_id, nature from filiations where enfant_id = $1 order by nature', [puine]))
             .toEqual([{ parent_id: mere, nature: 'adoptive' }, { parent_id: pere, nature: 'biologique' }]);
         // sens inverse : la personne SANS parents est reliée à ceux de l'existant
         const seul = await individu('Sans parents');
