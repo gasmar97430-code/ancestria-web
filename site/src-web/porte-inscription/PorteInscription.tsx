@@ -16,6 +16,7 @@
 // Posé par Porte.tsx.
 
 import { useState, type ReactNode } from 'react';
+import { AppliTelephone } from '../appli-telephone/AppliTelephone'; // 03/10 : Ancestria sur le téléphone
 import { supabase } from '../prise/supabase';
 import { emailAdministrateur } from '../visiteur/visiteur';
 import { garderInscription, lireInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
@@ -94,6 +95,7 @@ export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton:
             <div className="w-full max-w-xl flex flex-col gap-5">
                 <h1 className="font-display text-[40px] leading-none font-medium m-0">Bienvenue</h1>
                 <p className="text-[15px] leading-relaxed text-encre m-0" data-message="accueil">{MESSAGE_ACCUEIL}</p>
+                <AppliTelephone />{/* appli-telephone/ : 03/10, installer sur le téléphone + faire connaître */}
                 <form className="flex flex-col gap-3 rounded-[14px] border border-trait bg-carte px-4 py-4 sm:px-5" noValidate onSubmit={(e) => { e.preventDefault(); void valider(); }} data-inscription="porte">
                     <h2 className="font-display text-2xl m-0">Inscription</h2>
                     <Libelle t="Nom" erreur={erreurs.nom}><input className={champ} value={s.nom} maxLength={80} autoComplete="family-name" onChange={(e) => setS({ ...s, nom: e.target.value })} data-champ="inscrit-nom" /></Libelle>
