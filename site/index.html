@@ -5,6 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ancestria</title>
+    <!-- Mode téléphone (03/10) : le site s'installe comme une appli (public/manifest.webmanifest, public/sw.js) -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#FBF8F1" />
+    <link rel="apple-touch-icon" href="/icone-192.png" />
+    <script>
+      if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register(document.querySelector('link[rel=manifest]').href.replace(/manifest\.webmanifest$/, 'sw.js')).catch(function () {}); });
+    </script>
     <script>
       // Adresse d'essai sur GitHub Pages (01/10) : un lien direct (/essai/c/<jeton>) arrive par la page 404,
       // qui le renvoie ici sous la forme ?/c/<jeton> (scripts/essai-404.mjs) ; on remet l'adresse d'origine.
