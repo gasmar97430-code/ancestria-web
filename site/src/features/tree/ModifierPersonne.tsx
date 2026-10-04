@@ -9,6 +9,8 @@ import { messageErreur } from './edition';
 import { ChampDate, dateEcrite } from './ChampDate';
 import { ConjointsExistants } from './ConjointsExistants';
 import { DeplacerEnfants } from './DeplacerEnfants';
+import { OrdreNaissanceFiche } from './OrdreNaissance';
+import { FusionnerAvec } from './FusionnerAvec';
 const jour = (d?: string | null) => (d ? d.slice(0, 10) : '');
 const statutDe = (p: AvecStatut) => (p.decede === true ? 'decede' : p.decede === false ? 'vivant' : 'inconnu');
 type Champs = {
@@ -200,6 +202,8 @@ export const ModifierPersonne = ({ personne, onFermer }: {
 
                 <ConjointsExistants personne={personne}/>
                 <DeplacerEnfants enfantsIds={[personne.id]} titre="Ses parents"/>
+                <OrdreNaissanceFiche personne={personne}/>
+                <FusionnerAvec personne={personne} onFini={onFermer}/>
                 <div className="filet"/>
                 {!confirmer ? (<button type="button" onClick={() => setConfirmer(true)} className="self-start text-[12.5px] hover:underline" style={{ color: 'var(--o-afrique)' }}>
                         Supprimer cette personne…

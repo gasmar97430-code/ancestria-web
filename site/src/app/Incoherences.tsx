@@ -37,7 +37,7 @@ const TITRES: Record<Genre, [
     string,
     string
 ]> = {
-    doublon: ['Personnes saisies deux fois ?', 'Même nom, même prénom. Comparez les deux fiches : fusionnez si c\'est la même personne, sinon dites-le, le cas ne reviendra plus.'],
+    doublon: ['Personnes saisies deux fois ?', 'Même nom, même prénom, ET un proche en commun ou la même année de naissance (un nom seul ne prouve rien : à La Réunion beaucoup de familles portent les mêmes noms). Comparez les deux fiches : fusionnez si c\'est la même personne, sinon dites-le, le cas ne reviendra plus.'],
     'un-seul-parent': ['Enfant rattaché à un seul parent', 'Le parent vit en couple : l\'autre membre du couple est-il aussi son parent ?'],
     'parents-sans-couple': ['Parents sans couple', 'L\'enfant a ses deux parents, mais aucun couple ne les relie : l\'arbre ne peut pas le ranger.'],
     'enfant-hors-couple': ['Enfant pas rangé sous le couple de ses parents', 'Ses deux parents et leur couple existent déjà : le ranger ne change aucun fait, seulement la place dans l\'arbre (et le compteur « + enfant » de la fiche).'],
@@ -46,6 +46,10 @@ const TITRES: Record<Genre, [
     'trois-parents': ['Plus de deux parents biologiques', 'Ouvrez la fiche : « Ses parents → Changer de parents… ».'],
 };
 const ORDRE: Genre[] = ['doublon', 'un-seul-parent', 'parents-sans-couple', 'trois-parents', 'dates', 'sexe-inconnu', 'enfant-hors-couple'];
+export const A_VERIFIER: Genre[] = ['doublon', 'trois-parents', 'dates'];
+const aVerifier = (c: {
+    genre: Genre;
+}) => A_VERIFIER.includes(c.genre);
 const useVersion = create<{
     v: number;
 }>(() => ({ v: 0 }));
@@ -66,7 +70,7 @@ export const BoutonIncoherences = ({ rail }: {
 }) => {
     const { r } = useIncoherences();
     const [ouverte, setOuverte] = useState(false);
-    const n = r ? r.incoherences.length : null;
+    const n = r ? r.incoherences.filter(aVerifier).length : null;
     return (<>
             {rail ? (<button onClick={() => setOuverte(true)} title={`Incohérences de l'arbre${n !== null ? ` (${n})` : ''}`} className="relative w-10 h-10 rounded-[10px] grid place-items-center text-[19px] text-encre-2 hover:bg-papier" data-porte="incoherences">
                     <Warning />
@@ -90,6 +94,7 @@ const Fenetre = ({ onFermer }: {
         garder: Id;
         retirer: Id;
     } | null>(null);
+    const [completerOuvert, setCompleterOuvert] = useState(false);
     useEffect(() => {
         const t = (e: KeyboardEvent) => e.key === 'Escape' && (comparer ? setComparer(null) : onFermer());
         window.addEventListener('keydown', t);
@@ -130,18 +135,7 @@ const Fenetre = ({ onFermer }: {
             await apiClient.post('/deplacer-enfants', { enfants, versUnionId: unionId });
     });
     const bouton = 'h-7 px-2.5 rounded-lg border text-[12px] disabled:opacity-40';
-    return (<div className="fixed inset-0 z-[60] bg-black/40 grid place-items-start justify-center pt-[6vh] px-4" onMouseDown={onFermer} data-bloc="incoherences">
-            <div className="w-[820px] max-w-full bg-carte border border-trait rounded-2xl shadow-carte flex flex-col max-h-[88vh]" onMouseDown={(e) => e.stopPropagation()}>
-                <div className="px-5 py-4 border-b border-trait-leger">
-                    <div className="font-display text-[26px] leading-none">Incohérences de l'arbre</div>
-                    <div className="text-[12.5px] text-encre-3 mt-1">Repérées automatiquement ; rien n'est corrigé sans votre clic. Une copie de sécurité de la base est faite avant chaque fusion et chaque rangement.</div>
-                </div>
-
-                {comparer ? (<Comparaison key={versionFusion()} garder={comparer.garder} retirer={comparer.retirer} onInverser={() => setComparer({ garder: comparer.retirer, retirer: comparer.garder })} onRetour={() => setComparer(null)} enCours={enCours} onFusionner={() => geste(() => apiClient.post('/fusion', comparer)).then(() => setComparer(null))} erreur={erreurGeste}/>) : (<div className="overflow-y-auto px-4 py-3 flex flex-col gap-5">
-                        {!r && !erreur && <div className="text-sm text-encre-3">Vérification…</div>}
-                        {erreur && <div className="text-sm" style={{ color: 'var(--o-afrique)' }}>{erreur}</div>}
-                        {r && r.incoherences.length === 0 && <div className="text-sm text-encre-2">Aucune incohérence repérée.</div>}
-                        {parGenre.map(([g, cas]) => (<section key={g} className="flex flex-col gap-2" data-genre={g}>
+    const rendre = (g: Genre, cas: Cas[]) => (<section key={g} className="flex flex-col gap-2" data-genre={g}>
                                 <div className="flex items-baseline gap-3">
                                     <div className="text-[15px] text-encre font-medium">{TITRES[g][0]} · {cas.length}</div>
                                     {g === 'enfant-hors-couple' && (<button disabled={enCours} onClick={() => toutRanger(cas)} className={`${bouton} border-sepia text-sepia-deep hover:bg-sepia-tint`} data-action="tout-ranger">
@@ -153,38 +147,38 @@ const Fenetre = ({ onFermer }: {
                                         <div className="text-encre-2">{c.texte}</div>
                                         <div className="flex flex-wrap items-center gap-2">
                                             {c.geste?.type === 'fusionner' && (<button onClick={() => setComparer({ garder: c.geste!.type === 'fusionner' ? (c.geste as {
-                            garder: Id;
-                        }).garder : 0, retirer: (c.geste as {
-                            retirer: Id;
-                        }).retirer })} className={`${bouton} border-sepia text-sepia-deep hover:bg-sepia-tint`} data-action="comparer">
+                    garder: Id;
+                }).garder : 0, retirer: (c.geste as {
+                    retirer: Id;
+                }).retirer })} className={`${bouton} border-sepia text-sepia-deep hover:bg-sepia-tint`} data-action="comparer">
                                                     Comparer et fusionner…
                                                 </button>)}
                                             {c.genre === 'un-seul-parent' && c.geste?.type === 'rattacher-au-couple' && (<button disabled={enCours} onClick={() => geste(() => ranger((c.geste as {
-                        enfantId: Id;
-                    }).enfantId, (c.geste as {
-                        unionId: Id;
-                    }).unionId))} className={`${bouton} border-sepia text-sepia-deep hover:bg-sepia-tint`} data-action="oui-parent">
+                enfantId: Id;
+            }).enfantId, (c.geste as {
+                unionId: Id;
+            }).unionId))} className={`${bouton} border-sepia text-sepia-deep hover:bg-sepia-tint`} data-action="oui-parent">
                                                     Oui, {qui(autreDuCouple((c.geste as {
-                        unionId: Id;
-                    }).unionId, c.personnes[1]))} est aussi son parent
+                unionId: Id;
+            }).unionId, c.personnes[1]))} est aussi son parent
                                                 </button>)}
                                             {c.genre === 'enfant-hors-couple' && c.geste?.type === 'rattacher-au-couple' && (<button disabled={enCours} onClick={() => geste(() => ranger((c.geste as {
-                        enfantId: Id;
-                    }).enfantId, (c.geste as {
-                        unionId: Id;
-                    }).unionId))} className={`${bouton} border-trait text-encre hover:bg-sepia-tint`} data-action="ranger">
+                enfantId: Id;
+            }).enfantId, (c.geste as {
+                unionId: Id;
+            }).unionId))} className={`${bouton} border-trait text-encre hover:bg-sepia-tint`} data-action="ranger">
                                                     Ranger sous le couple
                                                 </button>)}
                                             {c.geste?.type === 'creer-couple' && (<button disabled={enCours} onClick={() => geste(async () => {
-                            const g2 = c.geste as {
-                                a: Id;
-                                b: Id;
-                            };
-                            const u = await apiClient.post('/unions', { partner1Id: g2.a, partner2Id: g2.b });
-                            await ranger(c.personnes[0], (u.data as {
-                                id: Id;
-                            }).id);
-                        })} className={`${bouton} border-sepia text-sepia-deep hover:bg-sepia-tint`} data-action="creer-couple">
+                    const g2 = c.geste as {
+                        a: Id;
+                        b: Id;
+                    };
+                    const u = await apiClient.post('/unions', { partner1Id: g2.a, partner2Id: g2.b });
+                    await ranger(c.personnes[0], (u.data as {
+                        id: Id;
+                    }).id);
+                })} className={`${bouton} border-sepia text-sepia-deep hover:bg-sepia-tint`} data-action="creer-couple">
                                                     Créer leur couple et y ranger l'enfant
                                                 </button>)}
                                             {c.genre === 'sexe-inconnu' && (<>
@@ -199,7 +193,28 @@ const Fenetre = ({ onFermer }: {
                                                 </button>)}
                                         </div>
                                     </div>))}
-                            </section>))}
+                            </section>);
+    return (<div className="fixed inset-0 z-[60] bg-black/40 grid place-items-start justify-center pt-[6vh] px-4" onMouseDown={onFermer} data-bloc="incoherences">
+            <div className="w-[820px] max-w-full bg-carte border border-trait rounded-2xl shadow-carte flex flex-col max-h-[88vh]" onMouseDown={(e) => e.stopPropagation()}>
+                <div className="px-5 py-4 border-b border-trait-leger">
+                    <div className="font-display text-[26px] leading-none">Incohérences de l'arbre</div>
+                    <div className="text-[12.5px] text-encre-3 mt-1">Seulement ce qui se contredit vraiment (fiche peut-être saisie deux fois, dates impossibles, plus de deux parents). Rien n'est corrigé sans votre clic ; copie de sécurité avant chaque fusion.</div>
+                </div>
+
+                {comparer ? (<Comparaison key={versionFusion()} garder={comparer.garder} retirer={comparer.retirer} onInverser={() => setComparer({ garder: comparer.retirer, retirer: comparer.garder })} onRetour={() => setComparer(null)} enCours={enCours} onFusionner={() => geste(() => apiClient.post('/fusion', comparer)).then(() => setComparer(null))} erreur={erreurGeste}/>) : (<div className="overflow-y-auto px-4 py-3 flex flex-col gap-5">
+                        {!r && !erreur && <div className="text-sm text-encre-3">Vérification…</div>}
+                        {erreur && <div className="text-sm" style={{ color: 'var(--o-afrique)' }}>{erreur}</div>}
+                        {r && r.incoherences.filter(aVerifier).length === 0 && <div className="text-sm text-encre-2" data-aucune>Aucune incohérence : rien ne se contredit dans votre arbre.</div>}
+                        {parGenre.filter(([g]) => A_VERIFIER.includes(g)).map(([g, cas]) => rendre(g, cas))}
+                        {parGenre.some(([g]) => !A_VERIFIER.includes(g) && g !== 'enfant-hors-couple') && (<div className="flex flex-col gap-3 border-t border-trait-leger pt-3" data-bloc="a-completer" data-etat={completerOuvert ? 'ouvert' : 'ferme'}>
+                                <button type="button" onClick={() => setCompleterOuvert((o) => !o)} aria-expanded={completerOuvert} className="flex items-center gap-2 text-left text-[14px] text-encre-2 hover:text-encre" data-bouton="a-completer">
+                                    <span>{completerOuvert ? '▾' : '▸'}</span>
+                                    <span className="font-medium">À compléter</span>
+                                    <span className="text-encre-3">· {parGenre.filter(([g]) => !A_VERIFIER.includes(g) && g !== 'enfant-hors-couple').reduce((s, [, c]) => s + c.length, 0)}</span>
+                                    <span className="text-[12px] text-encre-3 font-normal">— pas des erreurs : des informations qui manquent, à remplir quand vous les connaissez</span>
+                                </button>
+                                {completerOuvert && parGenre.filter(([g]) => !A_VERIFIER.includes(g)).map(([g, cas]) => rendre(g, cas))}
+                            </div>)}
                         {erreurGeste && <div className="text-[12.5px]" style={{ color: 'var(--o-afrique)' }} data-erreur>{erreurGeste}</div>}
                     </div>)}
 
@@ -235,7 +250,7 @@ interface Fiche {
     decede: boolean | null;
     notes: string | null;
 }
-const Comparaison = ({ garder, retirer, onInverser, onRetour, onFusionner, enCours, erreur }: {
+export const Comparaison = ({ garder, retirer, onInverser, onRetour, onFusionner, enCours, erreur }: {
     garder: Id;
     retirer: Id;
     onInverser: () => void;

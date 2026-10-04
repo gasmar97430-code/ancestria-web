@@ -6,6 +6,7 @@ import { CARTE, DonneesCarte, periode } from '../graphe';
 import { MarqueStatut } from '../StatutVie';
 import { OrigineCarte } from '../Origines';
 import { PhotoCarte } from '../Photos';
+import { DatesOuRang } from '../OrdreNaissance';
 const poignee = { opacity: 0, width: 1, height: 1, border: 0, minWidth: 0, minHeight: 0 };
 export const PersonMemorialNode = memo(({ data }: {
     data: DonneesCarte;
@@ -38,7 +39,7 @@ export const PersonMemorialNode = memo(({ data }: {
                 <div className="font-display leading-[1.05] font-semibold truncate" style={{ fontSize: i.nom.length > 12 ? 14 : i.nom.length > 9 ? 16 : 18 }} title={nomLisible(i.nom)}>
                     {nomLisible(i.nom)}
                 </div>
-                <div className="font-mono text-[10px] text-encre-2 truncate">{periode(i) ?? 'dates inconnues'}</div>
+                <div className="font-mono text-[10px] text-encre-2 truncate">{periode(i) ?? <DatesOuRang id={i.id} genre={i.genre}/>}</div>
                 <div className="text-[10.5px] text-encre-3 flex gap-1.5 whitespace-nowrap">
                     {lieu && <span className="truncate max-w-[80px]">{lieu}</span>}
                     <span className="flex items-center gap-0.5" title="Pistes rattachées">

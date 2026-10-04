@@ -7,6 +7,7 @@ import { UnionPillNode } from './nodes/UnionPillNode';
 import type { DonneesUnion } from './graphe';
 import { RangsDansModifierUnion } from './OrdreUnions';
 import { messageErreur } from './edition';
+import { fixerPassage, LIBELLE_PASSAGE, useRelationsPassage } from './relationPassage';
 export const NATURES: [
     string,
     string
@@ -34,6 +35,7 @@ const Reglages = ({ unionId, fermer }: {
         if (b && !enHaut && b.bottom > window.innerHeight - 8)
             setEnHaut(true);
     }, [enHaut]);
+    const passage = useRelationsPassage((s) => s.ids.has(unionId));
     const union = (tree.unions as unknown as {
         id: number;
         typeUnion?: string;
@@ -69,9 +71,22 @@ const Reglages = ({ unionId, fermer }: {
             <div>
                 <div className="text-[10.5px] tracking-[.1em] uppercase text-encre-3 mb-1">Statut</div>
                 <div className="flex gap-1.5 flex-wrap">
-                    {STATUTS.map(([v, l]) => (<button key={v} type="button" disabled={envoi} className={puce((union.statut ?? 'Active') === v)} onClick={() => void fixer({ statut: v })} data-statut-union={v}>
+                    {STATUTS.map(([v, l]) => (<button key={v} type="button" disabled={envoi} className={puce(!passage && (union.statut ?? 'Active') === v)} onClick={() => void (async () => { if (passage)
+            await fixerPassage(unionId, false); await fixer({ statut: v }); })()} data-statut-union={v}>
                             {l}
                         </button>))}
+                    <button type="button" disabled={envoi} className={puce(passage)} onClick={() => void (async () => { setEnvoi(true); try {
+        await fixerPassage(unionId, !passage);
+        await tree.fetchTree();
+    }
+    catch (err) {
+        setErreur(messageErreur(err));
+    }
+    finally {
+        setEnvoi(false);
+    } })()} data-statut-union="Passage" title="Une relation de passage, un enfant ensemble, jamais en couple">
+                        {LIBELLE_PASSAGE}
+                    </button>
                 </div>
             </div>
             <RangsDansModifierUnion union={union as never}/>

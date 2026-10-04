@@ -20,6 +20,7 @@ import { PorteInscription, dejaInscrit } from './porte-inscription/PorteInscript
 import { ChoisirMotDePasse, ConnexionMotDePasse, useChoixDuMotDePasse } from './connexion-mot-de-passe/ConnexionMotDePasse'; // 01/10 : sa connexion par mot de passe // l'inscription avant d'entrer (01/10)
 import { useAssistantIA } from '../src/app/AssistantIA';
 import { TitreCentre } from '../src/app/TitreCentre'; // l'en-tête de l'appli, tel quel (01/10)
+import { poserCompteSite } from './compte-site/CompteSite'; // 04/10 : « Site en ligne » + « S'inscrire · Se connecter » sur sa page
 
 useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (IA locale) : pas dans le site en ligne
 
@@ -28,6 +29,7 @@ export function Porte({ children }: { children: ReactNode }) {
     const [, setTour] = useState(0); // relit l'adresse après l'inscription (/c/<jeton> posé sans recharger)
     const [administrateur, setAdministrateur] = useState(false);
     const [choixMotDePasse, finChoixMotDePasse] = useChoixDuMotDePasse(); // arrivée par le lien « choisir mon mot de passe »
+    useEffect(() => poserCompteSite(), []); // compte-site/CompteSite.tsx (après entree.tsx, qui éteint « Site en ligne »)
 
     useEffect(() => {
         void supabase.auth.getSession().then(({ data }) => setSession(data.session));

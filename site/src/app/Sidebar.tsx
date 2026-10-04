@@ -5,11 +5,13 @@ import { BoutonRecherche } from './RechercheGlobale';
 import { BoutonSuggestions } from './Suggestions';
 import { BoutonIncoherences } from './Incoherences';
 import { BoutonCarnet } from '../features/carnet/BoutonCarnet';
-import { Ecran, PALETTES, useAtelierStore } from '../store/useAtelierStore';
+import { Ecran, useAtelierStore } from '../store/useAtelierStore';
 import { usePatronymeStore } from '../store/usePatronymeStore';
 import { nomLisible, teinteDe } from '../lib/origins';
 import { useLectureSeule } from '../lib/lectureSeule';
-import { BoutonSiteEnLigne } from '../lib/boutonSiteEnLigne';
+import { BasDuMenuPartenaires } from '../lib/bannierePartenaires';
+import { DuMemeAuteur } from '../lib/duMemeAuteur';
+import { OutilsRepliables } from '../lib/outilsRepliables';
 import { PortesDuSite } from '../lib/portesDuSite';
 import { MONTRER_RECENTS } from '../features/home/accueilNeutre';
 const ENTREES: {
@@ -25,13 +27,14 @@ const ENTREES: {
 export const Sidebar = ({ rail }: {
     rail: boolean;
 }) => {
-    const { ecran, aller, recents, palette, changerPalette } = useAtelierStore();
+    const { ecran, aller, recents } = useAtelierStore();
     const { patronymes } = usePatronymeStore();
     const lecture = useLectureSeule((s) => s.actif);
     if (rail) {
         return (<aside className="w-16 flex-none bg-carte border-r border-trait-leger flex flex-col items-center py-[22px] gap-1.5">
                 
                 <span className="h-[18px]"/>
+                <DuMemeAuteur rail/>
                 {ENTREES.map(({ ecran: e, libelle, icone: I }) => (<button key={e} onClick={() => aller(e)} title={libelle} className={`w-10 h-10 rounded-[10px] grid place-items-center text-[19px] transition-colors ${ecran === e ? 'bg-sepia-tint text-sepia-deep' : 'text-encre-2 hover:bg-papier'}`}>
                         <I />
                     </button>))}
@@ -39,13 +42,13 @@ export const Sidebar = ({ rail }: {
                 {!lecture && <><BoutonSuggestions rail/>
                 <BoutonIncoherences rail/>
                 <PortesDuSite rail/>
-                <BoutonSiteEnLigne rail/>
                 <BoutonSauvegarde rail/>
                 <BoutonCarnet rail/></>}
             </aside>);
     }
-    return (<aside className="w-[272px] flex-none bg-carte border-r border-trait-leger px-[18px] py-7 flex flex-col gap-8">
+    return (<aside className="w-[272px] flex-none bg-carte border-r border-trait-leger px-[18px] py-7 flex flex-col gap-8 overflow-y-auto [scrollbar-width:none]">
             
+            <DuMemeAuteur rail={false}/>
             <nav className="flex flex-col gap-0.5">
                 {ENTREES.map(({ ecran: e, libelle, icone: I }) => (<button key={e} onClick={() => aller(e)} className={`flex gap-3 items-center h-10 px-3 rounded-[10px] text-sm transition-colors text-left ${ecran === e ? 'bg-sepia-tint text-sepia-deep font-medium' : 'text-encre-2 hover:bg-papier'}`}>
                         <I size={18}/>
@@ -56,7 +59,7 @@ export const Sidebar = ({ rail }: {
             {!lecture && <><BoutonSuggestions rail={false}/>
             <BoutonIncoherences rail={false}/>
             <PortesDuSite rail={false}/>
-            <BoutonSiteEnLigne rail={false}/></>}
+            </>}
 
             {MONTRER_RECENTS && recents.length > 0 && (<div className="flex flex-col gap-2.5 px-3">
                     <div className="text-[10.5px] tracking-[.12em] uppercase text-encre-3">Récemment consultés</div>
@@ -69,15 +72,8 @@ export const Sidebar = ({ rail }: {
             })}
                 </div>)}
 
-            {!lecture && <><BoutonSauvegarde rail={false}/>
-            <BoutonCarnet rail={false}/></>}
-            <div className="flex flex-col gap-2 p-3 border border-trait-leger rounded-xl text-xs text-encre-2">
-                <span className="text-encre font-medium">Palette</span>
-                <div className="flex bg-papier rounded-[10px] p-[3px] gap-0.5">
-                    {PALETTES.map((p) => (<button key={p.cle} onClick={() => changerPalette(p.cle)} className={`flex-1 h-7 rounded-lg text-[12px] font-medium transition-all ${palette === p.cle ? 'bg-blanc shadow-onglet text-encre' : 'text-encre-2'}`}>
-                            {p.libelle}
-                        </button>))}
-                </div>
-            </div>
+            {!lecture && <OutilsRepliables />}
+            
+            <BasDuMenuPartenaires />
         </aside>);
 };

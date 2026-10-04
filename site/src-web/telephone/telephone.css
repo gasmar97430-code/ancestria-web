@@ -28,16 +28,43 @@
        Depuis le 01/10 la signature est DANS l'en-tête du PC (TitreCentre.tsx, sa demande) :
        plus besoin d'aller la chercher dans le menu ; on la resserre pour le téléphone. */
     #root header[data-bloc='en-tete'] {
-        height: 50px;
+        height: auto;
+        min-height: 50px;
         grid-template-columns: auto 1fr;
+        grid-auto-rows: 50px auto;
         padding: 0 16px 0 12px;
+    }
+    /* 04/10, ses mots : « Site en ligne, S'inscrire doit être sur ma page en ligne » + la petite bannière Maison GAC :
+       au téléphone, une 2e ligne sous le titre (la palette reste au grand écran : pas la place). */
+    #root header[data-bloc='en-tete'] > [data-bloc='haut-a-droite'] {
+        grid-column: 1 / -1;
+        justify-self: stretch;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 4px 6px;
+        padding: 0 0 8px;
+    }
+    #root header[data-bloc='en-tete'] > [data-bloc='haut-a-droite'] [data-bloc='palette'] {
+        display: none;
+    }
+    /* Une seule ligne de plus : bannière sans sa 2e mention, globe seul pour « Site en ligne » (le nom reste en
+       info-bulle), « S'inscrire · Se connecter » en entier. */
+    #root header[data-bloc='en-tete'] > [data-bloc='haut-a-droite'] {
+        flex-wrap: nowrap;
+        gap: 2px;
+    }
+    #root header[data-bloc='en-tete'] [data-bloc='petite-banniere'] > span:nth-of-type(4),
+    #root header[data-bloc='en-tete'] [data-porte='site-en-ligne'] > span {
+        display: none;
+    }
+    #root header[data-bloc='en-tete'] [data-porte='site-en-ligne'] {
+        padding: 0 6px;
     }
     #root header[data-bloc='en-tete'] > button {
         font-size: 25px;
         justify-self: end;
-    }
-    #root header[data-bloc='en-tete'] > span:last-child {
-        display: none;
     }
     #root header[data-bloc='en-tete'] [data-signature='logo'] {
         width: 34px;
@@ -188,7 +215,7 @@
     #root aside.w-\[300px\] {
         width: 100%;
         flex: none;
-        max-height: 34dvh;
+        max-height: 32dvh; /* 04/10 : 34 → 32, l'en-tête a une 2e ligne (Site en ligne, S'inscrire, bannière) : l'arbre garde ses 150 px */
         padding: 14px 18px 18px;
         gap: 14px;
         border-left: 0;

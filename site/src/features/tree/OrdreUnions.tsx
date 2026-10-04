@@ -8,6 +8,7 @@ import type { Id } from '../../types';
 import { libelleUnion, type UnionComplete } from './graphe';
 import { messageErreur } from './edition';
 import { fixerRangsConjoints, rangsDesConjoints, type Rang } from './ordreConjoints';
+import { estDePassage, fixerPassage, LIBELLE_PASSAGE, STATUT_PASSAGE, useRelationsPassage } from './relationPassage';
 type U = UnionComplete & {
     statut?: string;
 };
@@ -41,21 +42,25 @@ const rafraichir = async () => {
     await useTreeStore.getState().fetchTree();
 };
 export const rangDe = (rangs: Rang[], individuId: Id, unionId: Id) => rangs.find((r) => r.individuId === individuId && r.unionId === unionId)?.rang ?? null;
-const unionsDe = (unions: U[], id: Id) => unions.filter((u) => u.partenaire1Id === id || u.partenaire2Id === id);
+const unionsDe = (unions: U[], id: Id) => unions.filter((u) => (u.partenaire1Id === id || u.partenaire2Id === id) && !estDePassage(u.id));
 export function useAvecOrdreUnions<T extends {
     unions: unknown[];
 }>(tree: T): T {
     const { rangs, charger } = useRangsUnions();
+    const passages = useRelationsPassage((s) => s.ids);
     const toutes = useTreeStore((s) => s.unions);
     const signature = `${toutes.length}:${toutes.reduce((m, u) => Math.max(m, u.id), 0)}`;
     useEffect(() => {
         void charger();
+        void useRelationsPassage.getState().charger();
     }, [signature, charger]);
     fixerRangsConjoints(rangsDesConjoints(rangs, toutes as U[]));
-    const unions = useMemo(() => [...tree.unions], [tree.unions, rangs]);
+    const unions = useMemo(() => [...tree.unions], [tree.unions, rangs, passages]);
     return { ...tree, unions };
 }
 export function precisionUnion(u: U, rangs: Rang[], unions: U[], vuDe: Id[]): string[] {
+    if (estDePassage(u.id))
+        return [LIBELLE_PASSAGE];
     const morceaux: string[] = [];
     const multiples = vuDe.filter((id) => unionsDe(unions, id).length >= 2);
     if (multiples.length > 0) {
@@ -77,6 +82,8 @@ export function avecRangsPastilles(nodes: Node[], unions: U[], rangs: Rang[]): N
         const avant = precisionUnion(u, rangs, unions, [u.partenaire1Id, u.partenaire2Id]);
         if (avant.length === 0)
             return n;
+        if (estDePassage(u.id))
+            return { ...n, data: { ...n.data, libelle: LIBELLE_PASSAGE } };
         const libelle = (n.data as {
             libelle: string;
         }).libelle;
@@ -93,6 +100,8 @@ export function trierParRang<T extends {
 }
 export function libelleUnionFiche(personneId: Id, u: U, sesUnions: U[]): string {
     const { rangs } = useRangsUnions.getState();
+    if (estDePassage(u.id))
+        return LIBELLE_PASSAGE;
     return [...precisionUnion(u, rangs, sesUnions, [personneId]), libelleUnion(u)].join(' · ');
 }
 type Choix = {
@@ -131,12 +140,15 @@ export const ChoixCouple = ({ personne }: {
             <div>
                 <label className={etiquette}>Ce couple</label>
                 <div className="flex flex-wrap gap-1.5">
-                    {STATUTS.map(([v, t]) => (<button key={v} type="button" className={puce(statut === v)} onClick={() => fixer({ statut: v })} data-statut={v}>
+                    {[...STATUTS, [STATUT_PASSAGE, 'De passage (jamais en couple)'] as [
+                string,
+                string
+            ]].map(([v, t]) => (<button key={v} type="button" className={puce(statut === v)} onClick={() => fixer({ statut: v })} data-statut={v} title={v === STATUT_PASSAGE ? 'Une relation de passage, un enfant ensemble, jamais en couple : les autres couples ne changent pas' : undefined}>
                             {t}
                         </button>))}
                 </div>
             </div>
-            {sesUnions.length > 0 && (<div>
+            {statut !== STATUT_PASSAGE && sesUnions.length > 0 && (<div>
                     <label className={etiquette}>C'est sa… union ({sesUnions.length} déjà enregistrée{sesUnions.length > 1 ? 's' : ''})</label>
                     <div className="flex flex-wrap gap-1.5">
                         {Array.from({ length: sesUnions.length + 1 }, (_, k) => k + 1).map((n) => (<button key={n} type="button" disabled={pris.has(n)} className={`${puce(rang === n)} disabled:opacity-35`} onClick={() => fixer({ rang: n })} data-rang={n} title={pris.has(n) ? `La ${ordinal(n)} union est déjà dite pour un autre couple` : undefined}>
@@ -147,7 +159,7 @@ export const ChoixCouple = ({ personne }: {
                         </button>
                     </div>
                 </div>)}
-            {sesUnions.filter((u) => (u.statut ?? 'Active') === 'Active').map((u) => (<div key={u.id}>
+            {statut !== STATUT_PASSAGE && sesUnions.filter((u) => (u.statut ?? 'Active') === 'Active').map((u) => (<div key={u.id}>
                     <label className={etiquette}>Et le couple avec {qui(conjointDe(u))} ?</label>
                     <div className="flex flex-wrap gap-1.5">
                         {STATUTS.map(([v, t]) => (<button key={v} type="button" className={puce((precedents[u.id] ?? 'Active') === v)} onClick={() => fixer({ precedents: { ...precedents, [u.id]: v } })} data-precedent={`${u.id}-${v}`}>
@@ -159,6 +171,12 @@ export const ChoixCouple = ({ personne }: {
 };
 export async function appliquerChoixCouple(personneId: Id, unionId: Id): Promise<void> {
     const { statut, rang, precedents, vider } = useChoixCouple.getState();
+    if (statut === STATUT_PASSAGE) {
+        await apiClient.patch(`/unions/${unionId}`, { type: 'Other' });
+        await fixerPassage(unionId, true);
+        vider();
+        return;
+    }
     if (statut !== 'Active')
         await apiClient.patch(`/unions/${unionId}`, { statut });
     if (rang !== null)

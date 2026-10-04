@@ -1,3 +1,4 @@
+import { BoutonEnvoiSite } from '../../lib/envoiSite';
 import { useEffect, useMemo, useState } from 'react';
 import ReactFlow, { Background, BackgroundVariant, Node, ReactFlowProvider, useReactFlow, useStore, } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -39,6 +40,7 @@ import { EnfantsAussiSiens } from './EnfantsAussiSiens';
 import { BoiteNoireArbre } from './BoiteNoireArbre';
 import { avecCartesInconnues, CarteInconnue, useAvecParentsInconnus } from './ParentInconnu';
 import { avecRangsDesUnions, useAvecOrdreUnions } from './OrdreUnions';
+import { sansDates, useAvecOrdreNaissance } from './OrdreNaissance';
 import { avecNaturesTraits, useAvecFamillesFormes } from './FamillesFormes';
 import { avecPoubelle, BoutonSupprimerCarte } from './SupprimerSurCarte';
 import { avecCorbeillesDoublons, BoutonCorbeilleDoublon } from './CorbeilleDoublons';
@@ -56,7 +58,7 @@ export const Arbre = () => (<ReactFlowProvider>
     </ReactFlowProvider>);
 const ArbreInterieur = () => {
     const [choisi, setChoisi] = useState<Id | null>(null);
-    const tree = useAvecFamillesFormes(useAvecOrdreUnions(useAvecParentsInconnus(useArbreFoyers(choisi))));
+    const tree = useAvecOrdreNaissance(useAvecFamillesFormes(useAvecOrdreUnions(useAvecParentsInconnus(useArbreFoyers(choisi)))));
     const { patronymes } = usePatronymeStore();
     const { nomDansArbre, traquer } = useAtelierStore();
     const people = tree.people as Individu[];
@@ -169,6 +171,7 @@ const ArbreInterieur = () => {
                     <UserPlus size={16}/>
                     Ajouter un membre
                 </button>}
+                <BoutonEnvoiSite />
             </div>
 
             <FilAriane people={people} choisi={choisi} onChoisir={setChoisi}/>
@@ -186,6 +189,7 @@ const ArbreInterieur = () => {
                             <CadrageFocus nodes={ancres} noyau={noyau} pivot={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi}/>
                             <LumiereDesParents choisi={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi} lumineux={lumineux} edges={affiche.edges}/>
                             <CouleursConjointes unions={unions} choisi={choisi}/>
+                            
                             <BoiteNoireArbre />
                             <GardeCamera />
                         </ReactFlow>)}
@@ -240,7 +244,7 @@ const PersonDrawer = ({ personne: p, origine, sources, onTraquer, }: {
                 <div className="font-display text-[34px] leading-none font-medium">
                     {p.prenom} {nomLisible(p.nom)}
                 </div>
-                <div className="font-mono text-xs text-encre-2">{[periode(p) ?? 'dates inconnues', lieu].filter(Boolean).join(' · ')}</div>
+                <div className="font-mono text-xs text-encre-2">{[periode(p) ?? sansDates(p.id, p.genre), lieu].filter(Boolean).join(' · ')}</div>
             </div>
             <div className="flex items-center gap-2 text-[12.5px] text-encre">
                 <span className="w-2 h-2 rounded-full" style={{ background: t.c }}/>

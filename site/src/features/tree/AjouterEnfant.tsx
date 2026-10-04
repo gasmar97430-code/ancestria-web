@@ -9,6 +9,7 @@ import { IndiceSexe, useSexePropose } from './IndiceSexe';
 import { ChoixAutreParent } from './ChoixAutreParent';
 import { ChampDate, datesLisibles } from './ChampDate';
 import { DoublonPossible } from './DoublonPossible';
+import { appliquerRangNaissance, ChoixRangNaissance } from './OrdreNaissance';
 export function nomPropose(parent: Individu, autre: Individu | null): string {
     if (parent.genre === 'M')
         return parent.nom;
@@ -59,6 +60,7 @@ export const AjouterEnfant = ({ parent, people, unions, unionInitiale, onFermer,
                 await apiClient.post('/relationships', { parentId: autre.id, childId: creeId });
             if (unionId !== null)
                 await apiClient.post('/union-children', { childId: creeId, unionId });
+            await appliquerRangNaissance(creeId);
             await fetchTree();
             if (encore) {
                 setAjoutes((a) => [...a, f.prenom]);
@@ -151,6 +153,8 @@ export const AjouterEnfant = ({ parent, people, unions, unionInitiale, onFermer,
                         <input className={champ} value={f.lieuNaissance} onChange={(e) => setF({ ...f, lieuNaissance: e.target.value })} placeholder="Saint-Pierre…"/>
                     </div>
                 </div>
+
+                {choix !== undefined && <ChoixRangNaissance parents={autre ? [parent.id, autre.id] : [parent.id]}/>}
 
                 {f.statut === 'decede' && (<div>
                         <label className={etiquette}>Décès le (si connu)</label>
