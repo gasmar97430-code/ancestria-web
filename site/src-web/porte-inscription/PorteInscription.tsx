@@ -17,6 +17,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { AppliTelephone } from '../appli-telephone/AppliTelephone'; // 03/10 : Ancestria sur le téléphone
+import { MentionAmazon } from '../../src/lib/bannierePartenaires'; // 04/10 : la phrase d'Amazon
 import { supabase } from '../prise/supabase';
 import { emailAdministrateur } from '../visiteur/visiteur';
 import { garderInscription, lireInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
@@ -129,6 +130,7 @@ export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton:
                 <button type="button" onClick={onAdministrateur} className="self-start text-xs text-encre-3 underline underline-offset-4 min-h-11" data-bouton="administrateur">
                     Administrateur : se connecter
                 </button>
+                <MentionAmazon />{/* 04/10 : phrase exigée par le contrat Amazon Partenaires (lib/bannierePartenaires.tsx), seulement si sa bannière est visible */}
             </div>
         </main>
         </div>

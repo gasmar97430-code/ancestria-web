@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BookOpen, Books, Cpu, Cube, Dna, IceCream, Lightning, Desktop, type Icon } from '@phosphor-icons/react';
 import { useLectureSeule } from './lectureSeule';
+import { useCompteDuSite } from './compteDuSite';
 type Partenaire = {
     cle: string;
     marque: string;
@@ -21,7 +22,8 @@ export const PARTENAIRES: Partenaire[] = [
     { cle: 'myheritage', marque: 'MyHeritage', titre: 'Découvrez vos origines par l’ADN', bouton: 'Découvrir', lien: 'https://www.myheritage.fr/', icone: Dna,
         fond: 'linear-gradient(110deg, #1d2b4f 0%, #2f4c8a 100%)', encre: '#ffffff', accent: '#f26722', encreBouton: '#ffffff' },
     { cle: 'amazon', marque: 'amazon.fr', titre: 'Livres d’histoire de La Réunion', bouton: 'Voir', lien: 'https://www.amazon.fr/s?k=histoire+de+la+r%C3%A9union', icone: Books,
-        fond: 'linear-gradient(110deg, #131921 0%, #232f3e 100%)', encre: '#ffffff', accent: '#ff9900', encreBouton: '#131921', enLigneSeulement: true },
+        fond: 'linear-gradient(110deg, #131921 0%, #232f3e 100%)', encre: '#ffffff', accent: '#ff9900', encreBouton: '#131921', enLigneSeulement: true,
+        affiliation: 'https://www.amazon.fr/s?k=histoire+de+la+r%C3%A9union&tag=ancestria-21' },
     { cle: 'ldlc', marque: 'LDLC', titre: 'Informatique et bureautique', bouton: 'Voir', lien: 'https://www.ldlc.com/', icone: Desktop,
         fond: 'linear-gradient(110deg, #0a2a5c 0%, #0f4a9c 100%)', encre: '#ffffff', accent: '#1ea7e1', encreBouton: '#ffffff' },
     { cle: 'bambulab', marque: 'Bambu Lab', titre: 'Imprimantes 3D, filaments et pièces', bouton: 'Découvrir', lien: 'https://bambulab.com/fr', icone: Cube,
@@ -34,12 +36,26 @@ export const PARTENAIRES: Partenaire[] = [
         fond: 'linear-gradient(110deg, #fff8ee 0%, #f6e3c8 100%)', encre: '#3b2412', accent: '#8a4b2a', encreBouton: '#ffffff' },
 ];
 export const MENTION = 'Liens partenaires · soutient le projet gratuit';
+export const MENTION_AMAZON = 'En tant que Partenaire Amazon, je réalise un bénéfice sur les achats remplissant les conditions requises.';
+export const useSurLeSite = () => {
+    const lecture = useLectureSeule((s) => s.actif);
+    const site = useCompteDuSite((s) => s.Composant !== null);
+    return lecture || site;
+};
+export const MentionAmazon = ({ className = '' }: {
+    className?: string;
+}) => {
+    const surLeSite = useSurLeSite();
+    if (!partenairesVisibles(PARTENAIRES, surLeSite).some((p) => p.cle === 'amazon'))
+        return null;
+    return <p className={`text-[10px] leading-snug text-encre-3 m-0 ${className}`} data-mention="amazon">{MENTION_AMAZON}</p>;
+};
 export const partenairesVisibles = (liste: Partenaire[], surLeSite: boolean) => liste.filter((p) => !!p.affiliation && (surLeSite || !p.enLigneSeulement));
 export const PLACES = {
     enTete: ['cewe'],
     colonneAccueil: ['myheritage', 'ldlc', 'bambulab', 'xtool', 'amazon'],
     basDuMenu: ['aliexpress'],
-    auDessusDuSite: ['maisongac'],
+    auDessusDuSite: ['maisongac', 'amazon'],
 } as const;
 const choisir = (cles: readonly string[], surLeSite: boolean) => {
     const visibles = partenairesVisibles(PARTENAIRES, surLeSite);
@@ -62,7 +78,7 @@ const Banniere = ({ p, largeur = 234 }: {
 };
 const Mention = () => <span className="text-[9.5px] leading-none text-encre-3 pl-1" data-mention="partenaires">{MENTION}</span>;
 export const BannierePartenaires = () => {
-    const surLeSite = useLectureSeule((s) => s.actif);
+    const surLeSite = useSurLeSite();
     const liste = choisir(PLACES.enTete, surLeSite);
     if (liste.length === 0)
         return null;
@@ -72,7 +88,7 @@ export const BannierePartenaires = () => {
         </div>);
 };
 export const PetiteBanniereEnTete = () => {
-    const surLeSite = useLectureSeule((s) => s.actif);
+    const surLeSite = useSurLeSite();
     const p = choisir(PLACES.auDessusDuSite, surLeSite)[0];
     if (!p)
         return null;
@@ -107,7 +123,7 @@ function useAccueilVide() {
     return vide;
 }
 export const ColonnePartenaires = () => {
-    const surLeSite = useLectureSeule((s) => s.actif);
+    const surLeSite = useSurLeSite();
     const vide = useAccueilVide();
     const liste = choisir(PLACES.colonneAccueil, surLeSite);
     if (!vide || liste.length === 0)
@@ -115,10 +131,11 @@ export const ColonnePartenaires = () => {
     return (<aside className="hidden min-[1150px]:flex w-[262px] flex-none flex-col gap-2.5 py-14 pr-7 overflow-y-auto" data-bloc="partenaires-colonne">
             {liste.map((p) => <Banniere key={p.cle} p={p}/>)}
             <Mention />
+            <MentionAmazon className="pl-1"/>
         </aside>);
 };
 export const BasDuMenuPartenaires = () => {
-    const surLeSite = useLectureSeule((s) => s.actif);
+    const surLeSite = useSurLeSite();
     const liste = choisir(PLACES.basDuMenu, surLeSite);
     if (liste.length === 0)
         return null;
