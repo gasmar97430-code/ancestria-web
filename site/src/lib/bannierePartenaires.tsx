@@ -31,7 +31,7 @@ export const PARTENAIRES: Partenaire[] = [
     { cle: 'aliexpress', marque: 'AliExpress', titre: 'Composants 3D, CNC et électronique', bouton: 'Voir', lien: 'https://fr.aliexpress.com/', icone: Cpu,
         fond: 'linear-gradient(110deg, #fff4ee 0%, #ffd9c7 100%)', encre: '#3a1406', accent: '#e62e04', encreBouton: '#ffffff' },
     { cle: 'maisongac', marque: 'Maison GAC', titre: 'Glacier artisanal', bouton: 'Découvrir', lien: 'https://maisongac.com/', icone: IceCream,
-        fond: 'linear-gradient(110deg, #fff8ee 0%, #f6e3c8 100%)', encre: '#3b2412', accent: '#8a4b2a', encreBouton: '#ffffff', affiliation: 'https://maisongac.com/pros/?utm_source=ancestria&utm_medium=banniere' },
+        fond: 'linear-gradient(110deg, #fff8ee 0%, #f6e3c8 100%)', encre: '#3b2412', accent: '#8a4b2a', encreBouton: '#ffffff' },
 ];
 export const MENTION = 'Liens partenaires · soutient le projet gratuit';
 export const partenairesVisibles = (liste: Partenaire[], surLeSite: boolean) => liste.filter((p) => !!p.affiliation && (surLeSite || !p.enLigneSeulement));
