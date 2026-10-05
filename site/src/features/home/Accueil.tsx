@@ -83,7 +83,7 @@ export const Accueil = () => {
                     Quel nom cherchez-vous&#8239;?
                 </h1>
                 <p className="text-[15px] text-encre-2">
-                    {patronymes.length} patronymes réunionnais, leurs origines et les notes du répertoire.
+                    {patronymes.length} patronymes déjà documentés — et chacun peut ajouter les siens.
                     
                 </p>
             </header>
