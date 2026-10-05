@@ -59,8 +59,8 @@ function Libelle({ t, children, erreur, aide }: { t: string; children: ReactNode
 
 /** jeton : celui du lien partagé reçu, ou null (adresse du site : le lien de la porte est demandé à la base). */
 export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton: string | null; onEntree: (jeton: string) => void; onAdministrateur: () => void }) {
-    const [s, setS] = useState<Inscrit>({ nom: '', prenom: '', contact: '' });
-    const [charte, setCharte] = useState(false);
+    const [s, setS] = useState<Inscrit>(() => { try { return lireInscription(localStorage) ?? { nom: '', prenom: '', contact: '' }; } catch { return { nom: '', prenom: '', contact: '' }; } }); // 05/10 : un inscrit retrouve son formulaire rempli
+    const [charte, setCharte] = useState(() => { try { return charteAcceptee(localStorage); } catch { return false; } });
     const [erreurs, setErreurs] = useState<ErreursInscription & { charte?: string }>({});
     const [erreur, setErreur] = useState<string | null>(null);
     const [envoi, setEnvoi] = useState(false);
