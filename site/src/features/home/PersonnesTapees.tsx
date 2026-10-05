@@ -5,6 +5,7 @@ import { allerALaPersonne } from '../../store/versPersonne';
 import { nomLisible } from '../../lib/origins';
 import type { Id } from '../../types';
 import { estChampAccueil } from './accueilNeutre';
+import { ouvrirSaisie, racineEnTete } from '../tree/ligneeDuNom';
 interface Trouvee {
     id: Id;
     prenom: string;
@@ -29,7 +30,7 @@ export const PersonnesTapees = ({ saisie, aucunNom }: {
         const t = setTimeout(() => {
             apiClient
                 .get('/recherche-globale', { params: { q: saisie } })
-                .then((r) => vivant && setGens(((r.data as {
+                .then((r) => vivant && setGens(racineEnTete(saisie, (r.data as {
                 personnes: Trouvee[];
             }).personnes ?? []).slice(0, 8)))
                 .catch(() => vivant && setGens([]));
@@ -46,11 +47,11 @@ export const PersonnesTapees = ({ saisie, aucunNom }: {
                 return;
             e.preventDefault();
             e.stopPropagation();
-            allerALaPersonne(gens[0].id, gens[0].nom);
+            ouvrirSaisie(saisie, gens[0]);
         };
         window.addEventListener('keydown', touche, true);
         return () => window.removeEventListener('keydown', touche, true);
-    }, [gens, actif]);
+    }, [gens, actif, saisie]);
     if (!actif || gens.length === 0)
         return null;
     return (<div className="bg-carte border border-trait-leger rounded-2xl p-1.5 flex flex-col" data-bloc="personnes-tapees">

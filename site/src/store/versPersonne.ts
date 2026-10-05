@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { create } from 'zustand';
 import type { Id } from '../types';
-import { normaliser } from '../lib/origins';
 import { useAtelierStore } from './useAtelierStore';
+import { useTreeStore } from './useTreeStore';
+import { poserLignee, racineDuNom } from '../features/tree/ligneeDuNom';
 const useEnAttente = create<{
     id: Id | null;
 }>(() => ({ id: null }));
@@ -20,6 +21,7 @@ export function useArriveeDansArbre(nomDansArbre: string | null, people: {
         if (enAttente !== null) {
             if (people.length === 0)
                 return;
+            poserLignee('', null);
             choisir(enAttente);
             dejaFait.current = nomDansArbre;
             useEnAttente.setState({ id: null });
@@ -27,8 +29,9 @@ export function useArriveeDansArbre(nomDansArbre: string | null, people: {
         }
         if (!nomDansArbre || dejaFait.current === nomDansArbre || people.length === 0)
             return;
-        const porteur = people.find((p) => normaliser(p.nom) === normaliser(nomDansArbre));
-        choisir(porteur ? porteur.id : null);
+        const racine = racineDuNom(nomDansArbre, useTreeStore.getState().people, useTreeStore.getState().relationships);
+        poserLignee(nomDansArbre, racine);
+        choisir(racine ? racine.id : null);
         dejaFait.current = nomDansArbre;
     }, [enAttente, nomDansArbre, people, choisir]);
 }

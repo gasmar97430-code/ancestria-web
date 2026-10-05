@@ -1,13 +1,17 @@
 import type { Id } from '../../types';
 let rangDe = new Map<Id, number>();
+let naissanceDe = new Map<Id, number>();
 export function fixerRangsNaissance(m: Map<Id, number>): void {
     rangDe = m;
+}
+export function fixerDatesNaissance(m: Map<Id, number>): void {
+    naissanceDe = m;
 }
 export function rangerFratries(rangees: number[][], groupes: Id[][], relationships: {
     parentId: Id;
     enfantId: Id;
 }[]): number[][] {
-    if (rangDe.size === 0)
+    if (rangDe.size === 0 && naissanceDe.size === 0)
         return rangees;
     const foyerDe = new Map<Id, number>();
     groupes.forEach((g, i) => g.forEach((id) => foyerDe.set(id, i)));
@@ -27,7 +31,10 @@ export function rangerFratries(rangees: number[][], groupes: Id[][], relationshi
     r.forEach((rangee, k) => rangee.forEach((f, i) => place.set(f, [k, i])));
     const deja = new Set<number>();
     for (const enfants of fratries.values()) {
-        const ranges = enfants.filter((e) => rangDe.has(e) && foyerDe.has(e));
+        const parRang = enfants.filter((e) => rangDe.has(e) && foyerDe.has(e));
+        const parDate = enfants.filter((e) => naissanceDe.has(e) && foyerDe.has(e));
+        const cleDe = parRang.length >= 2 ? (e: Id) => rangDe.get(e)! : (e: Id) => naissanceDe.get(e)!;
+        const ranges = parRang.length >= 2 ? parRang : parRang.length === 0 ? parDate : [];
         if (enfants.length < 2 || ranges.length < 2)
             continue;
         const parRangee = new Map<number, {
@@ -42,7 +49,7 @@ export function rangerFratries(rangees: number[][], groupes: Id[][], relationshi
             const l = parRangee.get(k) ?? [];
             if (l.some((x) => x.foyer === f))
                 continue;
-            l.push({ foyer: f, rang: rangDe.get(e)! });
+            l.push({ foyer: f, rang: cleDe(e) });
             parRangee.set(k, l);
         }
         for (const [k, l] of parRangee) {

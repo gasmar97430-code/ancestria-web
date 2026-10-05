@@ -26,6 +26,7 @@ import { avecPastillesCoparents, useArbreFoyers } from './foyers/useArbreFoyers'
 import { relationsDePlacement, unionsEnregistrees } from './foyers/normaliser';
 import { useGlissement } from './glissement';
 import { cercleResserre } from './cercleResserre';
+import { cercleSelonArrivee } from './ligneeDuNom';
 import { useArriveeDansArbre } from '../../store/versPersonne';
 import { ChoixBranche, lumineuxDeLaBranche, netsDeLaBranche, noyauDeLaBranche } from './ChoixBranche';
 import { FondArbreDeVie } from './FondArbreDeVie';
@@ -108,7 +109,7 @@ const ArbreInterieur = () => {
         visibles: (i) => !eteintes.has(origineDuNom(i.nom, index)) && (dansLaBranche === null || dansLaBranche.has(i.id)),
     }), [people, unions, tree.relationships, tree.unionChildren, index, choisi, sources, eteintes, dansLaBranche]);
     const liens = useMemo(() => liensDeFamille(unions, tree.relationships, tree.unionChildren), [unions, tree.relationships, tree.unionChildren]);
-    const cercle = useMemo(() => (choisi === null ? null : cercleResserre(choisi, liens)), [choisi, liens]);
+    const cercle = useMemo(() => (choisi === null ? null : cercleSelonArrivee(choisi, people, liens) ?? cercleResserre(choisi, liens)), [choisi, liens, people]);
     const nets = useMemo(() => (cercle ? noeudsNets(cercle, unions) : null), [cercle, unions]);
     const lignee = useMemo(() => (choisi === null ? undefined : noeudsLignee(choisi, liens, unions)), [choisi, liens, unions]);
     const noyau = useMemo(() => noyauDeLaBranche(choisi === null ? null : noyauDe(choisi, liens, unions), dansLaBranche, unions), [choisi, liens, unions, dansLaBranche]);

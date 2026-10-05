@@ -4,7 +4,7 @@ import apiClient from '../../api/client';
 import { useTreeStore } from '../../store/useTreeStore';
 import type { Id } from '../../types';
 import { messageErreur } from './edition';
-import { fixerRangsNaissance } from './rangementFratries';
+import { fixerDatesNaissance, fixerRangsNaissance } from './rangementFratries';
 type Rang = {
     individuId: Id;
     rang: number;
@@ -56,6 +56,10 @@ export function useAvecOrdreNaissance<T extends {
         void charger();
     }, [signature, charger]);
     fixerRangsNaissance(rangs);
+    fixerDatesNaissance(new Map((fiches as {
+        id: Id;
+        dateNaissance?: string | null;
+    }[]).filter((p) => p.dateNaissance).map((p) => [p.id, new Date(p.dateNaissance!).getTime()])));
     const unions = useMemo(() => [...tree.unions], [tree.unions, rangs]);
     return { ...tree, unions };
 }
