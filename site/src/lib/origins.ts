@@ -42,4 +42,4 @@ export const ORDRE_ORIGINES = [
 const NEUTRE: Teinte = TEINTES['Non documentee'];
 export const teinteDe = (origine: string | null | undefined): Teinte => (origine && TEINTES[origine]) || NEUTRE;
 export const normaliser = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().trim();
-export const nomLisible = (nom: string) => nom.toLowerCase().replace(/(^|[\s\-'’])(\p{L})/gu, (_, sep, l) => sep + l.toUpperCase());
+export const nomLisible = (nom: string) => nom.toLocaleUpperCase('fr-FR');

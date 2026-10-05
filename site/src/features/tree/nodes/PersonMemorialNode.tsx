@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import { FileText } from '@phosphor-icons/react';
 import { nomLisible, teinteDe } from '../../../lib/origins';
+import { TitreQuiTient } from '../../../lib/TitreQuiTient';
 import { CARTE, DonneesCarte, periode } from '../graphe';
 import { MarqueStatut } from '../StatutVie';
 import { OrigineCarte } from '../Origines';
@@ -36,9 +37,8 @@ export const PersonMemorialNode = memo(({ data }: {
                     {i.prenom}
                 </div>
                 
-                <div className="font-display leading-[1.05] font-semibold truncate" style={{ fontSize: i.nom.length > 12 ? 14 : i.nom.length > 9 ? 16 : 18 }} title={nomLisible(i.nom)}>
-                    {nomLisible(i.nom)}
-                </div>
+                
+                <TitreQuiTient texte={nomLisible(i.nom)} taille={i.nom.length > 12 ? 14 : i.nom.length > 9 ? 16 : 18} mini={10} entier className="font-display leading-[1.05] font-semibold truncate" title={nomLisible(i.nom)}/>
                 <div className="font-mono text-[10px] text-encre-2 truncate">{periode(i) ?? <DatesOuRang id={i.id} genre={i.genre}/>}</div>
                 <div className="text-[10.5px] text-encre-3 flex gap-1.5 whitespace-nowrap">
                     {lieu && <span className="truncate max-w-[80px]">{lieu}</span>}

@@ -212,8 +212,8 @@ export const FamilleFiche = ({ personne }: {
     return (<div className="flex flex-col gap-2.5" data-noeud="famille-fiche">
             {liens.length > 0 && (<details className="flex flex-col gap-1" data-bloc="natures">
                     <summary className={`${titre} cursor-pointer`}>Nature des liens ({liens.length})</summary>
-                    {liens.map((r) => (<label key={`${r.parentId}-${r.typeLien}`} className="flex items-center gap-2 text-[12.5px] text-encre mt-1">
-                            <span className="truncate flex-1">{nom(r.parentId)}</span>
+                    {liens.map((r) => (<label key={`${r.parentId}-${r.typeLien}`} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] text-encre mt-1">
+                            <span className="min-w-[6.5rem] flex-1 leading-tight">{nom(r.parentId)}</span>
                             <select className="h-7 bg-blanc border border-trait rounded-lg text-[12px] px-1 max-w-[170px]" value={natureDe(natures, r.parentId, personne.id, r.typeLien)} onChange={(e) => void agir(() => apiClient.put('/nature-filiation', { parentId: r.parentId, enfantId: personne.id, nature: e.target.value }))} data-nature={r.parentId}>
                                 {NATURES.map(([c, l]) => <option key={c} value={c}>{l}</option>)}
                             </select>

@@ -15,6 +15,7 @@ import { appliquerFocus, disposerFocus, liensDeFamille, noeudsLignee, noeudsLumi
 import { LienLumineux } from './LienLumineux';
 import { CouleursConjointes } from './CouleursConjointes';
 import { LumiereDesParents } from './LumiereDesParents';
+import { CouleursDesNoms } from './CouleursDesNoms';
 import { CadrageFocus } from './CadrageFocus';
 import { RechercheArbre } from './RechercheArbre';
 import { FilAriane } from './FilAriane';
@@ -189,6 +190,7 @@ const ArbreInterieur = () => {
                             <ZoomDock />
                             <CadrageFocus nodes={ancres} noyau={noyau} pivot={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi}/>
                             <LumiereDesParents choisi={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi} lumineux={lumineux} edges={affiche.edges}/>
+                            <CouleursDesNoms nodes={noeudsAffiches} edges={affiche.edges}/>
                             <CouleursConjointes unions={unions} choisi={choisi}/>
                             
                             <BoiteNoireArbre />

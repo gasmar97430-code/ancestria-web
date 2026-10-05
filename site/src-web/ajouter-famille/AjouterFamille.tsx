@@ -23,6 +23,7 @@ import { garderInscription, genreContact, lireInscription, oublierInscription, v
 import { ARTICLES_CHARTE, AVIS_COURT, ENGAGEMENT_CHARTE, TITRE_CHARTE, VERSION_CHARTE, avisDetaille, charteAcceptee, garderCharte } from '../../../src/inscription/charte';
 import { ADMINISTRATEUR, MESSAGE_ACCUEIL, MESSAGE_PRUDENCE, MOT_CORRECTION } from '../../../src/inscription/messages';
 import { MAX_PROCHES, validerFamille, type ErreursFamille, type ProcheSaisi, type SaisieFamille } from './proposition';
+import { propositionMiseEnForme } from '../forme-des-noms/formeDesNoms'; // 06/10 : la proposition en forme (nom MAJUSCULES, prénom Marie-Thérèse)
 
 const RAISONS: Record<string, string> = {
     lien_invalide: 'Ce lien n’est pas complet. Demandez-le à nouveau à la personne qui vous l’a envoyé.',
@@ -154,7 +155,7 @@ function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: 
         try {
             const { data, error } = await supabase.rpc('soumettre_contribution', {
                 p_jeton: jetonVisiteur(), p_pin: pin, p_contact: inscrit.contact, p_uid: uid,
-                p_contenu: { ...v.contenu, inscrit: { nom: inscrit.nom, prenom: inscrit.prenom, charte: VERSION_CHARTE } },
+                p_contenu: { ...propositionMiseEnForme(v.contenu), inscrit: { nom: inscrit.nom, prenom: inscrit.prenom, charte: VERSION_CHARTE } },
             });
             if (error) throw new Error(error.message);
             const r = data as { ok: boolean; raison?: string };

@@ -6,6 +6,7 @@ import { usePatronymeStore } from '../../store/usePatronymeStore';
 import { useAtelierStore } from '../../store/useAtelierStore';
 import { useTreeStore } from '../../store/useTreeStore';
 import { nomLisible, normaliser, ORDRE_ORIGINES, teinteDe } from '../../lib/origins';
+import { TitreQuiTient } from '../../lib/TitreQuiTient';
 import type { Patronyme } from '../../types';
 import { FamilleDuNom } from './FamilleDuNom';
 import { PersonnesTapees } from './PersonnesTapees';
@@ -181,9 +182,7 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
                 </span>
             </div>
 
-            <div className="font-display text-[72px] leading-[.95] font-medium tracking-[-.015em] break-words">
-                {nomLisible(p.nom)}
-            </div>
+            <TitreQuiTient texte={nomLisible(p.nom)} className="font-display leading-[.95] font-medium tracking-[-.015em] break-words"/>
             <FamilleDuNom nom={p.nom}/>
 
             <div className="flex items-stretch gap-0 px-5 py-[18px] bg-papier rounded-[14px]">

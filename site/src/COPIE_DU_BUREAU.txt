@@ -1,6 +1,6 @@
 Copie du frontend de l'Ancestria de bureau, SANS SES COMMENTAIRES (noms réels, dépôt public) — même code, même fonctionnement. Ne pas modifier ici : modifier au bureau puis recopier.
 Source : D:/lab/Projets/Ancestria/frontend/src
-Version du bureau : 7a7fa9c 05/10/2026 23:57
-Copiée le : 06/10/2026 00:00:42
-Fichiers : 144
+Version du bureau : 12d3d08 06/10/2026 01:49
+Copiée le : 06/10/2026 01:57:09
+Fichiers : 146
 Pièce propre au site, jamais écrasée : api/client.ts
