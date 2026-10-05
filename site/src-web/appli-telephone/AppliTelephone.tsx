@@ -34,7 +34,7 @@ export function modeInstallation(a: { autonome: boolean; inviteDisponible: boole
     return 'autre-telephone';
 }
 
-export const MESSAGE_PARTAGE = 'Ancestria — l’arbre de famille de La Réunion, gratuit pour tous. Retrouvez vos ancêtres et ajoutez votre famille :';
+export const MESSAGE_PARTAGE = 'Ancestria — l’arbre de famille universel, gratuit pour tous. Retrouvez le nom de vos ancêtres et ajoutez votre famille, d’où qu’elle vienne :';
 
 const adresse = () => `${window.location.origin}${import.meta.env.BASE_URL}`;
 

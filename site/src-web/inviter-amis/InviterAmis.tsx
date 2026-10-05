@@ -16,7 +16,7 @@ import { ShareNetwork, X } from '@phosphor-icons/react';
 
 export const BLOQUANTE = false;
 export const PETIT_MOT =
-    'Coucou ! Je viens de découvrir Ancestria, l’arbre de famille de La Réunion 🌳 C’est gratuit : on y retrouve nos ancêtres et l’origine de nos noms. Viens voir, et ajoute ta famille :';
+    'Coucou ! Je viens de découvrir Ancestria, l’arbre de famille universel 🌳 C’est gratuit : on y retrouve le nom de nos ancêtres, et chacun peut y ajouter sa famille, d’où qu’elle vienne. Viens voir :';
 const CLE = 'ancestria-amis-invites';
 const adresse = () => `${window.location.origin}${import.meta.env.BASE_URL}`;
 
@@ -59,7 +59,7 @@ export function InviterAmis() {
                 </div>
                 {merci ? (
                     <>
-                        <p className="text-[14px] text-encre-2 m-0">Plus nous sommes nombreux, plus l’arbre de La Réunion grandit. Bonne découverte !</p>
+                        <p className="text-[14px] text-encre-2 m-0">Plus nous sommes nombreux, plus le grand arbre grandit. Bonne découverte !</p>
                         <button type="button" onClick={() => setOuverte(false)} className="min-h-11 rounded-[10px] bg-sepia text-blanc text-[14px] font-medium" data-bouton="amis-fermer">Entrer dans Ancestria</button>
                     </>
                 ) : (
