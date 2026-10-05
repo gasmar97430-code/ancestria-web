@@ -11,6 +11,7 @@ import { ConjointsExistants } from './ConjointsExistants';
 import { DeplacerEnfants } from './DeplacerEnfants';
 import { OrdreNaissanceFiche } from './OrdreNaissance';
 import { FusionnerAvec } from './FusionnerAvec';
+import { DoublonAuRenommage } from './DoublonAuRenommage';
 const jour = (d?: string | null) => (d ? d.slice(0, 10) : '');
 const statutDe = (p: AvecStatut) => (p.decede === true ? 'decede' : p.decede === false ? 'vivant' : 'inconnu');
 type Champs = {
@@ -136,6 +137,7 @@ export const ModifierPersonne = ({ personne, onFermer }: {
                         {c('nom')}
                     </div>
                 </div>
+                <DoublonAuRenommage id={personne.id} avant={avant} prenom={f.prenom} nom={f.nom} genre={f.genre}/>
                 <div className="grid grid-cols-2 gap-3">
                     <div>
                         <label className={etiquette}>Sexe</label>
