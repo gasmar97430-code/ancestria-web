@@ -98,7 +98,7 @@ export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton:
                 <RetourAncestria inscrit={dejaInscrit()} />{/* RetourAncestria.tsx : 05/10, revenir à l'appli (inscrit seulement) */}
                 <h1 className="font-display text-[40px] leading-none font-medium m-0">Bienvenue</h1>
                 <p className="text-[15px] leading-relaxed text-encre m-0" data-message="accueil">{MESSAGE_ACCUEIL}</p>
-                <p className="text-[15px] leading-relaxed text-encre-2 m-0" data-message="soutien">{MESSAGE_SOUTIEN}</p>{/* 05/10 : son message de soutien, mot pour mot */}
+                <aside className="rounded-[12px] border border-trait-leger bg-carte px-4 py-3 text-[13.5px] leading-relaxed text-encre-2" data-message="soutien">{MESSAGE_SOUTIEN}</aside>{/* 05/10 : son message de soutien, mot pour mot ; 06/10 : dans un encart discret (sa demande) */}
                 <AppliTelephone />{/* appli-telephone/ : 03/10, installer sur le téléphone + faire connaître */}
                 <form className="flex flex-col gap-3 rounded-[14px] border border-trait bg-carte px-4 py-4 sm:px-5" noValidate onSubmit={(e) => { e.preventDefault(); void valider(); }} data-inscription="porte">
                     <h2 className="font-display text-2xl m-0">Inscription</h2>
