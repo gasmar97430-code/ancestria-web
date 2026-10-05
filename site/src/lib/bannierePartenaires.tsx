@@ -53,7 +53,7 @@ export const MentionAmazon = ({ className = '' }: {
 export const partenairesVisibles = (liste: Partenaire[], surLeSite: boolean) => liste.filter((p) => !!p.affiliation && (surLeSite || !p.enLigneSeulement));
 export const PLACES = {
     enTete: ['cewe'],
-    colonneAccueil: ['myheritage', 'ldlc', 'bambulab', 'xtool', 'amazon'],
+    colonneAccueil: ['myheritage', 'ldlc', 'bambulab', 'xtool'],
     basDuMenu: ['aliexpress'],
     auDessusDuSite: ['maisongac', 'amazon'],
 } as const;
