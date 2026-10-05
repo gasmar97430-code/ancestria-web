@@ -1,0 +1,66 @@
+/* ---- RESPONSIVE ---- */
+/* 06/10/2026, sa demande : « le site n'est pas responsive … il faut impérativement que le design s'adapte
+   parfaitement aux deux » (PC et téléphone). Relevé mesuré avant (D:/tmp/ancestria-banc-site/audit-responsive.mjs,
+   6 largeurs de 360 à 1920 px) : rien ne dépassait en largeur, MAIS
+   1. les champs (Nom, Prénom, e-mail…) étaient en 15 px : sur iPhone, un champ sous 16 px fait ZOOMER la page
+      quand on le touche (« forcer l'utilisateur à zoomer ») ;
+   2. les liens du haut (S'inscrire · Se connecter, Maison GAC, le titre) faisaient 24 px de haut : trop petits
+      pour un doigt (il en faut ~44) ;
+   3. la signature en 9 px sur téléphone ;
+   4. sur grand écran, la colonne d'inscription restait à 576 px.
+   Nœud : un seul fichier, appelé par UNE ligne dans site/index.html. Le supprimer = le site d'avant.
+   Rien n'est retiré ni déplacé : seulement des tailles. */
+
+/* 1. Écran tactile : aucun champ de saisie sous 16 px (sinon l'iPhone zoome). Les champs déjà plus grands
+      (recherche de l'Accueil 24 px, champs en 17 px ou plus) gardent leur taille. */
+@media (hover: none) and (pointer: coarse) {
+    input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='file']):not([data-champ='accueil']):not([class*='text-[17px]']):not([class*='text-lg']):not([class*='text-xl']):not([class*='text-2xl']):not([class*='text-3xl']),
+    select:not([class*='text-lg']),
+    textarea:not([class*='text-lg']) {
+        font-size: 16px !important;
+    }
+}
+
+/* 2. Écran tactile : la zone qu'on touche s'agrandit SANS changer la mise en page (une couche invisible
+      autour du lien), pour les petits liens et boutons de l'en-tête. 6 px en haut et en bas : les deux rangées
+      de l'en-tête du téléphone ne sont qu'à 12 px l'une de l'autre (à 10 px, les zones se chevauchaient).
+      La petite bannière coupe ce qui dépasse (son reflet animé) : sa zone reste la sienne. */
+@media (hover: none) and (pointer: coarse) {
+    header a,
+    header button {
+        position: relative;
+    }
+    header a::after,
+    header button::after {
+        content: '';
+        position: absolute;
+        inset: -6px -4px;
+    }
+}
+
+/* 3. Téléphone : la signature passe de 9 à 10 px (lisible sans la grossir) — même seuil et même cible que
+      src-web/telephone/telephone.css, qui la mettait à 9 px. */
+@media (max-width: 760px) {
+    #root header[data-bloc='en-tete'] [data-bloc='signature'] > span:last-child {
+        font-size: 10px !important;
+    }
+}
+
+/* 4. PC : la colonne d'inscription était centrée entre la colonne d'icônes (64 px à gauche) et une marge de
+      32 px à droite, donc 16 px à droite du titre « Ancestria ». Même marge des deux côtés : centrée sur la page. */
+@media (min-width: 640px) {
+    main:has([data-message='accueil']) {
+        padding-right: 64px;
+    }
+}
+
+/* 5. Grand écran : la colonne d'inscription s'élargit un peu et le texte suit, toujours centrée. */
+@media (min-width: 1440px) {
+    .max-w-xl:has([data-message='accueil']) {
+        max-width: 40rem;
+    }
+    .max-w-xl:has([data-message='accueil']) [data-message='accueil'] {
+        font-size: 16px;
+    }
+}
+/* ---- FIN RESPONSIVE ---- */
