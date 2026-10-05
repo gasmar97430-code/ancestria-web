@@ -15,6 +15,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { adressePublique, supabase } from '../prise/supabase';
 import { TitreCentre } from '../../src/app/TitreCentre';
+import { ChampMotDePasse } from '../../src/lib/ChampMotDePasse'; // 05/10 : l'œil du mot de passe (copié du PC)
 
 const champ = 'h-11 px-3 rounded-[10px] bg-blanc border border-trait text-encre outline-none focus:border-sepia';
 const bouton = 'h-11 rounded-[10px] border border-sepia text-sepia-deep text-sm font-medium hover:bg-sepia-tint disabled:opacity-60';
@@ -84,7 +85,7 @@ export function ConnexionMotDePasse({ onRetour }: { onRetour: () => void }) {
                     <label className="text-sm text-encre-2" htmlFor="courriel">Votre adresse e-mail</label>
                     <input id="courriel" type="email" autoComplete="email" value={email} onChange={(ev) => setEmail(ev.target.value)} className={champ} />
                     <label className="text-sm text-encre-2" htmlFor="mot-de-passe">Votre mot de passe</label>
-                    <input id="mot-de-passe" type="password" autoComplete="current-password" value={mdp} onChange={(ev) => setMdp(ev.target.value)} className={champ} />
+                    <ChampMotDePasse id="mot-de-passe" autoComplete="current-password" value={mdp} onChange={(ev) => setMdp(ev.target.value)} className={champ} />
                     <Erreur t={erreur} />
                     <button type="submit" disabled={etat === 'envoi'} className={bouton} data-bouton="se-connecter">{etat === 'envoi' ? 'Un instant…' : 'Se connecter'}</button>
                     <button type="button" onClick={() => void recevoirLien()} disabled={etat === 'envoi'} className="self-start text-xs text-encre-2 underline underline-offset-4 min-h-11" data-bouton="recevoir-lien">
@@ -122,9 +123,9 @@ export function ChoisirMotDePasse({ onFini }: { onFini: () => void }) {
             ) : (
                 <form className="flex flex-col gap-3" onSubmit={(ev) => { ev.preventDefault(); void enregistrer(); }} noValidate>
                     <label className="text-sm text-encre-2" htmlFor="nouveau-mdp">Nouveau mot de passe ({LONGUEUR_MIN} caractères au moins)</label>
-                    <input id="nouveau-mdp" type="password" autoComplete="new-password" value={mdp} onChange={(ev) => setMdp(ev.target.value)} className={champ} />
+                    <ChampMotDePasse id="nouveau-mdp" autoComplete="new-password" value={mdp} onChange={(ev) => setMdp(ev.target.value)} className={champ} />
                     <label className="text-sm text-encre-2" htmlFor="nouveau-mdp-2">Le même, une deuxième fois</label>
-                    <input id="nouveau-mdp-2" type="password" autoComplete="new-password" value={mdp2} onChange={(ev) => setMdp2(ev.target.value)} className={champ} />
+                    <ChampMotDePasse id="nouveau-mdp-2" autoComplete="new-password" value={mdp2} onChange={(ev) => setMdp2(ev.target.value)} className={champ} />
                     <Erreur t={erreur} />
                     <button type="submit" disabled={etat === 'envoi'} className={bouton} data-bouton="enregistrer-mdp">{etat === 'envoi' ? 'Un instant…' : 'Enregistrer mon mot de passe'}</button>
                 </form>

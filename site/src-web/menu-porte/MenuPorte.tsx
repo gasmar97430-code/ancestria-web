@@ -10,7 +10,7 @@
 // Posé par UNE ligne dans Porte.tsx (autour de <PorteInscription/>).
 
 import { useState, type ReactNode } from 'react';
-import { Binoculars, Books, HouseSimple, TreeStructure } from '@phosphor-icons/react';
+import { HouseSimple, TreeStructure } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
 import { useAtelierStore, type Ecran } from '../../src/store/useAtelierStore';
 import { jetonVisiteur } from '../visiteur/visiteur';
@@ -20,8 +20,7 @@ import { dejaInscrit } from '../porte-inscription/PorteInscription';
 const ENTREES: { ecran: Ecran; libelle: string; icone: Icon }[] = [
     { ecran: 'accueil', libelle: 'Accueil', icone: HouseSimple },
     { ecran: 'arbre', libelle: 'Arbre', icone: TreeStructure },
-    { ecran: 'traque', libelle: 'Traque des Noms', icone: Binoculars },
-    { ecran: 'sources', libelle: 'Sources', icone: Books },
+    // 05/10 : Traque des Noms et Sources retirés du menu (sa demande), comme dans l'appli.
 ];
 
 export const MSG_PAS_INSCRIT = 'Inscrivez-vous ici, c’est gratuit : l’Accueil s’ouvre juste après.';

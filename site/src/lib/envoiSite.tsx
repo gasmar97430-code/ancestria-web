@@ -3,6 +3,7 @@ import { CloudArrowUp, X } from '@phosphor-icons/react';
 import apiClient from '../api/client';
 import { create } from 'zustand';
 import { useLectureSeule } from './lectureSeule';
+import { ChampMotDePasse } from './ChampMotDePasse';
 type Etat = {
     connecte: boolean;
     email: string | null;
@@ -159,7 +160,7 @@ export function Fenetre({ etat, rapatrie, onFermer, relire }: {
                         </section>
                         <form className="flex flex-col gap-2 rounded-[12px] border border-trait-leger px-4 py-3" onSubmit={(e) => { e.preventDefault(); void connexion(); }} noValidate data-etape="se-connecter">
                             <h3 className="font-display text-xl text-encre m-0">2. J’ai mon mot de passe : me connecter</h3>
-                            <input id="site-mdp" type="password" autoComplete="current-password" placeholder="Votre mot de passe" value={mdp} onChange={(e) => setMdp(e.target.value)} className={champ}/>
+                            <ChampMotDePasse id="site-mdp" autoComplete="current-password" placeholder="Votre mot de passe" value={mdp} onChange={(e) => setMdp(e.target.value)} className={champ}/>
                             <button type="submit" disabled={occupe || !email || !mdp} className={`${boutonBord} self-start`} data-bouton="site-connexion">Se connecter</button>
                         </form>
                     </div>) : (<div className="flex flex-col gap-3">

@@ -11,6 +11,7 @@
 // Gratuit : aucun store, aucun paiement. Ligne d'appel : porte-inscription/PorteInscription.tsx.
 
 import { useEffect, useState } from 'react';
+import { CONSIGNE_COLLER, partagerAncestria } from '../partage/partager'; // 05/10 : partage fluide
 
 type Invite = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }> };
 
@@ -36,7 +37,6 @@ export function modeInstallation(a: { autonome: boolean; inviteDisponible: boole
 
 export const MESSAGE_PARTAGE = 'Ancestria — l’arbre de famille universel, gratuit pour tous. Retrouvez le nom de vos ancêtres et ajoutez votre famille, d’où qu’elle vienne :';
 
-const adresse = () => `${window.location.origin}${import.meta.env.BASE_URL}`;
 
 export function AppliTelephone() {
     const [, setTour] = useState(0);
@@ -68,11 +68,9 @@ export function AppliTelephone() {
     };
 
     const partager = async () => {
-        const url = adresse();
         try {
-            if (navigator.share) { await navigator.share({ title: 'Ancestria', text: MESSAGE_PARTAGE, url }); return; }
-            await navigator.clipboard.writeText(`${MESSAGE_PARTAGE} ${url}`);
-            setMessage('Lien copié : collez-le dans un message (WhatsApp, Facebook, SMS…).');
+            const r = await partagerAncestria(MESSAGE_PARTAGE); // partage/partager.ts : 05/10, message copié + carte de partage
+            setMessage(r.copie ? CONSIGNE_COLLER : 'Partage ouvert.');
         } catch {
             // partage annulé par la personne : rien à dire
         }

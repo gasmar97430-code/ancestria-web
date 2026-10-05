@@ -7,7 +7,11 @@ export const ADMINISTRATEUR = 'M’astel Marius Gastellier';
 
 /** Message d'accueil (inscription). */
 export const MESSAGE_ACCUEIL =
-    'Bienvenue sur Ancestria ! L\'accès à nos pages est entièrement gratuit et ouvert à la mémoire de tous. Pour enrichir notre grand Arbre de Lumière et contribuer dans les règles de l\'art, merci de vous inscrire (Nom, Prénom et e-mail ou téléphone). Votre contribution est précieuse pour faire vivre notre histoire !';
+    'Ancestria est entièrement gratuit et ouvert à la mémoire de tous. Parce que chaque histoire familiale est précieuse, il vous suffit de vous inscrire ci-dessous pour participer à notre grand Arbre de Lumière et faire vivre nos racines ensemble.'; // 05/10 ~23:55, son texte « pour contrer Facebook », mot pour mot
+
+/** Message de soutien (05/10/2026, mot pour mot, à la place de « Votre contribution est précieuse… » retiré le même soir). */
+export const MESSAGE_SOUTIEN =
+    'Un petit coup de pouce pour l\'avenir : Ancestria restera toujours gratuit. Cependant, pour nous aider à faire face aux frais d\'hébergement et à faire perdurer cet outil, toute contribution, même symbolique à partir d\'1 euro, est la bienvenue. Un grand merci pour votre solidarité et votre aide précieuse pour faire vivre notre histoire !'; // 05/10 ~23:55, mot pour mot
 
 /** Message de prudence (contre les fausses informations). */
 export const MESSAGE_PRUDENCE =

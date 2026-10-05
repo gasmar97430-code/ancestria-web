@@ -1,9 +1,7 @@
-import { Binoculars, Books, HouseSimple, TreeStructure } from '@phosphor-icons/react';
+import { HouseSimple, TreeStructure } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
 import { BoutonSauvegarde } from './BoutonSauvegarde';
 import { BoutonRecherche } from './RechercheGlobale';
-import { BoutonSuggestions } from './Suggestions';
-import { BoutonIncoherences } from './Incoherences';
 import { BoutonCarnet } from '../features/carnet/BoutonCarnet';
 import { Ecran, useAtelierStore } from '../store/useAtelierStore';
 import { usePatronymeStore } from '../store/usePatronymeStore';
@@ -11,7 +9,6 @@ import { nomLisible, teinteDe } from '../lib/origins';
 import { useLectureSeule } from '../lib/lectureSeule';
 import { BasDuMenuPartenaires } from '../lib/bannierePartenaires';
 import { DuMemeAuteur } from '../lib/duMemeAuteur';
-import { OutilsRepliables } from '../lib/outilsRepliables';
 import { PortesDuSite } from '../lib/portesDuSite';
 import { MONTRER_RECENTS } from '../features/home/accueilNeutre';
 const ENTREES: {
@@ -21,8 +18,6 @@ const ENTREES: {
 }[] = [
     { ecran: 'accueil', libelle: 'Accueil', icone: HouseSimple },
     { ecran: 'arbre', libelle: 'Arbre', icone: TreeStructure },
-    { ecran: 'traque', libelle: 'Traque des Noms', icone: Binoculars },
-    { ecran: 'sources', libelle: 'Sources', icone: Books },
 ];
 export const Sidebar = ({ rail }: {
     rail: boolean;
@@ -39,8 +34,7 @@ export const Sidebar = ({ rail }: {
                         <I />
                     </button>))}
                 <BoutonRecherche rail/>
-                {!lecture && <><BoutonSuggestions rail/>
-                <BoutonIncoherences rail/>
+                {!lecture && <>
                 <PortesDuSite rail/>
                 <BoutonSauvegarde rail/>
                 <BoutonCarnet rail/></>}
@@ -56,8 +50,7 @@ export const Sidebar = ({ rail }: {
                     </button>))}
             </nav>
             <BoutonRecherche rail={false}/>
-            {!lecture && <><BoutonSuggestions rail={false}/>
-            <BoutonIncoherences rail={false}/>
+            {!lecture && <>
             <PortesDuSite rail={false}/>
             </>}
 
@@ -72,7 +65,7 @@ export const Sidebar = ({ rail }: {
             })}
                 </div>)}
 
-            {!lecture && <OutilsRepliables />}
+            
             
             <BasDuMenuPartenaires />
         </aside>);

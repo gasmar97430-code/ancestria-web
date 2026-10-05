@@ -13,12 +13,12 @@
 
 import { useEffect, useState } from 'react';
 import { ShareNetwork, X } from '@phosphor-icons/react';
+import { CONSIGNE_COLLER, partagerAncestria } from '../partage/partager'; // 05/10 : partage fluide
 
 export const BLOQUANTE = false;
 export const PETIT_MOT =
     'Coucou ! Je viens de découvrir Ancestria, l’arbre de famille universel 🌳 C’est gratuit : on y retrouve le nom de nos ancêtres, et chacun peut y ajouter sa famille, d’où qu’elle vienne. Viens voir :';
 const CLE = 'ancestria-amis-invites';
-const adresse = () => `${window.location.origin}${import.meta.env.BASE_URL}`;
 
 const dejaPartage = () => { try { return localStorage.getItem(CLE) === 'oui'; } catch { return false; } };
 
@@ -34,13 +34,9 @@ export function InviterAmis() {
     if (!ouverte) return null;
 
     const partager = async () => {
-        const url = adresse();
         try {
-            if (navigator.share) await navigator.share({ title: 'Ancestria', text: PETIT_MOT, url });
-            else {
-                await navigator.clipboard.writeText(`${PETIT_MOT} ${url}`);
-                setNote('Message copié : collez-le dans WhatsApp, Facebook ou un SMS.');
-            }
+            const r = await partagerAncestria(PETIT_MOT); // partage/partager.ts : 05/10, message copié + carte de partage
+            setNote(r.copie ? CONSIGNE_COLLER : 'Partage ouvert.');
             try { localStorage.setItem(CLE, 'oui'); } catch { /* sans stockage : la bulle reviendra */ }
             setMerci(true);
         } catch {

@@ -23,7 +23,7 @@ import { supabase } from '../prise/supabase';
 import { emailAdministrateur } from '../visiteur/visiteur';
 import { garderInscription, lireInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
 import { ARTICLES_CHARTE, AVIS_COURT, ENGAGEMENT_CHARTE, TITRE_CHARTE, VERSION_CHARTE, avisDetaille, charteAcceptee, garderCharte } from '../../../src/inscription/charte';
-import { ADMINISTRATEUR, MESSAGE_ACCUEIL } from '../../../src/inscription/messages';
+import { ADMINISTRATEUR, MESSAGE_ACCUEIL, MESSAGE_SOUTIEN } from '../../../src/inscription/messages';
 import { TitreCentre } from '../../src/app/TitreCentre'; // l'en-tête de l'appli, tel quel (« au miroir de l'appli »)
 
 const champ = 'h-11 w-full px-3 rounded-[10px] bg-blanc border border-trait text-encre text-[15px] outline-none focus:border-sepia';
@@ -98,6 +98,7 @@ export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton:
                 <RetourAncestria inscrit={dejaInscrit()} />{/* RetourAncestria.tsx : 05/10, revenir à l'appli (inscrit seulement) */}
                 <h1 className="font-display text-[40px] leading-none font-medium m-0">Bienvenue</h1>
                 <p className="text-[15px] leading-relaxed text-encre m-0" data-message="accueil">{MESSAGE_ACCUEIL}</p>
+                <p className="text-[15px] leading-relaxed text-encre-2 m-0" data-message="soutien">{MESSAGE_SOUTIEN}</p>{/* 05/10 : son message de soutien, mot pour mot */}
                 <AppliTelephone />{/* appli-telephone/ : 03/10, installer sur le téléphone + faire connaître */}
                 <form className="flex flex-col gap-3 rounded-[14px] border border-trait bg-carte px-4 py-4 sm:px-5" noValidate onSubmit={(e) => { e.preventDefault(); void valider(); }} data-inscription="porte">
                     <h2 className="font-display text-2xl m-0">Inscription</h2>

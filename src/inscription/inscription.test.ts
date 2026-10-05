@@ -1,7 +1,7 @@
 // Personnes et contacts INVENTÉS (exemple.re, numéros de forme seulement).
 import { describe, expect, it } from 'vitest';
 import { garderInscription, genreContact, inscriptionComplete, lireInscription, oublierInscription, validerInscription } from './contact';
-import { MESSAGE_ACCUEIL, MESSAGE_PRUDENCE } from './messages';
+import { MESSAGE_ACCUEIL, MESSAGE_PRUDENCE, MESSAGE_SOUTIEN } from './messages';
 
 describe('contact : e-mail ou téléphone', () => {
     it('reconnaît une adresse e-mail', () => {
@@ -57,7 +57,8 @@ describe('inscription : nom, prénom, contact — tous obligatoires', () => {
 
 describe('ses deux messages officiels, mot pour mot (texte du 30/09/2026)', () => {
     it('message d’accueil', () => {
-        expect(MESSAGE_ACCUEIL).toBe("Bienvenue sur Ancestria ! L'accès à nos pages est entièrement gratuit et ouvert à la mémoire de tous. Pour enrichir notre grand Arbre de Lumière et contribuer dans les règles de l'art, merci de vous inscrire (Nom, Prénom et e-mail ou téléphone). Votre contribution est précieuse pour faire vivre notre histoire !");
+        expect(MESSAGE_SOUTIEN).toBe("Un petit coup de pouce pour l'avenir : Ancestria restera toujours gratuit. Cependant, pour nous aider à faire face aux frais d'hébergement et à faire perdurer cet outil, toute contribution, même symbolique à partir d'1 euro, est la bienvenue. Un grand merci pour votre solidarité et votre aide précieuse pour faire vivre notre histoire !");
+        expect(MESSAGE_ACCUEIL).toBe("Ancestria est entièrement gratuit et ouvert à la mémoire de tous. Parce que chaque histoire familiale est précieuse, il vous suffit de vous inscrire ci-dessous pour participer à notre grand Arbre de Lumière et faire vivre nos racines ensemble.");
     });
     it('message de prudence', () => {
         expect(MESSAGE_PRUDENCE).toBe("Attention : Ancestria est un espace de mémoire noble et rigoureux. Toute tentative d'insertion de fausses informations, de blagues ou de données fantaisistes est strictement interdite. Par mesure de sécurité et de respect envers les familles, chaque contribution validée est verrouillée et tracée. Restons rigoureux pour honorer nos ancêtres.");
