@@ -528,6 +528,10 @@ describe('partage public : invitation, PIN, propositions, modération', () => {
         expect(jeton).toMatch(/^[0-9a-f]{32}$/);
         expect(inv.r.avec_pin).toBe(true);
         expect(inv.r.pin_hash).toBeNull();
+        // 05/10 : les contacts des essais ont une inscription ENREGISTRÉE (sa règle stricte : sinon rien n'entre).
+        await admin(db);
+        for (const c of [CONTACT, '0692 00 00 00'])
+            await db.query(`insert into inscriptions_acces (arbre_id, nom, prenom, contact, charte) values ($1, 'Fictif', 'Inscrit', $2, 'v1')`, [arbre, c]);
     });
     it('le haché du PIN n\'est jamais lisible, même par un éditeur', async () => {
         await utilisateur(db, editeur);

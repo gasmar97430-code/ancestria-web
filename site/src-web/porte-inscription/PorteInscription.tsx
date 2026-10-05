@@ -18,6 +18,7 @@
 import { useState, type ReactNode } from 'react';
 import { AppliTelephone } from '../appli-telephone/AppliTelephone'; // 03/10 : Ancestria sur le téléphone
 import { MentionAmazon } from '../../src/lib/bannierePartenaires'; // 04/10 : la phrase d'Amazon
+import { RetourAncestria } from './RetourAncestria'; // 05/10 : « ← Revenir à Ancestria »
 import { supabase } from '../prise/supabase';
 import { emailAdministrateur } from '../visiteur/visiteur';
 import { garderInscription, lireInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
@@ -94,6 +95,7 @@ export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton:
         <TitreCentre />
         <main className="flex justify-center p-5 sm:p-8" data-porte="inscription">
             <div className="w-full max-w-xl flex flex-col gap-5">
+                <RetourAncestria inscrit={dejaInscrit()} />{/* RetourAncestria.tsx : 05/10, revenir à l'appli (inscrit seulement) */}
                 <h1 className="font-display text-[40px] leading-none font-medium m-0">Bienvenue</h1>
                 <p className="text-[15px] leading-relaxed text-encre m-0" data-message="accueil">{MESSAGE_ACCUEIL}</p>
                 <AppliTelephone />{/* appli-telephone/ : 03/10, installer sur le téléphone + faire connaître */}

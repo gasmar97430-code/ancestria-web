@@ -30,6 +30,10 @@ beforeAll(async () => {
     arbre = (await une<{ id: string }>(db, `insert into arbres (nom) values ('Arbre Fictif') returning id`)).id;
     defunt = (await une<{ id: string }>(db, `insert into individus (arbre_id, prenom, nom, vivant) values ($1, 'Octave', 'Modèle', false) returning id`, [arbre])).id;
     jeton = (await une<{ r: { jeton: string } }>(db, `select to_jsonb(creer_invitation($1, 'Partage fictif')) as r`, [arbre])).r.jeton;
+    // 05/10 : une proposition n'entre que si son contact a une inscription ENREGISTRÉE pour l'arbre (sa règle stricte).
+    await admin(db);
+    for (const c of ['ana@exemple.re', '+262 692 00 00 00', 'autre@exemple.re', '0692000000'])
+        await db.query(`insert into inscriptions_acces (arbre_id, nom, prenom, contact, charte) values ($1, 'Fictif', 'Ana', $2, 'v1')`, [arbre, c]);
 });
 
 describe('aucune contribution anonyme', () => {
@@ -201,5 +205,22 @@ describe('parité : l’écran (src/inscription/contact.ts) juge comme la base',
         // probant seulement s'il a vu les deux verdicts (≈ 7 % de tirages complets attendus)
         expect(completes).toBeGreaterThan(50);
         expect(1500 - completes).toBeGreaterThan(900);
+    });
+});
+
+describe('sa règle stricte (05/10) : pas inscrit, rien ne s’ajoute', () => {
+    beforeAll(async () => { // un partage neuf : celui du début a été supprimé par l'essai précédent
+        await utilisateur(db, proprietaire);
+        jeton = (await une<{ r: { jeton: string } }>(db, `select to_jsonb(creer_invitation($1, 'Partage fictif 2')) as r`, [arbre])).r.jeton;
+    });
+    it('une inscription seulement écrite dans l’envoi, sans inscription enregistrée : refusée, rien d’écrit', async () => {
+        const avant = await combien();
+        await anonyme(db, '198.51.100.45');
+        expect(await envoyer({ ...CONTENU, inscrit: INSCRIT }, 'jamais.inscrit@exemple.re')).toEqual({ ok: false, raison: 'inscription_requise' });
+        expect(await combien()).toBe(avant);
+    });
+    it('le même envoi, contact inscrit (majuscules et espaces ignorés) : accepté', async () => {
+        await anonyme(db, '198.51.100.46');
+        expect((await envoyer({ ...CONTENU, inscrit: INSCRIT }, '  ANA@exemple.re ')).ok).toBe(true);
     });
 });

@@ -15,6 +15,10 @@ import { supabase } from '../prise/supabase';
 import { useCompteDuSite } from '../../src/lib/compteDuSite';
 import { useBoutonSiteEnLigne } from '../../src/lib/boutonSiteEnLigne';
 
+// 05/10, ses mots : « quand je clique sur inscription je n'ai pas de retour pour revenir sur la page d'accueil » → la page
+// d'où l'on vient est notée ici ; la page d'inscription propose « ← Revenir à Ancestria » (porte-inscription/RetourAncestria.tsx).
+export const CLE_RETOUR = 'ancestria-retour';
+
 const classe = 'flex items-center gap-1.5 h-6 px-2.5 rounded-[10px] text-[13px] leading-none text-encre-2 hover:bg-papier';
 
 export function CompteSite() {
@@ -34,7 +38,8 @@ export function CompteSite() {
         );
     }
     return (
-        <a href={import.meta.env.BASE_URL} className={classe} data-bouton="compte-site" title="Inscription (avec la Charte) ou connexion de l'administrateur">
+        <a href={`${import.meta.env.BASE_URL}?porte`} className={classe} data-bouton="compte-site" title="Inscription (avec la Charte) ou connexion de l'administrateur"
+            onClick={() => { try { sessionStorage.setItem(CLE_RETOUR, window.location.pathname); } catch { /* sans stockage : pas de retour proposé */ } }}>
             <UserCircle size={16} />
             S’inscrire · Se connecter
         </a>

@@ -21,6 +21,8 @@ import { ChoisirMotDePasse, ConnexionMotDePasse, useChoixDuMotDePasse } from './
 import { useAssistantIA } from '../src/app/AssistantIA';
 import { TitreCentre } from '../src/app/TitreCentre'; // l'en-tête de l'appli, tel quel (01/10)
 import { poserCompteSite } from './compte-site/CompteSite'; // 04/10 : « Site en ligne » + « S'inscrire · Se connecter » sur sa page
+import { garderJeton, jetonGarde, porteDemandee } from './porte-inscription/jetonGarde'; // 05/10 : l'inscrit rouvre l'appli et entre
+import { InviterAmis } from './inviter-amis/InviterAmis'; // 05/10 : « partager avec des amis » après l'inscription
 
 useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (IA locale) : pas dans le site en ligne
 
@@ -37,7 +39,7 @@ export function Porte({ children }: { children: ReactNode }) {
         return () => data.subscription.unsubscribe();
     }, []);
 
-    const jeton = configurationPrete ? jetonVisiteur() : null;
+    const jeton = configurationPrete ? (jetonVisiteur() ?? (!porteDemandee() && dejaInscrit() ? jetonGarde() : null)) : null; // jetonGarde.ts : l'inscrit qui rouvre l'appli
     const entrer = (j: string) => {
         if (jetonVisiteur() !== j) window.history.replaceState(null, '', `${import.meta.env.BASE_URL}c/${j}`);
         setTour((t) => t + 1);
@@ -45,7 +47,7 @@ export function Porte({ children }: { children: ReactNode }) {
 
     if (!configurationPrete) return <Cadre titre="Bienvenue"><p className="text-encre-2 text-sm">Le site n’est pas encore relié à sa base.</p></Cadre>;
     if (choixMotDePasse) return <ChoisirMotDePasse onFini={finChoixMotDePasse} />;
-    if (jeton && dejaInscrit()) { entrerEnVisiteur(); return <>{children}</>; }
+    if (jeton && dejaInscrit()) { garderJeton(jeton); if (!jetonVisiteur()) window.history.replaceState(null, '', `${import.meta.env.BASE_URL}c/${jeton}`); entrerEnVisiteur(); return <>{children}<InviterAmis /></>; } // inviter-amis/ : 05/10, partager avec ses amis
     if (session === undefined) return <div className="h-screen bg-papier" />;
     if (session && !jeton) { entrerEnProprietaire(); return <>{children}</>; }
     if (administrateur && !jeton) return <ConnexionMotDePasse onRetour={() => setAdministrateur(false)} />; // 01/10 : mot de passe (l'ancienne Connexion par lien reste ci-dessous)

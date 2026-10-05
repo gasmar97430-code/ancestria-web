@@ -1349,6 +1349,14 @@ begin
     if public.defaut_inscription(p_contenu, p_contact) is not null then
         return jsonb_build_object('ok', false, 'raison', 'inscription_requise');
     end if;
+    -- 05/10/2026, sa règle : « si je ne suis pas inscrit je ne dois pas pouvoir ajouter des noms, il faut que
+    -- cette condition soit stricte » ; « on peut cliquer sur les bannières mais ne rien pouvoir modifier ».
+    -- Une inscription seulement ÉCRITE dans l'envoi ne suffit plus : le contact doit être celui d'une
+    -- inscription ENREGISTRÉE pour cet arbre (inscrire_visiteur, avec la Charte).
+    if not exists (select 1 from public.inscriptions_acces i
+                   where i.arbre_id = v_arbre and lower(i.contact) = lower(btrim(p_contact))) then
+        return jsonb_build_object('ok', false, 'raison', 'inscription_requise');
+    end if;
 
     insert into public.contributions (arbre_id, invitation_id, contenu, contact, origine, uid)
     values (v_arbre, v_invitation, p_contenu, nullif(btrim(coalesce(p_contact, '')), ''), v_origine, p_uid)
