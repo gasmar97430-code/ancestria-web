@@ -49,7 +49,7 @@ export function CompteSite() {
 /** Appelée par la porte (au premier affichage) : rallume « Site en ligne » et pose la porte dans l'en-tête. */
 export function poserCompteSite(): void {
     useCompteDuSite.setState({ Composant: CompteSite });
-    useBoutonSiteEnLigne.setState({ montrer: true });
+    useBoutonSiteEnLigne.setState({ montrer: false }); // 05/10, ses mots : « en haut à droite l'info-bulle Site en ligne il faut l'enlever » (sur le site il renvoyait au site lui-même ; au PC il reste)
 }
 
 // ---- FIN « SITE EN LIGNE » + « S'INSCRIRE · SE CONNECTER » SUR LE SITE ----

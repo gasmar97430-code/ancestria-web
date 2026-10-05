@@ -23,6 +23,7 @@ import { TitreCentre } from '../src/app/TitreCentre'; // l'en-tête de l'appli, 
 import { poserCompteSite } from './compte-site/CompteSite'; // 04/10 : « Site en ligne » + « S'inscrire · Se connecter » sur sa page
 import { garderJeton, jetonGarde, porteDemandee } from './porte-inscription/jetonGarde'; // 05/10 : l'inscrit rouvre l'appli et entre
 import { InviterAmis } from './inviter-amis/InviterAmis'; // 05/10 : « partager avec des amis » après l'inscription
+import { MenuPorte } from './menu-porte/MenuPorte'; // 05/10 : le menu de l'appli sur la page d'inscription
 
 useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (IA locale) : pas dans le site en ligne
 
@@ -51,7 +52,7 @@ export function Porte({ children }: { children: ReactNode }) {
     if (session === undefined) return <div className="h-screen bg-papier" />;
     if (session && !jeton) { entrerEnProprietaire(); return <>{children}</>; }
     if (administrateur && !jeton) return <ConnexionMotDePasse onRetour={() => setAdministrateur(false)} />; // 01/10 : mot de passe (l'ancienne Connexion par lien reste ci-dessous)
-    return <PorteInscription jeton={jeton} onEntree={entrer} onAdministrateur={() => setAdministrateur(true)} />;
+    return <MenuPorte onEntrer={entrer}><PorteInscription jeton={jeton} onEntree={entrer} onAdministrateur={() => setAdministrateur(true)} /></MenuPorte>; // menu-porte/ : 05/10, le menu de l'appli (Accueil…) sur la page d'inscription
 }
 
 function Cadre({ children, titre = 'Connexion' }: { children: ReactNode; titre?: string }) {
