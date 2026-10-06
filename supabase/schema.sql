@@ -2247,6 +2247,129 @@ begin
 end;
 $$;
 
+-- ---- JOURNAL D'AUDIT (LOI 6, 06/10/2026) ----
+-- Loi 6 : « traçabilité totale des actions via un journal d'audit (logs) administrateur et respect
+-- strict des données personnelles ». Une ligne par écriture faite par un compte (administrateur,
+-- éditeur) ou par le serveur (l'IA, plus tard) : qui, quoi, sur quelle fiche, l'avant, l'après,
+-- quand, pourquoi. On ne peut qu'y AJOUTER : ni modification, ni effacement, pour personne (déclencheur).
+-- Écrit par des déclencheurs posés à côté : aucune fonction existante n'est réécrite.
+-- Données personnelles : jamais le contact ni le contenu d'une proposition, jamais un jeton ni un PIN ;
+-- une personne VIVANTE n'y laisse ni nom, ni prénom, ni dates, ni lieux (« protegee »).
+-- Le dépôt d'une proposition par un visiteur (anon) n'y est pas : la proposition est déjà sa propre trace.
+-- Pour donner la raison d'un geste : set_config('ancestria.pourquoi', '<raison>', true) ;
+-- pour l'IA : set_config('ancestria.acteur', 'ia', true).
+create table if not exists public.journal_audit (
+    id           bigint generated always as identity primary key,
+    le           timestamptz not null default clock_timestamp(),
+    arbre_id     uuid,          -- sans lien : effacer un arbre ne doit pas effacer sa trace
+    qui          uuid,
+    acteur       text not null,
+    action       text not null check (action in ('ajout', 'modification', 'suppression')),
+    table_visee  text not null,
+    fiche        uuid,
+    avant        jsonb,
+    apres        jsonb,
+    pourquoi     text
+);
+create index if not exists journal_audit_arbre on public.journal_audit (arbre_id, le desc);
+
+create or replace function public.audit_epurer(p_table text, r jsonb)
+returns jsonb
+language sql immutable set search_path = ''
+as $$
+    select case
+        when r is null then null
+        when p_table = 'contributions' then jsonb_strip_nulls(jsonb_build_object(
+            'id', r -> 'id', 'statut', r -> 'statut', 'motif', r -> 'motif',
+            'traitee_par', r -> 'traitee_par', 'traitee_le', r -> 'traitee_le'))
+        when p_table = 'individus' and coalesce((r ->> 'vivant')::boolean, false) then jsonb_strip_nulls(jsonb_build_object(
+            'id', r -> 'id', 'arbre_id', r -> 'arbre_id', 'vivant', true, 'protegee', true,
+            'notes', case when r ->> 'notes' ~ '^pc:[0-9]+$' then r -> 'notes' end))
+        else r - array['contact', 'contenu', 'pin_hash', 'jeton']
+    end;
+$$;
+
+create or replace function public.noter_audit()
+returns trigger
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_avant   jsonb := case when tg_op <> 'INSERT' then to_jsonb(old) end;
+    v_apres   jsonb := case when tg_op <> 'DELETE' then to_jsonb(new) end;
+    v_ligne   jsonb := coalesce(v_apres, v_avant);
+    v_role    text := coalesce(nullif(current_setting('role', true), 'none'), current_user);
+    v_acteur  text := nullif(current_setting('ancestria.acteur', true), '');
+    v_pourquoi text := nullif(current_setting('ancestria.pourquoi', true), '');
+begin
+    if tg_op = 'UPDATE' and v_avant - 'maj_le' = v_apres - 'maj_le' then
+        return null;   -- réécriture à l'identique (envoi du PC qui renvoie un couple inchangé) : rien n'a changé
+    end if;
+    if auth.uid() is null and v_role = 'anon' then
+        return null;   -- un visiteur dépose une proposition : elle est sa propre trace
+    end if;
+    if v_acteur is null then
+        v_acteur := case when auth.uid() is not null then coalesce(public.role_dans(
+                            (case when tg_table_name = 'arbres' then v_ligne ->> 'id' else v_ligne ->> 'arbre_id' end)::uuid), 'compte')
+                         when v_role = 'service_role' then 'serveur'
+                         else 'base' end;
+    end if;
+    if v_pourquoi is null then
+        v_pourquoi := case
+            when current_setting('ancestria.envoi', true) = 'oui' then 'Envoi du PC'
+            when tg_table_name = 'contributions' and tg_op = 'UPDATE' and v_apres ->> 'statut' = 'acceptee' then 'Proposition acceptée'
+            when tg_table_name = 'contributions' and tg_op = 'UPDATE' and v_apres ->> 'statut' = 'refusee' then 'Proposition refusée'
+        end;
+    end if;
+    insert into public.journal_audit (arbre_id, qui, acteur, action, table_visee, fiche, avant, apres, pourquoi)
+    values ((case when tg_table_name = 'arbres' then v_ligne ->> 'id' else v_ligne ->> 'arbre_id' end)::uuid,
+            auth.uid(), v_acteur,
+            case tg_op when 'INSERT' then 'ajout' when 'UPDATE' then 'modification' else 'suppression' end,
+            tg_table_name,
+            case when v_ligne ->> 'id' ~ '^[0-9a-f-]{36}$' then (v_ligne ->> 'id')::uuid
+                 when v_ligne ? 'individu_id' then (v_ligne ->> 'individu_id')::uuid end,
+            public.audit_epurer(tg_table_name, v_avant), public.audit_epurer(tg_table_name, v_apres), v_pourquoi);
+    return null;
+end;
+$$;
+
+-- Le verrou : une ligne du journal ne se modifie ni ne s'efface, pour personne.
+create or replace function public.verrou_audit()
+returns trigger
+language plpgsql set search_path = ''
+as $$
+begin
+    raise exception 'Le journal d''audit ne se modifie pas et ne s''efface pas.' using errcode = '42501', hint = 'AUDIT_VERROUILLE';
+end;
+$$;
+drop trigger if exists verrou_audit on public.journal_audit;
+create trigger verrou_audit before update or delete on public.journal_audit
+    for each row execute function public.verrou_audit();
+drop trigger if exists verrou_audit_vider on public.journal_audit;
+create trigger verrou_audit_vider before truncate on public.journal_audit
+    for each statement execute function public.verrou_audit();
+
+do $$
+declare
+    v_table text;
+begin
+    foreach v_table in array array['arbres', 'membres', 'individus', 'unions', 'foyers', 'foyer_parents', 'filiations',
+                                   'documents', 'document_individus', 'familles_historiques', 'invitations', 'contributions'] loop
+        execute format('drop trigger if exists noter_audit on public.%I', v_table);
+        execute format('create trigger noter_audit after insert or update or delete on public.%I for each row execute function public.noter_audit()', v_table);
+    end loop;
+end;
+$$;
+
+-- Lecture : le propriétaire de l'arbre seulement. Écriture : aucune, par personne (seuls les déclencheurs écrivent).
+alter table public.journal_audit enable row level security;
+revoke all on public.journal_audit from public, anon, authenticated, service_role;
+grant select on public.journal_audit to authenticated;
+drop policy if exists "journal lu par le proprietaire" on public.journal_audit;
+create policy "journal lu par le proprietaire" on public.journal_audit for select to authenticated
+    using (arbre_id is not null and public.role_dans(arbre_id) = 'proprietaire');
+revoke execute on function public.noter_audit(), public.verrou_audit(), public.audit_epurer(text, jsonb) from public, anon, authenticated;
+-- ---- FIN JOURNAL D'AUDIT ----
+
 -- =====================================================================
 -- FIN DU SCHÉMA
 -- =====================================================================
