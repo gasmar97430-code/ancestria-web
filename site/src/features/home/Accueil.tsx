@@ -11,6 +11,7 @@ import type { Patronyme } from '../../types';
 import { FamilleDuNom } from './FamilleDuNom';
 import { PersonnesTapees } from './PersonnesTapees';
 import { BulleCommunes } from './BulleCommunes';
+import { CarteDeLIle } from './carte-ile/CarteDeLIle';
 import { ArbreDeVieAccueil } from './ArbreDeVieAccueil';
 import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
 import { useNomTapeAccueil } from '../tree/titreFamille';
@@ -200,6 +201,7 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
                 {p.notes ? (<p className="font-display italic text-[22px] leading-[1.4] text-encre m-0">{p.notes}</p>) : (<p className="text-sm text-encre-3 m-0">Aucune note au répertoire pour ce nom.</p>)}
                 <SourceOrigine nom={p.nom}/>
                 <BulleCommunes nom={p.nom}/>
+                <CarteDeLIle nom={p.nom}/>
                 <div className="text-xs text-encre-3">
                     Répertoire des patronymes réunionnais — l'origine est celle du nom, pas celle des familles qui le
                     portent.
