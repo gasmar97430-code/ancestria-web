@@ -46,13 +46,8 @@
     }
 }
 
-/* 4. PC : la colonne d'inscription était centrée entre la colonne d'icônes (64 px à gauche) et une marge de
-      32 px à droite, donc 16 px à droite du titre « Ancestria ». Même marge des deux côtés : centrée sur la page. */
-@media (min-width: 640px) {
-    main:has([data-message='accueil']) {
-        padding-right: 64px;
-    }
-}
+/* 4. (06/10 après-midi) RETIRÉ : la marge de droite compensait la colonne d'icônes du menu ; le menu n'est
+      plus sur la page d'inscription (page-visiteur/, sa règle du 05/10) : la colonne est centrée d'elle-même. */
 
 /* 5. Grand écran : la colonne d'inscription s'élargit un peu et le texte suit, toujours centrée. */
 @media (min-width: 1440px) {

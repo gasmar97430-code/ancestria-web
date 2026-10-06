@@ -23,7 +23,7 @@ import { TitreCentre } from '../src/app/TitreCentre'; // l'en-tête de l'appli, 
 import { poserCompteSite } from './compte-site/CompteSite'; // 04/10 : « Site en ligne » + « S'inscrire · Se connecter » sur sa page
 import { garderJeton, jetonGarde, porteDemandee } from './porte-inscription/jetonGarde'; // 05/10 : l'inscrit rouvre l'appli et entre
 import { InviterAmis } from './inviter-amis/InviterAmis'; // 05/10 : « partager avec des amis » après l'inscription
-import { MenuPorte } from './menu-porte/MenuPorte'; // 05/10 : le menu de l'appli sur la page d'inscription
+import { PageVisiteur } from './page-visiteur/PageVisiteur'; // 06/10 : le visiteur s'inscrit et ajoute des noms, rien d'autre
 
 useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (IA locale) : pas dans le site en ligne
 
@@ -48,11 +48,11 @@ export function Porte({ children }: { children: ReactNode }) {
 
     if (!configurationPrete) return <Cadre titre="Bienvenue"><p className="text-encre-2 text-sm">Le site n’est pas encore relié à sa base.</p></Cadre>;
     if (choixMotDePasse) return <ChoisirMotDePasse onFini={finChoixMotDePasse} />;
-    if (jeton && dejaInscrit()) { garderJeton(jeton); if (!jetonVisiteur()) window.history.replaceState(null, '', `${import.meta.env.BASE_URL}c/${jeton}`); entrerEnVisiteur(); return <>{children}<InviterAmis /></>; } // inviter-amis/ : 05/10, partager avec ses amis
+    if (jeton && dejaInscrit()) { garderJeton(jeton); if (!jetonVisiteur()) window.history.replaceState(null, '', `${import.meta.env.BASE_URL}c/${jeton}`); entrerEnVisiteur(); return session === undefined ? <div className="h-screen bg-papier" /> : session ? <>{children}<InviterAmis /></> : <PageVisiteur />; } // page-visiteur/ : 06/10, sa règle du 05/10 « on s'inscrit et on ajoute des noms et rien d'autre » (l'administrateur connecté garde tout)
     if (session === undefined) return <div className="h-screen bg-papier" />;
     if (session && !jeton) { entrerEnProprietaire(); return <>{children}</>; }
     if (administrateur && !jeton) return <ConnexionMotDePasse onRetour={() => setAdministrateur(false)} />; // 01/10 : mot de passe (l'ancienne Connexion par lien reste ci-dessous)
-    return <MenuPorte onEntrer={entrer}><PorteInscription jeton={jeton} onEntree={entrer} onAdministrateur={() => setAdministrateur(true)} /></MenuPorte>; // menu-porte/ : 05/10, le menu de l'appli (Accueil…) sur la page d'inscription
+    return <PorteInscription jeton={jeton} onEntree={entrer} onAdministrateur={() => setAdministrateur(true)} />; // 06/10 : plus de menu de l'appli ici (MenuPorte gardé, sans appel) — le visiteur n'a plus d'arbre derrière, sa règle du 05/10
 }
 
 function Cadre({ children, titre = 'Connexion' }: { children: ReactNode; titre?: string }) {
