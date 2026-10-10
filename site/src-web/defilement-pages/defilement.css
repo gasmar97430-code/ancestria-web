@@ -1,0 +1,16 @@
+/* ---- DÉFILEMENT DES PAGES DU SITE (10/10/2026) ----
+ * Sa capture de la page d'inscription en ligne (…/ancestria-web/?porte) : « ta page n'est pas responsive, il ne
+ * s'ouvre pas complètement, puis y a pas administrateur ».
+ * Mesuré en ligne à 1600 × 760 : html, body et #root à 760 px, overflow: hidden (src/ui/theme.css, recopié du PC,
+ * où l'écran défile DANS sa coquille h-screen) → la page d'inscription (1 500 px de haut) ne défile pas ;
+ * « Administrateur : se connecter » à y = 1 449 hors d'atteinte.
+ * Les pages du site qui ne sont pas la coquille du PC (inscription, connexion de l'administrateur, page du
+ * visiteur, page d'attente de Porte.tsx) sont des enfants directs de #root en « min-h-screen » : #root défile
+ * pour elles seules. La coquille de l'arbre (h-screen) garde son comportement.
+ * Ligne d'appel : site/src-web/Porte.tsx (import).
+ */
+#root:has(> .min-h-screen) {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+/* ---- FIN DÉFILEMENT DES PAGES DU SITE ---- */

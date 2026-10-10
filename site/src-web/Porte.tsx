@@ -24,6 +24,7 @@ import { poserCompteSite } from './compte-site/CompteSite'; // 04/10 : « Site e
 import { garderJeton, jetonGarde, porteDemandee } from './porte-inscription/jetonGarde'; // 05/10 : l'inscrit rouvre l'appli et entre
 import { InviterAmis } from './inviter-amis/InviterAmis'; // 05/10 : « partager avec des amis » après l'inscription
 import { PageVisiteur } from './page-visiteur/PageVisiteur'; // 06/10 : le visiteur s'inscrit et ajoute des noms, rien d'autre
+import './defilement-pages/defilement.css'; // 10/10 : les pages du site défilent (inscription, connexion, visiteur) — sa capture « ne s'ouvre pas complètement »
 
 useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (IA locale) : pas dans le site en ligne
 
