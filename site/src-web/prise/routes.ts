@@ -10,6 +10,7 @@
 import { chargerArbre } from './donnees';
 import repertoire from '../copie-serveur/patronymes.json';
 import { sourcesDesOrigines } from './sources-origines';
+import { rangsNaissance, relationsPassage } from './complements'; // 10/10 : couples « de passage » et ordre de naissance
 import releveDesFonds from '../copie-serveur/releve-sources.json'; // relevé des fonds du bureau (écran « Sources »), copié par scripts/copier-bureau.mjs
 import { jetonVisiteur, REFUS_VISITEUR } from '../visiteur/visiteur'; // visiteur.ts : un visiteur n'écrit rien
 
@@ -39,6 +40,8 @@ const LECTURES: Record<string, (params: Record<string, string>) => Promise<Repon
     // Étapes suivantes : fiches « ? », rangs des unions, foyers, natures, genres dits par la famille.
     '/parents-inconnus': () => ok([]),
     '/rangs-unions': () => ok([]),
+    '/relations-passage': async () => ok(await relationsPassage()), // complements.ts (10/10)
+    '/rangs-naissance': async () => ok(await rangsNaissance()), // complements.ts (10/10)
     '/foyers-membres': () => ok([]),
     '/natures-filiation': () => ok([]),
     '/genres-libelles': () => ok([]),

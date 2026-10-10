@@ -7,6 +7,8 @@ export function fixerRangsNaissance(m: Map<Id, number>): void {
 export function fixerDatesNaissance(m: Map<Id, number>): void {
     naissanceDe = m;
 }
+export const rangsNaissanceConnus = () => rangDe;
+export const datesNaissanceConnues = () => naissanceDe;
 export function rangerFratries(rangees: number[][], groupes: Id[][], relationships: {
     parentId: Id;
     enfantId: Id;

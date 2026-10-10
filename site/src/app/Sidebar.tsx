@@ -10,6 +10,7 @@ import { useLectureSeule } from '../lib/lectureSeule';
 import { BasDuMenuPartenaires } from '../lib/bannierePartenaires';
 import { DuMemeAuteur } from '../lib/duMemeAuteur';
 import { PortesDuSite } from '../lib/portesDuSite';
+import '../lib/administrationPc';
 import { MONTRER_RECENTS } from '../features/home/accueilNeutre';
 const ENTREES: {
     ecran: Ecran;

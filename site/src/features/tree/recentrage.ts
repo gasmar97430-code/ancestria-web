@@ -1,4 +1,5 @@
 import { rangerFratries } from './rangementFratries';
+import { rangerEnfantsDeLaMere } from './rangementEnfantsDeLaMere';
 export interface Lien {
     parent: number;
     enfant: number;
@@ -207,6 +208,6 @@ export function recentrerGraphe(graphe: GrapheDagre, groupes: number[][], relati
             ancreEnfant: centreCarte(enfant),
         };
     });
-    const x = recentrer(rangerFratries(transposer(rangees, liens), groupes, relationships), largeur, gauche, liens, ecartFoyers);
+    const x = recentrer(rangerEnfantsDeLaMere(rangerFratries(transposer(rangees, liens), groupes, relationships), groupes, relationships), largeur, gauche, liens, ecartFoyers);
     groupes.forEach((_, i) => (graphe.node(`f-${i}`).x = x[i] + largeur[i] / 2));
 }

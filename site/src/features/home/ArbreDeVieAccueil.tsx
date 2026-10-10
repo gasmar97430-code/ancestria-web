@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useAtelierStore } from '../../store/useAtelierStore';
 const IMAGE = new URL('../tree/arbre-de-vie.webp', import.meta.url).href;
 export const ArbreDeVieAccueil = () => {
-    const aller = useAtelierStore((s) => s.aller);
     const [absente, setAbsente] = useState(false);
     if (absente)
         return null;
@@ -19,9 +17,7 @@ export const ArbreDeVieAccueil = () => {
                         <span className="font-display text-[19px] leading-tight text-encre">L'Arbre de Vie</span>
                         <span className="text-[13.5px] text-encre-2">Chaque lignée commence par un nom.</span>
                     </div>
-                    <button type="button" onClick={() => aller('arbre')} className="flex-none text-[13.5px] font-medium hover:underline" style={{ color: 'var(--amande, var(--sepia))' }}>
-                        Explorer un arbre →
-                    </button>
+                    
                 </div>
             </div>
         </div>);

@@ -9,7 +9,7 @@ describe('schéma : chargement', () => {
         const t = await db.query<{ tablename: string }>(`select tablename from pg_tables where schemaname = 'public' order by 1`);
         expect(t.rows.map((r) => r.tablename)).toEqual([
             'abonnements', 'arbres', 'contributions', 'corrections_proprietaire', 'document_individus', 'documents', 'essais_pin', 'exports_certifies',
-            'familles_historiques', 'filiations', 'foyer_parents', 'foyers', 'individus', 'inscriptions_acces', 'invitations', 'journal_audit', 'limites_offres', 'membres', 'unions',
+            'familles_historiques', 'filiations', 'foyer_parents', 'foyers', 'individus', 'inscriptions_acces', 'invitations', 'journal_audit', 'limites_offres', 'membres', 'rangs_naissance', 'relations_passage', 'unions', // 10/10 : + couples « de passage », ordre de naissance
         ]);
         const sansRls = await db.query<{ relname: string }>(`select relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
             where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity`);

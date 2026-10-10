@@ -9,6 +9,7 @@ import { messageErreur } from './edition';
 import { ChampDate, dateEcrite } from './ChampDate';
 import { ConjointsExistants } from './ConjointsExistants';
 import { DeplacerEnfants } from './DeplacerEnfants';
+import { EnfantDePassage } from './EnfantDePassage';
 import { OrdreNaissanceFiche } from './OrdreNaissance';
 import { FusionnerAvec } from './FusionnerAvec';
 import { DoublonAuRenommage } from './DoublonAuRenommage';
@@ -204,6 +205,7 @@ export const ModifierPersonne = ({ personne, onFermer }: {
 
                 <ConjointsExistants personne={personne}/>
                 <DeplacerEnfants enfantsIds={[personne.id]} titre="Ses parents"/>
+                <EnfantDePassage personne={personne}/>
                 <OrdreNaissanceFiche personne={personne}/>
                 <FusionnerAvec personne={personne} onFini={onFermer}/>
                 <div className="filet"/>

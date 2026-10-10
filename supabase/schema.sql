@@ -2370,6 +2370,92 @@ create policy "journal lu par le proprietaire" on public.journal_audit for selec
 revoke execute on function public.noter_audit(), public.verrou_audit(), public.audit_epurer(text, jsonb) from public, anon, authenticated;
 -- ---- FIN JOURNAL D'AUDIT ----
 
+-- ---- COUPLES « DE PASSAGE » ET ORDRE DE NAISSANCE, VENUS DU PC (10/10/2026) ----
+-- Sa demande : « maintenant corrige en ligne » (après « De passage », Benoit GRONDIN sous le couple de passage,
+-- l'ordre de naissance compté sur les enfants de la mère). Au PC : tables relation_passage et rang_naissance.
+-- En ligne, deux tables À CÔTÉ (unions et individus ne sont pas touchées) et une fonction d'envoi À CÔTÉ
+-- d'envoi_pc (qui n'est pas réécrite) : envoi_pc_complements, appelée par l'appli juste après envoi_pc.
+-- Lecture : les membres de l'arbre (comme les unions). Écriture : seulement par la fonction, pour le propriétaire.
+create table if not exists public.relations_passage (
+    arbre_id  uuid not null references public.arbres (id) on delete cascade,
+    union_id  uuid not null references public.unions (id) on delete cascade,
+    primary key (arbre_id, union_id)
+);
+create table if not exists public.rangs_naissance (
+    arbre_id     uuid not null references public.arbres (id) on delete cascade,
+    individu_id  uuid not null,
+    rang         integer not null check (rang between 1 and 30),
+    primary key (arbre_id, individu_id),
+    foreign key (arbre_id, individu_id) references public.individus (arbre_id, id) on delete cascade
+);
+
+alter table public.relations_passage enable row level security;
+alter table public.rangs_naissance enable row level security;
+revoke all on public.relations_passage, public.rangs_naissance from public, anon, authenticated;
+grant select on public.relations_passage, public.rangs_naissance to authenticated;
+drop policy if exists "lecture membres" on public.relations_passage;
+create policy "lecture membres" on public.relations_passage for select to authenticated using (public.peut_lire(arbre_id));
+drop policy if exists "lecture membres" on public.rangs_naissance;
+create policy "lecture membres" on public.rangs_naissance for select to authenticated using (public.peut_lire(arbre_id));
+
+-- p_donnees = { passages: [uuid d'union], rangs: [{ individu: uuid, rang: int }] } : l'état du PC remplace l'état en
+-- ligne (ce qui n'est plus au PC disparaît). Une union ou une personne absente en ligne est sautée et comptée.
+create or replace function public.envoi_pc_complements(p_donnees jsonb)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_arbre  public.arbres;
+    n_pas    integer := 0;
+    n_rangs  integer := 0;
+    n_sautes integer := 0;
+    r        jsonb;
+begin
+    if auth.uid() is null then
+        raise exception 'Connexion requise.' using errcode = '42501';
+    end if;
+    -- le même arbre qu'envoi_pc
+    select a.* into v_arbre from public.invitations i join public.arbres a on a.id = i.arbre_id
+        where i.libelle = 'Porte du site' and not i.ferme and i.expire_le > now() order by i.cree_le limit 1;
+    if not found then
+        select a.* into v_arbre from public.arbres a left join public.individus i on i.arbre_id = a.id
+            group by a.id order by count(i.id) desc, a.cree_le limit 1;
+    end if;
+    if not found or v_arbre.proprietaire <> auth.uid() then
+        return jsonb_build_object('ok', false, 'raison', 'pas_proprietaire');
+    end if;
+    if jsonb_typeof(coalesce(p_donnees -> 'passages', '[]')) <> 'array' or jsonb_typeof(coalesce(p_donnees -> 'rangs', '[]')) <> 'array' then
+        return jsonb_build_object('ok', false, 'raison', 'donnees_invalides');
+    end if;
+
+    delete from public.relations_passage where arbre_id = v_arbre.id;
+    for r in select * from jsonb_array_elements(coalesce(p_donnees -> 'passages', '[]')) loop
+        if exists (select 1 from public.unions where id = (r #>> '{}')::uuid and arbre_id = v_arbre.id) then
+            insert into public.relations_passage (arbre_id, union_id) values (v_arbre.id, (r #>> '{}')::uuid) on conflict do nothing;
+            n_pas := n_pas + 1;
+        else
+            n_sautes := n_sautes + 1;
+        end if;
+    end loop;
+
+    delete from public.rangs_naissance where arbre_id = v_arbre.id;
+    for r in select * from jsonb_array_elements(coalesce(p_donnees -> 'rangs', '[]')) loop
+        if (r ->> 'rang')::integer between 1 and 30
+           and exists (select 1 from public.individus where id = (r ->> 'individu')::uuid and arbre_id = v_arbre.id) then
+            insert into public.rangs_naissance (arbre_id, individu_id, rang) values (v_arbre.id, (r ->> 'individu')::uuid, (r ->> 'rang')::integer)
+                on conflict (arbre_id, individu_id) do update set rang = excluded.rang;
+            n_rangs := n_rangs + 1;
+        else
+            n_sautes := n_sautes + 1;
+        end if;
+    end loop;
+    return jsonb_build_object('ok', true, 'passages', n_pas, 'rangs', n_rangs, 'sautes', n_sautes);
+end;
+$$;
+revoke execute on function public.envoi_pc_complements(jsonb) from public, anon;
+grant execute on function public.envoi_pc_complements(jsonb) to authenticated;
+-- ---- FIN COUPLES « DE PASSAGE » ET ORDRE DE NAISSANCE ----
+
 -- =====================================================================
 -- FIN DU SCHÉMA
 -- =====================================================================

@@ -41,9 +41,19 @@ export function enfantsDe(parents: Id[], liens: Lien[]): Id[] {
         parEnfant.set(l.enfantId, new Set([...(parEnfant.get(l.enfantId) ?? []), l.parentId]));
     return [...parEnfant.entries()].filter(([, ps]) => [...ps].sort((a, b) => a - b).join(',') === voulue).map(([e]) => e).sort((a, b) => a - b);
 }
-export function fratrieDe(id: Id, liens: Lien[]): Id[] {
+export function fratrieDe(id: Id, liens: (Lien & {
+    typeLien?: string;
+})[], genres?: Map<Id, string>): Id[] {
     const parents = liens.filter((l) => l.enfantId === id).map((l) => l.parentId);
-    return parents.length ? enfantsDe(parents, liens) : [];
+    if (!parents.length)
+        return [];
+    const bio = (l: {
+        typeLien?: string;
+    }) => !l.typeLien || l.typeLien === 'Biological';
+    const mere = genres ? liens.find((l) => l.enfantId === id && bio(l) && genres.get(l.parentId) === 'F')?.parentId : undefined;
+    if (mere !== undefined)
+        return [...new Set(liens.filter((l) => l.parentId === mere && bio(l)).map((l) => l.enfantId))].sort((a, b) => a - b);
+    return enfantsDe(parents, liens);
 }
 export function useAvecOrdreNaissance<T extends {
     unions: unknown[];
@@ -87,7 +97,10 @@ export const OrdreNaissanceFiche = ({ personne }: {
     useEffect(() => {
         void useRangsNaissance.getState().charger();
     }, []);
-    const fratrie = fratrieDe(personne.id, tree.relationships);
+    const fratrie = fratrieDe(personne.id, tree.relationships, new Map(people.map((p) => [p.id, p.genre ?? ''] as [
+        Id,
+        string
+    ])));
     if (fratrie.length < 2)
         return null;
     const mien = rangs.get(personne.id) ?? null;
@@ -109,7 +122,7 @@ export const OrdreNaissanceFiche = ({ personne }: {
         }
     };
     return (<div className="flex flex-col gap-2" data-noeud="ordre-naissance">
-            <label className={etiquette}>Ordre de naissance ({fratrie.length} enfants de ces parents)</label>
+            <label className={etiquette}>Ordre de naissance ({fratrie.length} enfants de sa mère)</label>
             <div className="flex flex-wrap gap-1.5">
                 {fratrie.map((_, k) => k + 1).map((n) => {
             const autre = pris.get(n);

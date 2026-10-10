@@ -17,6 +17,8 @@ import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDema
 import { useNomTapeAccueil } from '../tree/titreFamille';
 import { DEGRES, definitionOrigine } from '../../lib/origineEtablie';
 import { SourceOrigine } from './SourceOrigine';
+import { BoutonOrigine, NomsDeFrance } from './NomsDeFrance';
+import { FicheDuNom, FicheNomHorsRepertoire } from './FicheDuNom';
 import { EmplacementAjouterFamille } from '../../lib/ajouterFamille';
 const MAX_RESULTATS = 7;
 const CERTITUDES: Record<string, string> = {
@@ -111,6 +113,7 @@ export const Accueil = () => {
                                     {o ? teinteDe(o).court : 'Toutes'}
                                 </button>);
         })}
+                        <BoutonOrigine nomChoisi={choisi?.nom} saisie={saisie}/>
                     </div>
 
                     {sansRecherche(terme) && <InviteRecherche noms={patronymes.length} filtre={origine ? teinteDe(origine).court : null}/>}
@@ -140,6 +143,8 @@ export const Accueil = () => {
                         {charge && resultats.length === 0 && <EmplacementAjouterFamille nom={saisie.trim()}/>}
                     </div>
                     <PersonnesTapees saisie={saisie} aucunNom={charge && resultats.length === 0}/>
+                    <NomsDeFrance saisie={saisie}/>
+                    <FicheNomHorsRepertoire saisie={saisie} dansRepertoire={resultats.length > 0}/>
                 </div>
 
                 {choisi && (<FichePatronyme p={choisi} individus={people.filter((i) => normaliser(i.nom) === normaliser(choisi.nom)).length} onArbre={() => ouvrirDansArbre(choisi.nom)} onTraque={() => traquer(choisi.nom)}/>)}
@@ -199,6 +204,7 @@ const FichePatronyme = ({ p, individus, onArbre, onTraque, }: {
             <div className="flex flex-col gap-2.5">
                 <div className="text-[10.5px] tracking-[.12em] uppercase text-sepia">Note historique</div>
                 {p.notes ? (<p className="font-display italic text-[22px] leading-[1.4] text-encre m-0">{p.notes}</p>) : (<p className="text-sm text-encre-3 m-0">Aucune note au répertoire pour ce nom.</p>)}
+                <FicheDuNom nom={p.nom}/>
                 <SourceOrigine nom={p.nom}/>
                 <BulleCommunes nom={p.nom}/>
                 <CarteDeLIle nom={p.nom}/>
