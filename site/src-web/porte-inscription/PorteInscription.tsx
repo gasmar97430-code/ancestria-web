@@ -19,6 +19,7 @@ import { useState, type ReactNode } from 'react';
 import { AppliTelephone } from '../appli-telephone/AppliTelephone'; // 03/10 : Ancestria sur le téléphone
 import { MentionAmazon } from '../../src/lib/bannierePartenaires'; // 04/10 : la phrase d'Amazon
 import { RetourAncestria } from './RetourAncestria'; // 05/10 : « ← Revenir à Ancestria »
+import { Bienvenue } from '../bienvenue/Bienvenue'; // 10/10 : fenêtre de bienvenue à la première visite (son texte)
 import { supabase } from '../prise/supabase';
 import { emailAdministrateur } from '../visiteur/visiteur';
 import { garderInscription, lireInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
@@ -93,6 +94,7 @@ export function PorteInscription({ jeton, onEntree }: { jeton: string | null; on
     return (
         <div className="min-h-screen bg-papier text-encre font-sans flex flex-col">
         <TitreCentre />
+        <Bienvenue />{/* bienvenue/Bienvenue.tsx : 10/10 */}
         <main className="flex justify-center p-5 sm:p-8" data-porte="inscription">
             <div className="w-full max-w-xl flex flex-col gap-5">
                 <RetourAncestria inscrit={dejaInscrit()} />{/* RetourAncestria.tsx : 05/10, revenir à l'appli (inscrit seulement) */}

@@ -34,7 +34,7 @@ export const PARTENAIRES: Partenaire[] = [
     { cle: 'maisongac', marque: 'Maison GAC', titre: 'Glacier artisanal', bouton: 'Découvrir', lien: 'https://maisongac.com/', icone: IceCream,
         fond: 'linear-gradient(110deg, #fff8ee 0%, #f6e3c8 100%)', encre: '#3b2412', accent: '#8a4b2a', encreBouton: '#ffffff' },
 ];
-export const MENTION = 'Liens partenaires · soutient le projet gratuit';
+export const MENTION = 'Petite suggestion partenaire : en passant par ce lien si vous le souhaitez, vous soutenez le développement d’Ancestria sans aucun frais supplémentaire pour vous.';
 export const MENTION_AMAZON = 'En tant que Partenaire Amazon, je réalise un bénéfice sur les achats remplissant les conditions requises.';
 export const useSurLeSite = () => {
     const lecture = useLectureSeule((s) => s.actif);
