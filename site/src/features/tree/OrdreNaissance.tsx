@@ -126,7 +126,7 @@ export const OrdreNaissanceFiche = ({ personne }: {
             <div className="flex flex-wrap gap-1.5">
                 {fratrie.map((_, k) => k + 1).map((n) => {
             const autre = pris.get(n);
-            return (<button key={n} type="button" disabled={envoi || autre !== undefined} className={`${puce(mien === n)} disabled:opacity-35`} onClick={() => void choisir(n)} data-rang-naissance={n} title={autre !== undefined ? `Déjà dit pour ${qui(autre)?.prenom ?? '?'}` : undefined}>
+            return (<button key={n} type="button" disabled={envoi} className={`${puce(mien === n)} disabled:opacity-35`} onClick={() => void choisir(n)} data-rang-naissance={n} title={autre !== undefined && mien !== n ? `Prend la place de ${qui(autre)?.prenom ?? '?'} : les autres se décalent` : undefined}>
                             {ordinalEnfant(n, personne.genre)}
                         </button>);
         })}

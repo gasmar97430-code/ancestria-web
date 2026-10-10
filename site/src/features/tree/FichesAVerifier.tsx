@@ -1,6 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 import apiClient from '../../api/client';
 import { useTreeStore } from '../../store/useTreeStore';
+import { fixerDoublonsVrais } from './doublonsVrais';
 type Incoherence = {
     genre: string;
     texte: string;
@@ -32,7 +33,7 @@ export const FichesAVerifier = memo(() => {
         apiClient.get<{
             incoherences: Incoherence[];
         }>('/incoherences')
-            .then((r) => { if (vivant)
+            .then((r) => { fixerDoublonsVrais(Array.isArray(r.data?.incoherences) ? r.data.incoherences : []); if (vivant)
             setRaisons(raisonsParPersonne(Array.isArray(r.data?.incoherences) ? r.data.incoherences : [])); })
             .catch(() => { if (vivant)
             setRaisons(new Map()); });

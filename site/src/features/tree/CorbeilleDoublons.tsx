@@ -1,4 +1,5 @@
 import { memo, useLayoutEffect, useRef, useState } from 'react';
+import { useDoublonsVrais } from './doublonsVrais';
 import type { Node } from 'reactflow';
 import { Trash } from '@phosphor-icons/react';
 import apiClient from '../../api/client';
@@ -106,7 +107,8 @@ export function avecCorbeillesDoublons(nodes: Node[], people: {
     prenom: string;
     nom: string;
 }[] = useTreeStore.getState().people as never[]): Node[] {
-    const doubles = idsEnDouble(people);
+    const vrais = useDoublonsVrais.getState().ids;
+    const doubles = new Set([...idsEnDouble(people)].filter((id) => vrais?.has(id)));
     if (doubles.size === 0)
         return nodes;
     const ajouts: Node[] = [];

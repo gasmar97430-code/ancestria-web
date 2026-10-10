@@ -46,6 +46,7 @@ import { sansDates, useAvecOrdreNaissance } from './OrdreNaissance';
 import { avecNaturesTraits, useAvecFamillesFormes } from './FamillesFormes';
 import { avecPoubelle, BoutonSupprimerCarte } from './SupprimerSurCarte';
 import { avecCorbeillesDoublons, BoutonCorbeilleDoublon } from './CorbeilleDoublons';
+import { useDoublonsVrais } from './doublonsVrais';
 import { PastilleReglable } from './ReglerUnion';
 import { useAncrage } from './ancrage';
 import { usePositionsValides, GardeCamera } from './positionsValides';
@@ -126,6 +127,7 @@ const ArbreInterieur = () => {
     const ancres = useAncrage(usePositionsValides(affiche.nodes), choisi);
     const avecEdition = lecture ? ancres : avecBoutonsEpouses(avecBarre(ancres, choisi, CARTE.width), choisi, people, unionsEnregistrees(unions), CARTE.width);
     const decores = avecPastillesCoparents(avecRangsDesUnions(avecCartesInconnues(avecEdition, tree.inconnus)));
+    useDoublonsVrais((x) => x.ids);
     const noeudsGlisses = useGlissement(lecture ? decores : avecCorbeillesDoublons(avecPoubelle(decores)));
     const noeudsAffiches = useTaillesConnues(noeudsGlisses);
     return (<div className="flex-1 min-w-0 flex flex-col">

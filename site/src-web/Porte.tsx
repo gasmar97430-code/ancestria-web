@@ -31,7 +31,7 @@ useAssistantIA.setState({ actif: false }); // l'assistant IA tourne sur le PC (I
 export function Porte({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null | undefined>(undefined);
     const [, setTour] = useState(0); // relit l'adresse après l'inscription (/c/<jeton> posé sans recharger)
-    const [administrateur, setAdministrateur] = useState(false);
+    const [administrateur, setAdministrateur] = useState(() => { try { return new URLSearchParams(window.location.search).has('administrateur'); } catch { return false; } }); // 10/10 : son adresse privée …/?administrateur (plus de lien sur la page publique)
     const [choixMotDePasse, finChoixMotDePasse] = useChoixDuMotDePasse(); // arrivée par le lien « choisir mon mot de passe »
     useEffect(() => poserCompteSite(), []); // compte-site/CompteSite.tsx (après entree.tsx, qui éteint « Site en ligne »)
 

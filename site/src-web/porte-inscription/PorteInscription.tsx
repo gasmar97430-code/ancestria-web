@@ -58,7 +58,7 @@ function Libelle({ t, children, erreur, aide }: { t: string; children: ReactNode
 }
 
 /** jeton : celui du lien partagé reçu, ou null (adresse du site : le lien de la porte est demandé à la base). */
-export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton: string | null; onEntree: (jeton: string) => void; onAdministrateur: () => void }) {
+export function PorteInscription({ jeton, onEntree }: { jeton: string | null; onEntree: (jeton: string) => void; onAdministrateur: () => void }) {
     const [s, setS] = useState<Inscrit>(() => { try { return lireInscription(localStorage) ?? { nom: '', prenom: '', contact: '' }; } catch { return { nom: '', prenom: '', contact: '' }; } }); // 05/10 : un inscrit retrouve son formulaire rempli
     const [charte, setCharte] = useState(() => { try { return charteAcceptee(localStorage); } catch { return false; } });
     const [erreurs, setErreurs] = useState<ErreursInscription & { charte?: string }>({});
@@ -130,9 +130,9 @@ export function PorteInscription({ jeton, onEntree, onAdministrateur }: { jeton:
                         {envoi ? 'Inscription…' : 'M’inscrire et entrer'}
                     </button>
                 </form>
-                <button type="button" onClick={onAdministrateur} className="self-start text-xs text-encre-3 underline underline-offset-4 min-h-11" data-bouton="administrateur">
-                    Administrateur : se connecter
-                </button>
+                {/* 10/10, sa règle : « l'administrateur ne doit pas être sur la page du site … quelqu'un de mauvais présage
+                    pourrait essayer de se connecter » → plus de lien ici ; il entre par son adresse privée …/?administrateur
+                    (Porte.tsx). onAdministrateur reste pour cette porte. */}
                 <MentionAmazon />{/* 04/10 : phrase exigée par le contrat Amazon Partenaires (lib/bannierePartenaires.tsx), seulement si sa bannière est visible */}
             </div>
         </main>
