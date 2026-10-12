@@ -70,7 +70,19 @@ export function PorteInscription({ jeton, onEntree }: { jeton: string | null; on
     const valider = async () => {
         const r = validerInscription(s);
         const manque = charte ? {} : { charte: 'Pour entrer, il faut s’engager à respecter la Charte.' };
-        if (!r.ok || !charte) return setErreurs({ ...(r.ok ? {} : r.erreurs), ...manque });
+        if (!r.ok || !charte) {
+            // 12/10, son essai sur son téléphone : « je suis tout en bas … cocher une petite case puis s'inscrire et c'est
+            // là le bug » — les erreurs s'affichaient EN HAUT, à côté des cases, hors de sa vue : il croyait le bouton
+            // en panne. Maintenant : la liste de ce qui manque s'écrit AUSSI au-dessus du bouton, et la page remonte
+            // à la première case à corriger.
+            const e = { ...(r.ok ? {} : r.erreurs), ...manque } as ErreursInscription & { charte?: string };
+            setErreurs(e);
+            const quoi = [e.nom && 'votre nom', e.prenom && 'votre prénom', e.contact && 'un e-mail ou un téléphone valable', e.charte && 'cocher la Charte'].filter(Boolean);
+            setErreur(`Il manque : ${quoi.join(', ')}.`);
+            const premier = e.nom ? 'inscrit-nom' : e.prenom ? 'inscrit-prenom' : e.contact ? 'inscrit-contact' : null;
+            if (premier) setTimeout(() => { const c = document.querySelector<HTMLInputElement>(`[data-champ="${premier}"]`); c?.scrollIntoView({ block: 'center', behavior: 'smooth' }); c?.focus(); }, 50);
+            return;
+        }
         setErreurs({});
         setErreur(null);
         setEnvoi(true);
