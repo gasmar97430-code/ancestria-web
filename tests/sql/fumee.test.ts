@@ -33,8 +33,8 @@ describe('schéma : chargement', () => {
         const r = await db.query<{ proname: string }>(`select distinct p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
             where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute') order by 1`);
         expect(r.rows.map((x) => x.proname)).toEqual([
-            'arbre_public', 'date_max', 'inscrire_visiteur', 'invitation_publique', 'patrimoine_carte', 'patrimoine_individu', 'patrimoine_public',
-            'patrimoine_recherche', 'plat', 'soumettre_contribution', 'thematiques_valides', 'verifier_export',
+            'arbre_public', 'date_max', 'desinscrire', 'inscrire_visiteur', 'invitation_publique', 'patrimoine_carte', 'patrimoine_individu', 'patrimoine_public',
+            'patrimoine_recherche', 'plat', 'poser_mot_de_passe', 'soumettre_contribution', 'thematiques_valides', 'verifier_export',
         ]);
     });
 

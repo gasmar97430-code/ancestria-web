@@ -2600,6 +2600,67 @@ grant execute on function public.envoi_pc(jsonb, boolean) to authenticated;
 revoke execute on function public.envoi_pc(jsonb, boolean) from public, anon;
 -- ---- FIN ENVOI DU PC EN UN CLIC ----
 
+-- ---- DÉSINSCRIPTION AVEC MOT DE PASSE (12/10/2026) ----
+-- Ses mots : « une fois installé sur le téléphone, il faut pour supprimer l'appli un désabonnement … l'appli n'est pas
+-- qu'un petit moment de visite mais une appli très sérieuse » ; « on efface rien : un nom validé reste figé » ;
+-- « avec un code de validation c'est plus strict » ; « mot de passe ».
+--   · à l'inscription, la personne choisit un mot de passe : gardé CHIFFRÉ (bcrypt, comme le code de famille) ;
+--     posé une seule fois, dans les 15 minutes qui suivent l'inscription, avec le même contact ;
+--   · pour se désinscrire (sa précision : « pour désinscription pas besoin de mot de passe, le mot de passe sert juste
+--     de protection ») : nom + prénom + contact exacts, et le mot DÉSINSCRIRE tapé à l'écran ;
+--   · effacé : ses inscriptions. JAMAIS touché : l'arbre (individus, unions, filiations) ni ses propositions envoyées
+--     (verrouillées, pour la vérification de l'administrateur).
+alter table public.inscriptions_acces add column if not exists mot_de_passe text;
+drop function if exists public.desinscrire(text, text, text);
+
+create or replace function public.poser_mot_de_passe(p_id uuid, p_contact text, p_mot text)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_n int;
+begin
+    if p_mot is null or char_length(p_mot) not between 4 and 72 then
+        return jsonb_build_object('ok', false, 'raison', 'mot_de_passe_invalide');
+    end if;
+    update public.inscriptions_acces
+       set mot_de_passe = extensions.crypt(p_mot, extensions.gen_salt('bf', 8))
+     where id = p_id and contact = btrim(coalesce(p_contact, '')) and mot_de_passe is null and cree_le > now() - interval '15 minutes';
+    get diagnostics v_n = row_count;
+    return case when v_n = 1 then jsonb_build_object('ok', true) else jsonb_build_object('ok', false, 'raison', 'inconnu') end;
+end;
+$$;
+
+create or replace function public.desinscrire(p_nom text, p_prenom text, p_contact text, p_mot text)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_n int;
+    v_contact text := btrim(coalesce(p_contact, ''));
+begin
+    if char_length(v_contact) < 3 or char_length(btrim(coalesce(p_nom, ''))) < 1 or char_length(btrim(coalesce(p_prenom, ''))) < 1 then
+        return jsonb_build_object('ok', false, 'raison', 'identite_incomplete');
+    end if;
+    with sup as (
+        delete from public.inscriptions_acces
+        where contact = v_contact and lower(btrim(nom)) = lower(btrim(p_nom)) and lower(btrim(prenom)) = lower(btrim(p_prenom))
+        returning arbre_id
+    )
+    select count(*) into v_n from sup;
+    if v_n = 0 then
+        return jsonb_build_object('ok', false, 'raison', 'inconnu');
+    end if;
+    -- les propositions déjà envoyées restent VERROUILLÉES (sa règle : une proposition envoyée ne se modifie plus)
+    return jsonb_build_object('ok', true, 'inscriptions_effacees', v_n);
+end;
+$$;
+revoke execute on function public.poser_mot_de_passe(uuid, text, text) from public;
+grant execute on function public.poser_mot_de_passe(uuid, text, text) to anon, authenticated;
+revoke execute on function public.desinscrire(text, text, text, text) from public;
+grant execute on function public.desinscrire(text, text, text, text) to anon, authenticated;
+-- ---- FIN DÉSINSCRIPTION ----
+
 -- =====================================================================
 -- FIN DU SCHÉMA
 -- =====================================================================

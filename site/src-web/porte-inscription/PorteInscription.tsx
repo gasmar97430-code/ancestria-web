@@ -25,6 +25,7 @@ import { emailAdministrateur } from '../visiteur/visiteur';
 import { garderInscription, lireInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
 import { ARTICLES_CHARTE, AVIS_COURT, ENGAGEMENT_CHARTE, TITRE_CHARTE, VERSION_CHARTE, avisDetaille, charteAcceptee, garderCharte } from '../../../src/inscription/charte';
 import { ADMINISTRATEUR, MESSAGE_ACCUEIL, MESSAGE_SOUTIEN } from '../../../src/inscription/messages';
+import { ChampMotDePasse } from '../../src/lib/ChampMotDePasse'; // 12/10 : mot de passe de l'inscrit (désinscription)
 import { TitreCentre } from '../../src/app/TitreCentre'; // l'en-tête de l'appli, tel quel (« au miroir de l'appli »)
 
 const champ = 'h-11 w-full px-3 rounded-[10px] bg-blanc border border-trait text-encre text-[15px] outline-none focus:border-sepia';
@@ -62,24 +63,28 @@ function Libelle({ t, children, erreur, aide }: { t: string; children: ReactNode
 export function PorteInscription({ jeton, onEntree }: { jeton: string | null; onEntree: (jeton: string) => void; onAdministrateur: () => void }) {
     const [s, setS] = useState<Inscrit>({ nom: '', prenom: '', contact: '' }); // 12/10 : ses coordonnées ne se réaffichent jamais (« mes informations doivent être privées et non visibles »)
     const [charte, setCharte] = useState(() => { try { return charteAcceptee(localStorage); } catch { return false; } });
-    const [erreurs, setErreurs] = useState<ErreursInscription & { charte?: string }>({});
+    const [erreurs, setErreurs] = useState<ErreursInscription & { charte?: string; mot?: string }>({});
+    const [mot, setMot] = useState(''); // 12/10, ses mots : « avec un code de validation c'est plus strict » · « mot de passe » (désinscription)
     const [erreur, setErreur] = useState<string | null>(null);
     const [envoi, setEnvoi] = useState(false);
     const email = emailAdministrateur();
 
     const valider = async () => {
         const r = validerInscription(s);
-        const manque = charte ? {} : { charte: 'Pour entrer, il faut s’engager à respecter la Charte.' };
-        if (!r.ok || !charte) {
+        const manque = {
+            ...(charte ? {} : { charte: 'Pour entrer, il faut s’engager à respecter la Charte.' }),
+            ...([...mot].length >= 4 && [...mot].length <= 72 ? {} : { mot: 'Choisissez un mot de passe de 4 caractères au moins : il protège votre inscription.' }),
+        };
+        if (!r.ok || Object.keys(manque).length) {
             // 12/10, son essai sur son téléphone : « je suis tout en bas … cocher une petite case puis s'inscrire et c'est
             // là le bug » — les erreurs s'affichaient EN HAUT, à côté des cases, hors de sa vue : il croyait le bouton
             // en panne. Maintenant : la liste de ce qui manque s'écrit AUSSI au-dessus du bouton, et la page remonte
             // à la première case à corriger.
-            const e = { ...(r.ok ? {} : r.erreurs), ...manque } as ErreursInscription & { charte?: string };
+            const e = { ...(r.ok ? {} : r.erreurs), ...manque } as ErreursInscription & { charte?: string; mot?: string };
             setErreurs(e);
-            const quoi = [e.nom && 'votre nom', e.prenom && 'votre prénom', e.contact && 'un e-mail ou un téléphone valable', e.charte && 'cocher la Charte'].filter(Boolean);
+            const quoi = [e.nom && 'votre nom', e.prenom && 'votre prénom', e.contact && 'un e-mail ou un téléphone valable', e.mot && 'un mot de passe (4 caractères au moins)', e.charte && 'cocher la Charte'].filter(Boolean);
             setErreur(`Il manque : ${quoi.join(', ')}.`);
-            const premier = e.nom ? 'inscrit-nom' : e.prenom ? 'inscrit-prenom' : e.contact ? 'inscrit-contact' : null;
+            const premier = e.nom ? 'inscrit-nom' : e.prenom ? 'inscrit-prenom' : e.contact ? 'inscrit-contact' : e.mot ? 'inscrit-mot' : null;
             if (premier) setTimeout(() => { const c = document.querySelector<HTMLInputElement>(`[data-champ="${premier}"]`); c?.scrollIntoView({ block: 'center', behavior: 'smooth' }); c?.focus(); }, 50);
             return;
         }
@@ -91,8 +96,11 @@ export function PorteInscription({ jeton, onEntree }: { jeton: string | null; on
                 p_jeton: jeton, p_nom: r.inscrit.nom, p_prenom: r.inscrit.prenom, p_contact: r.inscrit.contact, p_charte: VERSION_CHARTE,
             });
             if (error) throw new Error(error.message);
-            const res = data as { ok: boolean; raison?: string; jeton?: string };
+            const res = data as { ok: boolean; raison?: string; jeton?: string; id?: string };
             if (!res.ok || !res.jeton) return setErreur(RAISONS[res.raison ?? ''] ?? 'L’inscription n’a pas abouti.');
+            // 12/10 : le mot de passe est posé (chiffré par la base) juste après ; sans lui, on n'entre pas (appli stricte)
+            const { data: m, error: em } = await supabase.rpc('poser_mot_de_passe', { p_id: res.id, p_contact: r.inscrit.contact, p_mot: mot });
+            if (em || !(m as { ok?: boolean } | null)?.ok) return setErreur('Votre mot de passe n’a pas pu être enregistré : réessayez dans un moment.');
             garderInscription(localStorage, r.inscrit);
             garderCharte(localStorage);
             onEntree(res.jeton);
@@ -119,6 +127,7 @@ export function PorteInscription({ jeton, onEntree }: { jeton: string | null; on
                     <Libelle t="Nom" erreur={erreurs.nom}><input className={champ} value={s.nom} maxLength={80} autoComplete="family-name" onChange={(e) => setS({ ...s, nom: e.target.value })} data-champ="inscrit-nom" /></Libelle>
                     <Libelle t="Prénom" erreur={erreurs.prenom}><input className={champ} value={s.prenom} maxLength={80} autoComplete="given-name" onChange={(e) => setS({ ...s, prenom: e.target.value })} data-champ="inscrit-prenom" /></Libelle>
                     <Libelle t="E-mail ou téléphone" erreur={erreurs.contact} aide="l’un des deux suffit"><input className={champ} value={s.contact} maxLength={200} autoComplete="email" onChange={(e) => setS({ ...s, contact: e.target.value })} data-champ="inscrit-contact" /></Libelle>
+                    <Libelle t="Mot de passe" erreur={erreurs.mot} aide="il protège votre inscription"><ChampMotDePasse className={champ} value={mot} maxLength={72} autoComplete="new-password" onChange={(e) => setMot(e.target.value)} data-champ="inscrit-mot" /></Libelle>{/* 12/10 */}
                     <section className="rounded-[12px] border border-sepia bg-blanc px-4 py-3 flex flex-col gap-2" data-charte="articles">
                         <h3 className="font-display text-xl text-sepia-deep m-0">{TITRE_CHARTE}</h3>
                         <ol className="flex flex-col gap-1.5 text-[13.5px] leading-relaxed text-encre list-decimal pl-5 m-0">
