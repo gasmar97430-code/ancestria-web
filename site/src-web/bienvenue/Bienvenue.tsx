@@ -39,8 +39,8 @@ export function Bienvenue() {
                 <ol className="m-0 pl-5 flex flex-col gap-1.5 text-[15px] leading-relaxed">
                     <li><b>Inscrivez-vous :</b> votre nom, votre prénom, votre e-mail ou votre téléphone, et la charte de l’Arbre de Lumière.</li>
                     <li><b>Cherchez un nom :</b> tapez-le, son arbre apparaît (les personnes vivantes restent protégées).</li>
-                    <li><b>Ajoutez les noms de votre famille :</b> ils arrivent à l’administrateur, qui les vérifie avant de les poser dans l’arbre.</li>
-                    <li><b>Partagez avec vos proches :</b> le bouton « Faire connaître Ancestria » vous donne le lien et l’affiche.</li>
+                    <li><b>Ajoutez les noms de votre famille :</b> ils entrent tout de suite dans l’arbre.</li>{/* 12/10, ses mots : « direct sans chichi » */}
+                    <li><b>Vous aimez Ancestria ?</b> N’hésitez pas à la partager avec vos proches : le bouton « Faire connaître Ancestria » vous donne le lien et l’affiche.</li>{/* 12/10 : « le partage ne doit pas être une obligation » */}
                 </ol>
                 <h3 className="font-display text-xl m-0">Une œuvre collective et solidaire</h3>
                 <p className="italic text-[15px] leading-relaxed m-0">Ancestria vit grâce à la générosité et à la bienveillance de chacun. Si votre cœur vous en dit et que vous le pouvez, un petit soutien libre (même symbolique) aide beaucoup à faire vivre et grandir ce bel outil pour toute la communauté. C’est un geste d’amour totalement facultatif.</p>

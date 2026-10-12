@@ -60,7 +60,7 @@ function Libelle({ t, children, erreur, aide }: { t: string; children: ReactNode
 export function AjouterFamille({ nom }: { nom: string }) {
     const [ouvert, setOuvert] = useState(false);
     const [inscrit, setInscrit] = useState<Inscrit | null>(() => (charteAcceptee(localStorage) ? lireInscription(localStorage) : null));
-    const [envoye, setEnvoye] = useState(false);
+    const [envoye, setEnvoye] = useState<false | 'posee' | 'a-verifier' | 'en-attente'>(false); // 12/10 : posé tout de suite, sauf refus de la base
     const [pour, setPour] = useState(nom);
     if (pour !== nom) {
         // un autre nom est cherché : le bloc repart du bouton (l'inscription, elle, reste gardée)
@@ -79,10 +79,10 @@ export function AjouterFamille({ nom }: { nom: string }) {
             )}
             {ouvert && !envoye && !inscrit && <Inscription onInscrit={setInscrit} onFermer={() => setOuvert(false)} />}
             {ouvert && !envoye && inscrit && (
-                <Formulaire famille={nom} inscrit={inscrit} onEnvoye={() => setEnvoye(true)} onFermer={() => setOuvert(false)}
+                <Formulaire famille={nom} inscrit={inscrit} onEnvoye={(posee) => setEnvoye(posee === true ? 'posee' : posee === false ? 'a-verifier' : 'en-attente')} onFermer={() => setOuvert(false)}
                     onChangerInscrit={() => { oublierInscription(localStorage); setInscrit(null); }} />
             )}
-            {envoye && <Verrou />}
+            {envoye && <Verrou etat={envoye} />}
         </div>
     );
 }
@@ -136,7 +136,7 @@ function Inscription({ onInscrit, onFermer }: { onInscrit: (i: Inscrit) => void;
     );
 }
 
-function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: { famille: string; inscrit: Inscrit; onEnvoye: () => void; onFermer: () => void; onChangerInscrit: () => void }) {
+function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: { famille: string; inscrit: Inscrit; onEnvoye: (posee: boolean | undefined) => void; onFermer: () => void; onChangerInscrit: () => void }) {
     const nomFamille = famille.toUpperCase();
     const [s, setS] = useState<SaisieFamille>({ famille: nomFamille, prenom: inscrit.prenom, nom: inscrit.nom, annee: '', proches: [], message: '' });
     const [erreurs, setErreurs] = useState<ErreursFamille>({});
@@ -153,13 +153,17 @@ function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: 
         setErreur(null);
         setEnvoi(true);
         try {
-            const { data, error } = await supabase.rpc('soumettre_contribution', {
+            const args = {
                 p_jeton: jetonVisiteur(), p_pin: pin, p_contact: inscrit.contact, p_uid: uid,
                 p_contenu: { ...propositionMiseEnForme(v.contenu), inscrit: { nom: inscrit.nom, prenom: inscrit.prenom, charte: VERSION_CHARTE } },
-            });
+            };
+            // 12/10, sa règle « direct sans chichi » : ajouter_noms_direct pose tout de suite (supabase/schema.sql) ;
+            // repli : si la base en ligne ne l'a pas encore (script pas rejoué), l'ancien envoi, en attente.
+            let { data, error } = await supabase.rpc('ajouter_noms_direct', args);
+            if (error && /ajouter_noms_direct|PGRST202|Could not find/i.test(`${error.code ?? ''} ${error.message}`)) ({ data, error } = await supabase.rpc('soumettre_contribution', args));
             if (error) throw new Error(error.message);
-            const r = data as { ok: boolean; raison?: string };
-            if (r.ok) return onEnvoye();
+            const r = data as { ok: boolean; raison?: string; posee?: boolean };
+            if (r.ok) return onEnvoye(r.posee);
             if (r.raison === 'pin_requis' || r.raison === 'pin_faux') setPin((x) => x ?? '');
             setErreur(RAISONS[r.raison ?? ''] ?? 'L’envoi n’a pas abouti.');
         } catch {
@@ -214,7 +218,7 @@ function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: 
                 </button>
             )}
 
-            <Libelle t="Ce que vous savez de cette famille (origine, communes, histoire…)" erreur={erreurs.message} aide="Facultatif. Rien n’entre dans l’arbre sans l’accord de l’administrateur.">
+            <Libelle t="Ce que vous savez de cette famille (origine, communes, histoire…)" erreur={erreurs.message} aide="Facultatif.">
                 <textarea className={`${champ} h-28 py-2`} value={s.message} maxLength={2000} onChange={(e) => setS({ ...s, message: e.target.value })} data-champ="message" />
             </Libelle>
 
@@ -230,7 +234,7 @@ function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: 
             {erreur && <p className="text-[14px] m-0" style={{ color: 'var(--o-afrique)' }} data-erreur="envoi">{erreur}</p>}
             <div className="flex flex-wrap gap-2">
                 <button type="submit" disabled={envoi} className={`${bouton} border-sepia text-blanc bg-sepia hover:bg-sepia-deep disabled:opacity-60`} data-bouton="envoyer">
-                    {envoi ? 'Envoi…' : 'Envoyer ma proposition'}
+                    {envoi ? 'Ajout…' : 'Ajouter à l’arbre'}
                 </button>
                 <button type="button" onClick={onFermer} className={`${bouton} border-trait text-encre-2 bg-blanc`}>Annuler</button>
             </div>
@@ -238,14 +242,16 @@ function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: 
     );
 }
 
-function Verrou() {
+function Verrou({ etat }: { etat: 'posee' | 'a-verifier' | 'en-attente' }) {
     const email = emailAdministrateur();
     const objet = encodeURIComponent(`${MOT_CORRECTION} — Ancestria`);
     return (
         <div className="rounded-[12px] border border-sepia bg-sepia-tint px-4 py-3 text-[14px] leading-relaxed text-encre" data-message="verrou">
-            <b>Votre proposition est enregistrée et verrouillée</b> : elle ne peut plus être modifiée ici. Elle entrera dans l’arbre
-            quand l’administrateur l’aura vérifiée. Pour toute correction, écrivez à l’administrateur, {ADMINISTRATEUR}, en commençant
-            votre message par le mot « {MOT_CORRECTION} ».
+            {etat === 'posee' && <><b>C’est fait : vos noms sont dans l’arbre.</b> Ils sont enregistrés et verrouillés.</>}
+            {etat === 'a-verifier' && <><b>Vos noms sont enregistrés.</b> Une date ne va pas avec celles de l’arbre : l’administrateur la regarde avant de les poser.</>}
+            {etat === 'en-attente' && <><b>Vos noms sont enregistrés</b> et entreront dans l’arbre très vite.</>}
+            {' '}Pour toute correction, écrivez à l’administrateur, {ADMINISTRATEUR}, en commençant{' '}
+            votre message par le mot « {MOT_CORRECTION} ».
             {email && <> <a className="text-sepia-deep underline underline-offset-4 break-all" href={`mailto:${email}?subject=${objet}`}>{email}</a></>}
         </div>
     );

@@ -4,8 +4,8 @@
 // c'est tout à fait normal, mais aussi de pouvoir faire des recherches » · « l'appli doit ressembler exactement à mon
 // appli … page d'accueil et l'arborescence ». L'inscrit a donc l'appli (Accueil + Arbre, lecture seule, vivants
 // protégés) ET, à la place de « S'inscrire · Se connecter » (inutile : il est inscrit), « Ajouter des noms » : la
-// même fenêtre que l'ancienne page visiteur (nom de famille + « Ajouter cette famille » ; la proposition part vers
-// l'administrateur, rien n'entre sans son accord). Pas de bloc flottant : la place du lien existant.
+// même fenêtre que l'ancienne page visiteur (nom de famille + « Ajouter cette famille »  ; depuis le 12/10, les noms
+// entrent tout de suite dans l'arbre : sa règle « direct sans chichi »). Pas de bloc flottant : la place du lien existant.
 // Ligne d'appel : compte-site/CompteSite.tsx.
 
 import { useState } from 'react';

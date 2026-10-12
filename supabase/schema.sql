@@ -2664,3 +2664,52 @@ grant execute on function public.desinscrire(text, text, text, text) to anon, au
 -- =====================================================================
 -- FIN DU SCHÉMA
 -- =====================================================================
+
+-- ---- NOMS AJOUTÉS : DIRECTEMENT DANS L'ARBRE (12/10/2026) ----
+-- Ses mots (12/10, citant la Bienvenue « ils arrivent à l'administrateur, qui les vérifie avant de les poser dans
+-- l'arbre ») : « je n'ai pas besoin de vérifier ça devrait être direct sans chichi sinon ça fait trop administratif ».
+-- Remplace sa règle du 06/10 « rien n'entre sans son accord ». Nœud : soumettre_contribution (tous ses contrôles :
+-- inscription ENREGISTRÉE, contenu, cible décédée, limite d'envois) puis, dans la foulée, accepter_contribution comme
+-- si le propriétaire de l'arbre l'acceptait (auth.uid() = lui, le temps de l'appel seulement). Si un contrôle de la
+-- base refuse la pose (dates impossibles, lien interdit…), l'ajout RESTE dans ses propositions (en attente) : rien
+-- n'est perdu, et la réponse le dit (posee = false). Les vivants restent protégés à la lecture (arbre_public).
+-- Ni soumettre_contribution ni accepter_contribution ne sont modifiées. Le site appelle cette fonction
+-- (site/src-web/ajouter-famille/AjouterFamille.tsx). La retirer = l'ancien chemin (proposition en attente).
+create or replace function public.ajouter_noms_direct(p_jeton text, p_pin text, p_contenu jsonb, p_contact text default null, p_uid text default null)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_r            jsonb;
+    v_id           uuid;
+    v_proprietaire uuid;
+    v_avant        text := current_setting('request.jwt.claim.sub', true);
+    v_pose         jsonb;
+begin
+    v_r := public.soumettre_contribution(p_jeton, p_pin, p_contenu, p_contact, p_uid);
+    if not coalesce((v_r ->> 'ok')::boolean, false) then
+        return v_r;
+    end if;
+    v_id := (v_r ->> 'id')::uuid;
+    if exists (select 1 from public.contributions where id = v_id and statut = 'acceptee') then
+        return v_r || jsonb_build_object('posee', true);           -- même envoi reçu deux fois : déjà posé
+    end if;
+    select a.proprietaire into v_proprietaire
+    from public.contributions c join public.arbres a on a.id = c.arbre_id where c.id = v_id and c.statut = 'en_attente';
+    if v_proprietaire is null then
+        return v_r || jsonb_build_object('posee', false);
+    end if;
+    begin
+        perform set_config('request.jwt.claim.sub', v_proprietaire::text, true);
+        v_pose := public.accepter_contribution(v_id);
+        perform set_config('request.jwt.claim.sub', coalesce(v_avant, ''), true);
+        return v_r || jsonb_build_object('posee', true, 'individus_crees', v_pose -> 'individus_crees');
+    exception when others then
+        perform set_config('request.jwt.claim.sub', coalesce(v_avant, ''), true);
+        return v_r || jsonb_build_object('posee', false, 'a_verifier', sqlerrm);
+    end;
+end;
+$$;
+revoke execute on function public.ajouter_noms_direct(text, text, jsonb, text, text) from public;
+grant execute on function public.ajouter_noms_direct(text, text, jsonb, text, text) to anon, authenticated;
+-- ---- FIN NOMS AJOUTÉS : DIRECTEMENT DANS L'ARBRE ----

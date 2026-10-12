@@ -9,7 +9,7 @@
 //   - proches : parent / enfant / conjoint, 20 au plus, prénom obligatoire ;
 //   - message : ce qu'il sait de la famille (origine, communes…), 2000 signes au plus ;
 //   - inscrit : ajouté à l'envoi (nom, prénom, version de la charte) — aucune proposition anonyme.
-// Rien n'entre dans l'arbre sans l'accord de l'administrateur.
+// 12/10, sa règle « direct sans chichi » : l'ajout entre tout de suite dans l'arbre (ajouter_noms_direct), sauf refus de la base.
 
 export type RelationProche = 'parent' | 'enfant' | 'conjoint';
 

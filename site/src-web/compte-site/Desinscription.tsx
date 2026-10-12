@@ -43,7 +43,7 @@ export function Desinscription({ onAnnuler }: { onAnnuler: () => void }) {
     return (
         <div className="flex flex-col gap-3" data-bloc="desinscription">
             <h3 className="font-display text-[26px] leading-tight m-0">Vous désinscrire d’Ancestria</h3>
-            <p className="text-[14.5px] leading-relaxed m-0">Ancestria garde la mémoire des familles pour toute une vie. Si vous partez, <b>votre inscription est effacée</b> ; les noms que vous avez apportés <b>restent dans l’arbre</b> — c’est la mémoire de votre famille — et vos propositions déjà envoyées restent à la vérification de l’administrateur.</p>
+            <p className="text-[14.5px] leading-relaxed m-0">Ancestria garde la mémoire des familles pour toute une vie. Si vous partez, <b>votre inscription est effacée</b> ; les noms que vous avez apportés <b>restent dans l’arbre</b> — c’est la mémoire de votre famille.</p>
             <p className="text-[14.5px] leading-relaxed m-0">Pour confirmer que c’est bien vous, donnez les informations de votre inscription.</p>
             {ligne('Nom', 'nom', 'family-name')}
             {ligne('Prénom', 'prenom', 'given-name')}
