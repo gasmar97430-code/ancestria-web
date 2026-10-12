@@ -100,14 +100,16 @@ export function AppliTelephone() {
     const [message, setMessage] = useState<string | null>(null);
     useEffect(() => { const f = () => setTour((t) => t + 1); abonnes.add(f); return () => { abonnes.delete(f); }; }, []);
 
-    const mode = modeInstallation({
+    const appareil = {
         autonome: window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true,
-        inviteDisponible: invite !== null,
         agent: navigator.userAgent,
         tactile: window.matchMedia?.('(pointer: coarse)').matches ?? false,
-    });
-    const dansAppli = mode === 'android-dans-appli' || mode === 'iphone-dans-appli';
-    const android = /Android/i.test(navigator.userAgent) && (mode.startsWith('android') || mode === 'autre-telephone');
+    };
+    const mode = modeInstallation({ ...appareil, inviteDisponible: invite !== null });
+    const sansInvite = modeInstallation({ ...appareil, inviteDisponible: false }); // si la fenêtre du téléphone ne s'ouvre pas : SES gestes
+    const surPC = sansInvite.startsWith('pc');
+    const dansAppli = sansInvite === 'android-dans-appli' || sansInvite === 'iphone-dans-appli';
+    const android = /Android/i.test(navigator.userAgent) && (sansInvite.startsWith('android') || sansInvite === 'autre-telephone');
     const adresse = `${window.location.origin}${import.meta.env.BASE_URL}`;
 
     const installer = async () => {
@@ -141,7 +143,7 @@ export function AppliTelephone() {
     };
 
     const bouton = 'min-h-11 px-4 rounded-[10px] text-[14px] font-medium text-left';
-    const liste = gestes(mode === 'un-toucher' ? (/Android/i.test(navigator.userAgent) ? 'android-chrome' : 'pc') : mode);
+    const liste = gestes(sansInvite);
     const montrer = aide || dansAppli; // dans Facebook & co, l'aide s'affiche d'elle-même : le bouton ne pourrait rien faire
     return (
         <section className="rounded-[12px] border border-trait bg-carte px-4 py-3 flex flex-col gap-2.5" data-bloc="appli-telephone" data-mode={mode}>
@@ -149,7 +151,7 @@ export function AppliTelephone() {
             <div className="flex flex-wrap gap-2">
                 {mode !== 'deja-installee' && (
                     <button type="button" onClick={() => void installer()} className={`${bouton} bg-sepia text-blanc`} data-bouton="installer">
-                        {mode.startsWith('pc') ? 'Installer Ancestria sur mon ordinateur' : 'Installer Ancestria sur mon téléphone'}
+                        {surPC ? 'Installer Ancestria sur mon ordinateur' : 'Installer Ancestria sur mon téléphone'}
                     </button>
                 )}
                 <button type="button" onClick={() => void partager()} className={`${bouton} border border-sepia text-sepia-deep bg-blanc`} data-bouton="partager">
@@ -157,16 +159,16 @@ export function AppliTelephone() {
                 </button>
             </div>
             {montrer && liste.length > 0 && (
-                <div className="rounded-[10px] bg-papier border border-trait-leger px-3 py-2.5 flex flex-col gap-2" data-aide={mode}>
+                <div className="rounded-[10px] bg-papier border border-trait-leger px-3 py-2.5 flex flex-col gap-2" data-aide={sansInvite}>
                     <div className="text-[14px] font-semibold text-encre">Pour installer Ancestria :</div>
                     <ol className="m-0 pl-5 text-[14.5px] text-encre leading-relaxed">
                         {liste.map((g) => <li key={g}>{g}</li>)}
                     </ol>
                     <div className="flex flex-wrap gap-2">
-                        {android && mode !== 'android-chrome' && (
+                        {android && sansInvite !== 'android-chrome' && (
                             <a href={lienChrome(adresse)} className={`${bouton} bg-sepia text-blanc inline-flex items-center`} data-bouton="ouvrir-chrome">Ouvrir dans Chrome</a>
                         )}
-                        {(dansAppli || mode === 'iphone-autre' || mode === 'autre-telephone' || mode === 'pc-firefox') && (
+                        {(dansAppli || sansInvite === 'iphone-autre' || sansInvite === 'autre-telephone' || sansInvite === 'pc-firefox') && (
                             <button type="button" onClick={() => void copier()} className={`${bouton} border border-sepia text-sepia-deep bg-blanc`} data-bouton="copier-lien">Copier le lien</button>
                         )}
                     </div>
