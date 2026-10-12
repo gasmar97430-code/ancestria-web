@@ -14,7 +14,8 @@ import { SignOut, UserCircle } from '@phosphor-icons/react';
 import { supabase } from '../prise/supabase';
 import { useCompteDuSite } from '../../src/lib/compteDuSite';
 import { useBoutonSiteEnLigne } from '../../src/lib/boutonSiteEnLigne';
-import { AjouterNomsEnTete } from './AjouterNomsEnTete'; // 12/10 : l'inscrit ajoute des noms depuis l'en-tête
+import { AjouterNomsEnTete } from './AjouterNomsEnTete';
+import { PartagerLien } from './PartagerLien'; // 12/10 : lui connecté → copier le lien et le partager // 12/10 : l'inscrit ajoute des noms depuis l'en-tête
 import { dejaInscrit } from '../porte-inscription/PorteInscription';
 
 // 05/10, ses mots : « quand je clique sur inscription je n'ai pas de retour pour revenir sur la page d'accueil » → la page
@@ -31,13 +32,14 @@ export function CompteSite() {
         return () => data.subscription.unsubscribe();
     }, []);
     if (session) {
-        return (
+        return (<span className="inline-flex items-center gap-1">
+            <PartagerLien classe={classe} />{/* PartagerLien.tsx (12/10) */}
             <button type="button" className={classe} data-bouton="compte-site" title={session.user.email ?? 'Connecté'}
                 onClick={() => void supabase.auth.signOut().then(() => window.location.assign(import.meta.env.BASE_URL))}>
                 <SignOut size={16} />
                 Connecté · Se déconnecter
             </button>
-        );
+        </span>);
     }
     if (dejaInscrit()) return <AjouterNomsEnTete classe={classe} />; // 12/10 : déjà inscrit → « Ajouter des noms » (AjouterNomsEnTete.tsx)
     return (
