@@ -16,6 +16,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { adressePublique, supabase } from '../prise/supabase';
 import { TitreCentre } from '../../src/app/TitreCentre';
 import { ChampMotDePasse } from '../../src/lib/ChampMotDePasse'; // 05/10 : l'œil du mot de passe (copié du PC)
+import { AppliTelephone } from '../appli-telephone/AppliTelephone'; // 12/10 : « il faut que l'icône reste sur mon téléphone » — installer depuis son entrée administrateur
 
 const champ = 'h-11 px-3 rounded-[10px] bg-blanc border border-trait text-encre outline-none focus:border-sepia';
 const bouton = 'h-11 rounded-[10px] border border-sepia text-sepia-deep text-sm font-medium hover:bg-sepia-tint disabled:opacity-60';
@@ -93,6 +94,7 @@ export function ConnexionMotDePasse({ onRetour }: { onRetour: () => void }) {
                     </button>
                 </form>
             )}
+            <AppliTelephone />{/* appli-telephone/ : 12/10, installer l'icône depuis l'entrée administrateur (son QR) */}
             <button type="button" onClick={onRetour} className="self-start text-xs text-encre-3 underline underline-offset-4 min-h-11">← Retour à l’inscription</button>
         </Cadre>
     );
