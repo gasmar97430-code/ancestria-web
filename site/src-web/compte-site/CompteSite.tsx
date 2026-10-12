@@ -14,6 +14,8 @@ import { SignOut, UserCircle } from '@phosphor-icons/react';
 import { supabase } from '../prise/supabase';
 import { useCompteDuSite } from '../../src/lib/compteDuSite';
 import { useBoutonSiteEnLigne } from '../../src/lib/boutonSiteEnLigne';
+import { AjouterNomsEnTete } from './AjouterNomsEnTete'; // 12/10 : l'inscrit ajoute des noms depuis l'en-tête
+import { dejaInscrit } from '../porte-inscription/PorteInscription';
 
 // 05/10, ses mots : « quand je clique sur inscription je n'ai pas de retour pour revenir sur la page d'accueil » → la page
 // d'où l'on vient est notée ici ; la page d'inscription propose « ← Revenir à Ancestria » (porte-inscription/RetourAncestria.tsx).
@@ -37,6 +39,7 @@ export function CompteSite() {
             </button>
         );
     }
+    if (dejaInscrit()) return <AjouterNomsEnTete classe={classe} />; // 12/10 : déjà inscrit → « Ajouter des noms » (AjouterNomsEnTete.tsx)
     return (
         <a href={`${import.meta.env.BASE_URL}?porte`} className={classe} data-bouton="compte-site" title="Inscription (avec la Charte) ou connexion de l'administrateur"
             onClick={() => { try { sessionStorage.setItem(CLE_RETOUR, window.location.pathname); } catch { /* sans stockage : pas de retour proposé */ } }}>
