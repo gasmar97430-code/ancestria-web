@@ -19,7 +19,7 @@
 import { useState, type ReactNode } from 'react';
 import { supabase } from '../prise/supabase';
 import { jetonVisiteur, emailAdministrateur } from '../visiteur/visiteur';
-import { garderInscription, genreContact, lireInscription, oublierInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
+import { garderInscription, lireInscription, oublierInscription, validerInscription, type ErreursInscription, type Inscrit } from '../../../src/inscription/contact';
 import { ARTICLES_CHARTE, AVIS_COURT, ENGAGEMENT_CHARTE, TITRE_CHARTE, VERSION_CHARTE, avisDetaille, charteAcceptee, garderCharte } from '../../../src/inscription/charte';
 import { ADMINISTRATEUR, MESSAGE_ACCUEIL, MESSAGE_PRUDENCE, MOT_CORRECTION } from '../../../src/inscription/messages';
 import { MAX_PROCHES, validerFamille, type ErreursFamille, type ProcheSaisi, type SaisieFamille } from './proposition';
@@ -224,7 +224,7 @@ function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: 
 
             <div className="rounded-[12px] border border-trait px-3.5 py-2.5 text-[13.5px] flex flex-col gap-0.5" data-inscription="rappel">
                 <span className="text-xs uppercase tracking-widest text-encre-3">Inscrit</span>
-                <span className="text-encre break-words"><b>{inscrit.prenom} {inscrit.nom}</b> — {genreContact(inscrit.contact) === 'email' ? 'e-mail' : 'téléphone'} : {inscrit.contact}</span>
+                <span className="text-encre break-words">Inscrit ✓ — vos coordonnées restent privées (jamais affichées ici).</span>{/* 12/10, ses mots : « une fois inscrit mes informations doivent être privées et non visibles sur le téléphone » */}
                 <button type="button" className="self-start text-sepia-deep underline underline-offset-4 min-h-11" onClick={onChangerInscrit}>Ce n’est pas moi / corriger mon inscription</button>
             </div>
             {erreur && <p className="text-[14px] m-0" style={{ color: 'var(--o-afrique)' }} data-erreur="envoi">{erreur}</p>}
