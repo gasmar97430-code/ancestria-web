@@ -9,6 +9,7 @@
 
 import { chargerArbre } from './donnees';
 import repertoire from '../copie-serveur/patronymes.json';
+import { trouverPersonnes, type PersonneArbre } from './personnes-tapees'; // 12/10 : nom + prénom tapés = la personne
 import { sourcesDesOrigines } from './sources-origines';
 import { rangsNaissance, relationsPassage } from './complements'; // 10/10 : couples « de passage » et ordre de naissance
 import releveDesFonds from '../copie-serveur/releve-sources.json'; // relevé des fonds du bureau (écran « Sources »), copié par scripts/copier-bureau.mjs
@@ -55,7 +56,7 @@ const LECTURES: Record<string, (params: Record<string, string>) => Promise<Repon
     '/traque/recherches': () => ok([]),
     '/traque/rattachements': () => ok([]), // compteur « pistes rattachées » des cartes : aucune en ligne
     '/carnet/notes': () => ok([]),
-    '/recherche-globale': () => ok({ personnes: [], patronymes: [], pistes: [], dureeMs: 0 }),
+    '/recherche-globale': async (params) => ok({ personnes: trouverPersonnes(params.q ?? '', (await chargerArbre()).people as PersonneArbre[]), patronymes: [], pistes: [], dureeMs: 0 }), // 12/10 : personnes-tapees.ts (« hoarau emile ceus »)
 };
 
 export async function repondre(methode: string, chemin: string, params: Record<string, string>, _corps: unknown): Promise<Reponse> {
