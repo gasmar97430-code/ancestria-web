@@ -213,7 +213,7 @@ function Formulaire({ famille, inscrit, onEnvoye, onFermer, onChangerInscrit }: 
             ))}
             {s.proches.length < MAX_PROCHES && (
                 <button type="button" data-bouton="ajouter-proche" className={`${bouton} self-start border-trait text-encre bg-blanc hover:border-sepia`}
-                    onClick={() => setS({ ...s, proches: [...s.proches, { relation: 'parent', prenom: '', nom: s.famille, annee: '', decede: true }] })}>
+                    onClick={() => setS({ ...s, proches: [...s.proches, { relation: 'parent', prenom: '', nom: s.famille, annee: '', decede: false }] })}>{/* 12/10, loi 6 : décoché par défaut — un proche reste « Fiche protégée » tant qu'on ne coche pas « Décédé(e) » */}
                     + Ajouter un proche
                 </button>
             )}
