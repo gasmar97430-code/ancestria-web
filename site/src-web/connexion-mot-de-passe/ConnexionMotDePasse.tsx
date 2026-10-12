@@ -84,9 +84,9 @@ export function ConnexionMotDePasse({ onRetour }: { onRetour: () => void }) {
             ) : (
                 <form className="flex flex-col gap-3" onSubmit={(ev) => { ev.preventDefault(); void seConnecter(); }} noValidate>
                     <label className="text-sm text-encre-2" htmlFor="courriel">Votre adresse e-mail</label>
-                    <input id="courriel" type="email" autoComplete="email" value={email} onChange={(ev) => setEmail(ev.target.value)} className={champ} />
+                    <input id="courriel" name="email" type="email" autoComplete="username" inputMode="email" value={email} onChange={(ev) => setEmail(ev.target.value)} className={champ} />
                     <label className="text-sm text-encre-2" htmlFor="mot-de-passe">Votre mot de passe</label>
-                    <ChampMotDePasse id="mot-de-passe" autoComplete="current-password" value={mdp} onChange={(ev) => setMdp(ev.target.value)} className={champ} />
+                    <ChampMotDePasse id="mot-de-passe" name="password" autoComplete="current-password" value={mdp} onChange={(ev) => setMdp(ev.target.value)} className={champ} />
                     <Erreur t={erreur} />
                     <button type="submit" disabled={etat === 'envoi'} className={bouton} data-bouton="se-connecter">{etat === 'envoi' ? 'Un instant…' : 'Se connecter'}</button>
                     <button type="button" onClick={() => void recevoirLien()} disabled={etat === 'envoi'} className="self-start text-xs text-encre-2 underline underline-offset-4 min-h-11" data-bouton="recevoir-lien">
