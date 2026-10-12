@@ -239,7 +239,8 @@
       "origine": "Non documentee",
       "certitude": "Non documentee",
       "frequence": 221,
-      "rang": 30
+      "rang": 30,
+      "notes": "Aussi écrit à l’état civil (INSEE, La Réunion 1891-2000) : LE BRETON (30)."
     },
     {
       "nom": "SERY",
@@ -471,7 +472,8 @@
       "origine": "Non documentee",
       "certitude": "Non documentee",
       "frequence": 114,
-      "rang": 62
+      "rang": 62,
+      "notes": "Aussi écrit à l’état civil (INSEE, La Réunion 1891-2000) : K-BIDI (349), K'BIDI (240), KBIDI (33)."
     },
     {
       "nom": "DUCHEMANN",
@@ -1456,7 +1458,8 @@
       "origine": "Non documentee",
       "certitude": "Non documentee",
       "frequence": 45,
-      "rang": 199
+      "rang": 199,
+      "notes": "Aussi écrit à l’état civil (INSEE, La Réunion 1891-2000) : MARIE LOUISE (79)."
     },
     {
       "nom": "MOREAU",
@@ -2713,7 +2716,8 @@
       "origine": "Non documentee",
       "certitude": "Non documentee",
       "frequence": 28,
-      "rang": 383
+      "rang": 383,
+      "notes": "Aussi écrit à l’état civil (INSEE, La Réunion 1891-2000) : JEAN-BAPTISTE (940)."
     },
     {
       "nom": "LASAONE",
