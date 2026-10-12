@@ -2713,3 +2713,146 @@ $$;
 revoke execute on function public.ajouter_noms_direct(text, text, jsonb, text, text) from public;
 grant execute on function public.ajouter_noms_direct(text, text, jsonb, text, text) to anon, authenticated;
 -- ---- FIN NOMS AJOUTÉS : DIRECTEMENT DANS L'ARBRE ----
+
+-- ---- FICHES PRIVÉES DE L'AUTEUR (12/10/2026) ----
+-- Ses mots : « tous ces noms sont de ma famille que je n'ai pas terminé donc il faut j'ai accès » · « et
+-- pourquoi pas en ligne car si je vais leur faire une visite j'aurai tout de suite le moyen de discuter avec
+-- eux et du même coup remplir les fiches ». Loi 6, nouvelle forme : un vivant n'est JAMAIS visible du public ni
+-- d'un inscrit ; ses vraies données ne se lisent en ligne que par l'AUTEUR connecté (propriétaire de l'arbre).
+-- Rien d'existant n'est réécrit : la fiche publique reste « Fiche protégée » (arbre_public inchangé) ; les vraies
+-- données vivent dans cette table à côté, fermée à tous sauf à lui. Ce qu'il y change revient au PC par
+-- corrections_proprietaire (même chemin que ses autres corrections), le PC restant le maître.
+create table if not exists public.fiches_privees (
+    individu_id          uuid primary key references public.individus (id) on delete cascade,
+    arbre_id             uuid not null references public.arbres (id) on delete cascade,
+    pc                   integer not null check (pc > 0),
+    prenom               text not null check (char_length(btrim(prenom)) between 1 and 80),
+    nom                  text not null default '' check (char_length(nom) <= 80),
+    genre                text not null default 'inconnu' check (genre in ('homme', 'femme', 'inconnu')),
+    naissance            date,
+    naissance_precision  text not null default 'annee' check (naissance_precision in ('annee', 'jour')),
+    lieu_naissance       text check (char_length(lieu_naissance) <= 120),
+    maj_le               timestamptz not null default now()
+);
+create index if not exists fiches_privees_arbre on public.fiches_privees (arbre_id);
+alter table public.fiches_privees enable row level security;
+revoke all on public.fiches_privees from public, anon, authenticated;
+grant select on public.fiches_privees to authenticated;
+grant update (prenom, nom, genre, naissance, naissance_precision, lieu_naissance) on public.fiches_privees to authenticated;
+
+create or replace function public.est_auteur(p_arbre uuid)
+returns boolean
+language sql stable security definer set search_path = ''
+as $$
+    select auth.uid() is not null and exists (select 1 from public.arbres a where a.id = p_arbre and a.proprietaire = auth.uid());
+$$;
+revoke execute on function public.est_auteur(uuid) from public, anon;
+grant execute on function public.est_auteur(uuid) to authenticated;
+
+drop policy if exists fiches_privees_lire on public.fiches_privees;
+create policy fiches_privees_lire on public.fiches_privees for select to authenticated
+    using (public.est_auteur(arbre_id));
+drop policy if exists fiches_privees_modifier on public.fiches_privees;
+create policy fiches_privees_modifier on public.fiches_privees for update to authenticated
+    using (public.est_auteur(arbre_id)) with check (public.est_auteur(arbre_id));
+
+-- Ce qu'il remplit en ligne → correction à rapatrier au PC (seuls les champs changés) + trace sans nom.
+create or replace function public.noter_fiche_privee()
+returns trigger
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_champs jsonb := '{}'::jsonb;
+    v_avant  jsonb := to_jsonb(old);
+    v_apres  jsonb := to_jsonb(new);
+    c        text;
+begin
+    new.maj_le := now();
+    if coalesce(current_setting('ancestria.envoi', true), '') = 'oui' or auth.uid() is null then
+        return new;
+    end if;
+    foreach c in array array['prenom', 'nom', 'genre', 'naissance', 'naissance_precision', 'lieu_naissance'] loop
+        if (v_avant -> c) is distinct from (v_apres -> c) then
+            v_champs := v_champs || jsonb_build_object(c, v_apres -> c);
+        end if;
+    end loop;
+    if v_champs <> '{}'::jsonb then
+        insert into public.corrections_proprietaire (arbre_id, individu_id, pc, champs, auteur)
+        values (new.arbre_id, new.individu_id, new.pc, v_champs, auth.uid());
+        insert into public.journal_audit (arbre_id, qui, acteur, action, table_visee, fiche, avant, apres, pourquoi)
+        values (new.arbre_id, auth.uid(), 'proprietaire', 'modification', 'fiches_privees', new.individu_id,
+                null, jsonb_build_object('champs', (select jsonb_agg(k) from jsonb_object_keys(v_champs) k), 'protegee', true),
+                'fiche privée remplie en ligne par l''auteur');
+    end if;
+    return new;
+end;
+$$;
+revoke execute on function public.noter_fiche_privee() from public, anon, authenticated;
+drop trigger if exists noter_fiche_privee on public.fiches_privees;
+create trigger noter_fiche_privee before update on public.fiches_privees
+    for each row execute function public.noter_fiche_privee();
+
+-- Envoi du PC (après envoi_pc, même connexion = son compte) : la liste COMPLÈTE de ses fiches protégées.
+-- Ajoute / met à jour ; retire celles qui ne sont plus protégées (décès coché → nommée en public) ou plus en ligne.
+-- Une fiche n'entre que si elle existe dans l'arbre, venue du PC (notes « pc:N ») et protégée (vivant).
+create or replace function public.envoi_pc_prives(p_donnees jsonb)
+returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+declare
+    v_arbre  public.arbres;
+    v_ids    uuid[];
+    r        jsonb;
+    n_ecr    integer := 0;
+    n_ret    integer := 0;
+    n        integer;
+    v_refus  jsonb := '[]'::jsonb;
+begin
+    if auth.uid() is null then
+        raise exception 'Connexion requise.' using errcode = '42501';
+    end if;
+    select a.* into v_arbre from public.invitations i join public.arbres a on a.id = i.arbre_id
+        where i.libelle = 'Porte du site' and not i.ferme and i.expire_le > now() order by i.cree_le limit 1;
+    if not found then
+        select a.* into v_arbre from public.arbres a left join public.individus i on i.arbre_id = a.id
+            group by a.id order by count(i.id) desc, a.cree_le limit 1;
+    end if;
+    if not found or v_arbre.proprietaire <> auth.uid() then
+        return jsonb_build_object('ok', false, 'raison', 'pas_proprietaire');
+    end if;
+    if jsonb_typeof(p_donnees -> 'prives') is distinct from 'array' then
+        return jsonb_build_object('ok', false, 'raison', 'donnees_invalides');
+    end if;
+    perform set_config('ancestria.envoi', 'oui', true); -- le PC n'est pas une correction faite en ligne
+    v_ids := array(select (x ->> 'id')::uuid from jsonb_array_elements(p_donnees -> 'prives') x);
+    delete from public.fiches_privees where arbre_id = v_arbre.id and individu_id <> all (v_ids);
+    get diagnostics n_ret = row_count;
+    for r in select * from jsonb_array_elements(p_donnees -> 'prives') loop
+        begin
+            if not exists (select 1 from public.individus i where i.id = (r ->> 'id')::uuid and i.arbre_id = v_arbre.id
+                           and i.vivant and i.notes = 'pc:' || (r ->> 'pc')) then
+                v_refus := v_refus || jsonb_build_array('pc:' || (r ->> 'pc') || ' — absente ou non protégée en ligne');
+                continue;
+            end if;
+            insert into public.fiches_privees (individu_id, arbre_id, pc, prenom, nom, genre, naissance, naissance_precision, lieu_naissance)
+            values ((r ->> 'id')::uuid, v_arbre.id, (r ->> 'pc')::integer, r ->> 'prenom', coalesce(r ->> 'nom', ''),
+                    coalesce(r ->> 'genre', 'inconnu'), (r ->> 'naissance')::date, coalesce(r ->> 'naissance_precision', 'annee'),
+                    r ->> 'lieu_naissance')
+            on conflict (individu_id) do update set pc = excluded.pc, prenom = excluded.prenom, nom = excluded.nom,
+                genre = excluded.genre, naissance = excluded.naissance, naissance_precision = excluded.naissance_precision,
+                lieu_naissance = excluded.lieu_naissance
+            where (public.fiches_privees.prenom, public.fiches_privees.nom, public.fiches_privees.genre, public.fiches_privees.naissance,
+                   public.fiches_privees.naissance_precision, public.fiches_privees.lieu_naissance)
+                  is distinct from (excluded.prenom, excluded.nom, excluded.genre, excluded.naissance, excluded.naissance_precision, excluded.lieu_naissance);
+            get diagnostics n = row_count;
+            n_ecr := n_ecr + n;
+        exception when others then
+            v_refus := v_refus || jsonb_build_array('pc:' || (r ->> 'pc') || ' — ' || sqlerrm);
+        end;
+    end loop;
+    return jsonb_build_object('ok', true, 'ecrites', n_ecr, 'retirees', n_ret, 'refus', v_refus);
+end;
+$$;
+revoke execute on function public.envoi_pc_prives(jsonb) from public, anon;
+grant execute on function public.envoi_pc_prives(jsonb) to authenticated;
+-- ---- FIN FICHES PRIVÉES DE L'AUTEUR ----

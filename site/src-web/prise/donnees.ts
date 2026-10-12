@@ -10,6 +10,7 @@
 import { supabase } from './supabase';
 import { traduire, type Correspondance, type DonneesSupabase } from './traduction';
 import { jetonVisiteur } from '../visiteur/visiteur'; // visiteur.ts : un visiteur lit arbre_public (décédés seulement)
+import { superposerPrives } from '../fiches-privees/fichesPrivees'; // 12/10 : l'auteur connecté voit ses vivants (personne d'autre)
 
 const PAGE = 1000;
 
@@ -53,7 +54,7 @@ export async function chargerArbre() {
         toutLire<DonneesSupabase['unions'][number]>('unions', id),
         toutLire<DonneesSupabase['filiations'][number]>('filiations', id),
     ]);
-    const t = traduire({ individus, unions, filiations });
+    const t = traduire({ individus: await superposerPrives(individus, id) /* fiches-privees/ (12/10) */, unions, filiations });
     derniere = t.correspondance;
     return t.arbre;
 }

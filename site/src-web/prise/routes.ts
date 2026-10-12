@@ -7,13 +7,15 @@
 // (fouiller les archives depuis le PC, carnet du téléphone, fichiers, IA locale)
 // le dit clairement. Rien n'est inventé.
 
-import { chargerArbre } from './donnees';
+import { chargerArbre, correspondance } from './donnees';
 import repertoire from '../copie-serveur/patronymes.json';
 import { trouverPersonnes, type PersonneArbre } from './personnes-tapees'; // 12/10 : nom + prénom tapés = la personne
 import { sourcesDesOrigines } from './sources-origines';
 import { rangsNaissance, relationsPassage } from './complements'; // 10/10 : couples « de passage » et ordre de naissance
 import releveDesFonds from '../copie-serveur/releve-sources.json'; // relevé des fonds du bureau (écran « Sources »), copié par scripts/copier-bureau.mjs
 import { jetonVisiteur, REFUS_VISITEUR } from '../visiteur/visiteur'; // visiteur.ts : un visiteur n'écrit rien
+import { modifierPrive } from '../fiches-privees/fichesPrivees'; // 12/10 : « Modifier » d'une fiche privée de l'auteur
+import { modifierFiche } from '../modifier-fiche/modifierFiche'; // 13/10 : « Modifier » d'une fiche de défunt, connecté
 
 export interface Reponse {
     status: number;
@@ -73,6 +75,7 @@ export async function repondre(methode: string, chemin: string, params: Record<s
             return pasEncore();
         }
         if (jetonVisiteur()) return { status: 403, data: { error: REFUS_VISITEUR } };
+        if (methode === 'PATCH') { const p = (await modifierPrive(chemin, _corps, correspondance)) ?? (await modifierFiche(chemin, _corps, correspondance)); if (p) return p; } // fiches-privees/ (12/10), puis modifier-fiche/ (13/10)
         if (chemin === '/sauvegarde') return pasEnLigne('La sauvegarde de la base');
         if (chemin.startsWith('/traque')) return pasEnLigne('La traque dans les archives');
         if (chemin.startsWith('/boite-noire')) return ok({ ok: true });
