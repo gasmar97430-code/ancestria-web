@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { X } from '@phosphor-icons/react';
 import apiClient from '../../api/client';
 import { useTreeStore } from '../../store/useTreeStore';
@@ -79,6 +79,13 @@ export const ModifierPersonne = ({ personne, onFermer }: {
     const fetchTree = useTreeStore((s) => s.fetchTree);
     const avant = useMemo(() => champsDe(personne as AvecStatut), [personne]);
     const [f, setF] = useState<Champs>(avant);
+    const avantPrec = useRef(avant);
+    useEffect(() => {
+        const prec = avantPrec.current;
+        avantPrec.current = avant;
+        setF((x) => { const n = { ...x }; (Object.keys(avant) as (keyof Champs)[]).forEach((k) => { if (x[k] === prec[k])
+            n[k] = avant[k]; }); return n; });
+    }, [avant]);
     const [erreur, setErreur] = useState<string | null>(null);
     const [envoi, setEnvoi] = useState(false);
     const [confirmer, setConfirmer] = useState(false);

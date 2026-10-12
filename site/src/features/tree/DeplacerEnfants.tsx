@@ -5,6 +5,7 @@ import { nomLisible } from '../../lib/origins';
 import type { Id } from '../../types';
 import { champ } from './ChoixPersonne';
 import { messageErreur } from './edition';
+import { ParentDOrigine } from './ParentDOrigine';
 const plat = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 export const DeplacerEnfants = ({ enfantsIds: donnes, depuisUnionId, titre }: {
     enfantsIds?: Id[];
@@ -89,6 +90,7 @@ export const DeplacerEnfants = ({ enfantsIds: donnes, depuisUnionId, titre }: {
                             </label>))}
                         {couples.length === 0 && <div className="text-[12.5px] text-encre-3">Aucun couple ne porte ce nom.</div>}
                     </div>
+                    {couples.length === 0 && choisis.length > 0 && <ParentDOrigine enfantsIds={choisis} nomTape={filtre} onFait={(f) => { setFait(f); setOuvert(false); setFiltre(''); }}/>}
                     {cibleU && choisis.length > 0 && (<div className="rounded-[10px] border px-3 py-2.5 flex flex-col gap-2" style={{ borderColor: 'var(--o-afrique)' }}>
                             <div className="text-[13px] text-encre">
                                 {choisis.map(nom).join(', ')} {choisis.length > 1 ? 'deviendront les enfants' : "deviendra l'enfant"} de <strong>{couple(cibleU)}</strong>.

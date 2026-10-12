@@ -13,7 +13,7 @@ import { PersonnesTapees } from './PersonnesTapees';
 import { BulleCommunes } from './BulleCommunes';
 import { CarteDeLIle } from './carte-ile/CarteDeLIle';
 import { ArbreDeVieAccueil } from './ArbreDeVieAccueil';
-import { EXEMPLE_CHAMP, InviteRecherche, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
+import { EXEMPLE_CHAMP, MARQUE_CHAMP, sansRecherche, useNomDemande } from './accueilNeutre';
 import { useNomTapeAccueil } from '../tree/titreFamille';
 import { DEGRES, definitionOrigine } from '../../lib/origineEtablie';
 import { SourceOrigine } from './SourceOrigine';
@@ -81,7 +81,7 @@ export const Accueil = () => {
         const s = new Set(patronymes.map((p) => p.origine));
         return ORDRE_ORIGINES.filter((o) => s.has(o));
     }, [patronymes]);
-    return (<main className="flex-1 min-w-0 overflow-y-auto px-16 py-14 flex flex-col gap-9">
+    return (<main className="flex-1 min-w-0 overflow-y-auto px-16 pt-8 pb-14 flex flex-col gap-6">
             <header className="flex flex-col gap-2.5">
                 <h1 className="font-display text-[56px] leading-none font-medium tracking-[-.01em]">
                     Quel nom cherchez-vous&#8239;?
@@ -116,7 +116,7 @@ export const Accueil = () => {
                         <BoutonOrigine nomChoisi={choisi?.nom} saisie={saisie}/>
                     </div>
 
-                    {sansRecherche(terme) && <InviteRecherche noms={patronymes.length} filtre={origine ? teinteDe(origine).court : null}/>}
+                    
                     <div className={`bg-carte border border-trait-leger rounded-2xl p-1.5 flex flex-col ${sansRecherche(terme) ? 'hidden' : ''}`}>
                         {resultats.map((p) => {
             const { avant, dedans, apres } = decouper(nomLisible(p.nom), terme);

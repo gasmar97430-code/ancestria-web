@@ -1,6 +1,6 @@
 import { BoutonEnvoiSite } from '../../lib/envoiSite';
 import { useEffect, useMemo, useState } from 'react';
-import ReactFlow, { Background, BackgroundVariant, Node, ReactFlowProvider, useReactFlow, useStore, } from 'reactflow';
+import ReactFlow, { Node, ReactFlowProvider, useReactFlow, useStore, } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Binoculars, CornersOut, Image, Minus, Plus, UserPlus } from '@phosphor-icons/react';
 import { usePatronymeStore } from '../../store/usePatronymeStore';
@@ -11,6 +11,7 @@ import { ascendance, construireArbre, DonneesCarte, Individu, origineDuNom, peri
 import { PersonMemorialNode } from './nodes/PersonMemorialNode';
 import { UnionPillNode } from './nodes/UnionPillNode';
 import { FormulaireMembre } from './FormulaireMembre';
+import { siRecherche, useArbreVisible } from './arbreSurRecherche';
 import { appliquerFocus, disposerFocus, liensDeFamille, noeudsLignee, noeudsLumineux, noeudsNets, noyauDe } from './focus';
 import { LienLumineux } from './LienLumineux';
 import { CouleursConjointes } from './CouleursConjointes';
@@ -94,8 +95,20 @@ const ArbreInterieur = () => {
         const garde = new Set<Id>([choisi]);
         if (parent)
             ascendance(parent.id, parentsDe).forEach((id) => garde.add(id));
+        for (const u of unions) {
+            if (u.partenaire1Id === choisi)
+                garde.add(u.partenaire2Id);
+            if (u.partenaire2Id === choisi)
+                garde.add(u.partenaire1Id);
+        }
+        tree.relationships.forEach((r) => { if (r.parentId === choisi)
+            garde.add(r.enfantId); });
+        const sesUnions = new Set(unions.filter((u) => u.partenaire1Id === choisi || u.partenaire2Id === choisi).map((u) => u.id));
+        tree.unionChildren.forEach((c) => { if (sesUnions.has(c.unionId))
+            garde.add(c.enfantId); });
         return garde;
-    }, [branche, choisi, parentsDe, people]);
+    }, [branche, choisi, parentsDe, people, unions, tree.relationships, tree.unionChildren]);
+    useEffect(() => { setBranche('Toutes'); }, [choisi]);
     const origines = useMemo(() => {
         const s = new Set(people.map((p) => origineDuNom(p.nom, index)));
         return [...ORDRE_ORIGINES, 'Hors repertoire'].filter((o) => s.has(o));
@@ -129,6 +142,7 @@ const ArbreInterieur = () => {
     const decores = avecPastillesCoparents(avecRangsDesUnions(avecCartesInconnues(avecEdition, tree.inconnus)));
     useDoublonsVrais((x) => x.ids);
     const noeudsGlisses = useGlissement(lecture ? decores : avecCorbeillesDoublons(avecPoubelle(decores)));
+    const visible = useArbreVisible(choisi);
     const noeudsAffiches = useTaillesConnues(noeudsGlisses);
     return (<div className="flex-1 min-w-0 flex flex-col">
             
@@ -183,11 +197,12 @@ const ArbreInterieur = () => {
             <div className="flex-1 min-h-0 flex">
                 <div className="flex-1 min-w-0 relative bg-papier">
                     <FondArbreDeVie />
-                    {people.length === 0 ? (<ArbreVide onAjouter={() => setAjout(true)} charge={!tree.loading}/>) : (<ReactFlow nodes={noeudsAffiches} edges={avecNaturesTraits(affiche.edges)} nodeTypes={nodeTypesEdition} edgeTypes={edgeTypes} onNodeClick={(_, n: Node) => {
+                    
+                    {people.length === 0 ? (<ArbreVide onAjouter={() => setAjout(true)} charge={!tree.loading}/>) : (<ReactFlow nodes={siRecherche(noeudsAffiches, visible)} edges={siRecherche(avecNaturesTraits(affiche.edges), visible)} nodeTypes={nodeTypesEdition} edgeTypes={edgeTypes} onNodeClick={(_, n: Node) => {
                 if (n.type === 'carte')
                     setChoisi((n.data as DonneesCarte).individu.id);
             }} onPaneClick={() => setChoisi(null)} nodesConnectable={false} nodesDraggable={false} fitView fitViewOptions={{ padding: 0.15 }} minZoom={0.1} maxZoom={1.6} proOptions={{ hideAttribution: true }}>
-                            <Background variant={BackgroundVariant.Dots} gap={22} size={1.2} color="var(--points)"/>
+                            
                             
                             <ZoomDock />
                             <CadrageFocus nodes={ancres} noyau={noyau} pivot={choisi === null ? null : `p-${choisi}`} parents={parentsChoisi}/>

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { Id, Union } from '../../types';
 import { ascendance, type Individu } from './graphe';
 import { nomLisible } from '../../lib/origins';
@@ -64,10 +64,16 @@ export const ChoixBranche = ({ branche, setBranche, choisi, people, parentsDe, }
         const n = compterSansInconnus(ascendance(parent.id, parentsDe));
         return `Côté ${cote} : ${parent.prenom} ${nomLisible(parent.nom)} · ${n} ancêtre${n > 1 ? 's' : ''}`;
     }, [branche, choisi, people, parentsDe]);
+    useEffect(() => { if (choisi === null && branche !== 'Toutes')
+        setBranche('Toutes'); }, [choisi, branche, setBranche]);
+    if (choisi === null)
+        return null;
+    const prenom = people.find((p) => p.id === choisi)?.prenom?.split(' ')[0] || 'cette personne';
+    const libelle = (b: Branche) => (b === 'Toutes' ? 'Toute la famille' : `Côté ${b === 'Paternelle' ? 'père' : 'mère'} de ${prenom}`);
     return (<div className="flex flex-col gap-1 ml-3 flex-none" data-bloc="choix-branche">
             <div className="flex bg-papier rounded-[10px] p-[3px] gap-0.5 self-start">
                 {(['Toutes', 'Paternelle', 'Maternelle'] as Branche[]).map((b) => (<button key={b} onClick={() => setBranche(b)} title={b === 'Toutes' ? "Tout l'arbre" : `Ancêtres côté ${b === 'Paternelle' ? 'père' : 'mère'} de la personne choisie`} className={`h-[30px] px-3 rounded-lg text-[12.5px] font-medium text-encre transition-all ${branche === b ? 'bg-blanc shadow-onglet' : 'hover:bg-sepia-tint'}`}>
-                        {b}
+                        {libelle(b)}
                     </button>))}
             </div>
             {message && <div className="text-[11px] leading-[1.25] text-encre-3 line-clamp-2 w-0 min-w-full" title={message} data-message-branche>{message}</div>}
