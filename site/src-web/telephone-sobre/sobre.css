@@ -1,0 +1,17 @@
+/* ---- TÉLÉPHONE : MOINS DE RÉPÉTITION (12/10/2026) ----
+ * Sa capture (Honor, « Ferrere ») : « trop de répétition de nom » — le nom tapé, puis la ligne de résultat
+ * « FERRERE », puis le même nom en très grand dans la carte. Sur téléphone (sous 760 px) seulement : le très grand
+ * titre de la carte du nom est retiré (la ligne de résultat le dit déjà, avec son origine), et la carte se resserre.
+ * Au PC, rien ne change. Posé par une ligne d'import dans Porte.tsx.
+ */
+@media (max-width: 760px) {
+    #root article.bg-carte > .font-display.leading-\[\.95\] { display: none; }
+    /* 12/10, ses mots : « si tu enlèves ces gros textes en surplus, il y a la place pour le clavier tout en bas, qu'on
+       voie bien la barre de recherche, et que l'image soit présente sur la page d'accueil » : le grand titre
+       « Quel nom cherchez-vous ? » et sa ligne, et la légende sous l'image, sont retirés ; l'image reste. */
+    #root main > header:has(> h1.text-\[56px\]) { display: none; }
+    #root [data-arbre-de-vie-accueil] .px-\[22px\] { display: none; }
+    #root main.pt-8 { padding-top: .75rem; gap: .9rem; }
+    #root article.bg-carte.px-10 { padding-left: 1rem; padding-right: 1rem; padding-top: 1.25rem; padding-bottom: 1.25rem; gap: 1rem; }
+}
+/* ---- FIN TÉLÉPHONE : MOINS DE RÉPÉTITION ---- */
