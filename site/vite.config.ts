@@ -2,8 +2,9 @@
 // GitHub Pages sert le site sous /<dépôt>/ : VITE_BASE=/ancestria-web/.
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { listeHorsConnexion } from './src-web/hors-connexion/liste.vite.mjs';
 
 export default defineConfig({
     base: process.env.VITE_BASE ?? '/',
-    plugins: [react()],
+    plugins: [react(), listeHorsConnexion()], // 12/10 : listeHorsConnexion = src-web/hors-connexion/liste.vite.mjs
 });

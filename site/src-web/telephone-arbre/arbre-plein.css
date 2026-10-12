@@ -1,0 +1,121 @@
+/* ---- TÉLÉPHONE : L'ARBRE PREND TOUT LE BAS (12/10/2026) ----
+ * Sa capture (Honor, 16:37, Ludovic Simon FERRÈRE) : « pas bon du tout pas responsive a l'arborescence il faut que
+ * quand j'ai choisi le nom toute la partie basse et toute l'image devrait se voir comme cette grande image ».
+ * Avant : sous 760 px, la fiche de la personne (telephone/telephone.css) prenait 32 % de la hauteur sous l'arbre,
+ * et l'arbre n'avait plus qu'une bande. Ici, sur téléphone seulement : la fiche se REPLIE en une ligne (le nom +
+ * « Voir la fiche ») ; l'arbre et l'image descendent jusqu'au menu. Toucher la ligne ouvre la fiche, toucher
+ * « Replier » la referme (replier.ts). Au PC, rien ne change.
+ * Posé par une ligne d'import dans Porte.tsx (+ celle de replier.ts). Les retirer : l'écran d'avant.
+ */
+@media (max-width: 760px) {
+    /* Repliée (par défaut) : une seule ligne, le nom et « Voir la fiche ▴ ». */
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) {
+        max-height: none;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 16px;
+        cursor: pointer;
+        overflow: hidden;
+    }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) > * {
+        display: none;
+    }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) > div:has(> .font-display.text-\[34px\]) {
+        display: flex;
+        min-width: 0;
+        flex: 1 1 auto;
+        gap: 2px;
+    }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) .font-display.text-\[34px\] {
+        font-size: 19px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte])::after {
+        content: 'Voir la fiche ▴';
+        flex: none;
+        font-size: 13px;
+        color: var(--sepia, #8a5a2b);
+        padding: 8px 12px;
+        border: 1px solid var(--trait);
+        border-radius: 999px;
+    }
+    /* Ouverte : la fiche entière, au plus 55 % de la place (l'arbre garde le reste), « Replier ▾ » en tête. */
+    #root aside.w-\[300px\][data-fiche-ouverte] {
+        max-height: 55%;
+    }
+    #root aside.w-\[300px\][data-fiche-ouverte]::before {
+        content: 'Replier la fiche ▾';
+        align-self: center;
+        font-size: 13px;
+        color: var(--sepia, #8a5a2b);
+        padding: 6px 14px;
+        border: 1px solid var(--trait);
+        border-radius: 999px;
+        cursor: pointer;
+    }
+}
+
+/* ---- TÉLÉPHONE BASCULÉ (paysage) ----
+ * Ses mots (12/10) : « et pourrait être basculé aussi ». Couché, le téléphone a plus de 760 px de large : il reçoit
+ * l'écran du PC, mais avec 393 px de haut l'arbre n'avait plus que 136 px (mesuré). Ici, seulement quand l'écran est
+ * en paysage ET bas (≤ 500 px, un téléphone couché ; jamais un PC) : en-tête, ligne de la famille et fil resserrés
+ * sur une ligne chacun ; la fiche repliée en colonne étroite (le nom + « Voir la fiche ») ; l'arbre prend le reste.
+ */
+@media (orientation: landscape) and (max-height: 500px) {
+    #root header.h-\[64px\] { height: 52px; }
+    #root header.h-\[64px\] [data-signature='logo'] { width: 30px; height: 30px; border-radius: 9px; }
+    #root header.h-\[64px\] > button { font-size: 24px; }
+    /* La ligne de la famille : UNE ligne qu'on fait défiler du doigt (nom, branches, recherche, pastilles). */
+    #root .min-h-\[72px\] {
+        min-height: 0;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding: 4px 12px;
+        column-gap: 12px;
+    }
+    #root .min-h-\[72px\] > * { flex: none; }
+    #root .min-h-\[72px\] > div:first-child > div:first-child { font-size: 19px; }
+    #root .min-h-\[72px\] > div:first-child > div:last-child { display: none; }
+    #root .min-h-\[72px\] > .ml-auto { margin-left: 0; min-width: 0; flex-wrap: nowrap; }
+    /* Le fil (← Arbre entier › nom) : moins haut. */
+    #root div.h-10.overflow-x-auto { height: 30px; }
+    /* La fiche : repliée = colonne étroite ; ouverte = celle du PC (300 px). */
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) {
+        width: 150px;
+        padding: 10px 12px;
+        gap: 8px;
+        cursor: pointer;
+        justify-content: center;
+    }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) > * { display: none; }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) > div:has(> .font-display.text-\[34px\]) { display: flex; }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte]) .font-display.text-\[34px\] { font-size: 18px; line-height: 1.1; }
+    #root aside.w-\[300px\]:not([data-fiche-ouverte])::after {
+        content: 'Voir la fiche ▸';
+        align-self: flex-start;
+        font-size: 12.5px;
+        color: var(--sepia, #8a5a2b);
+        padding: 6px 10px;
+        border: 1px solid var(--trait);
+        border-radius: 999px;
+    }
+    #root aside.w-\[300px\][data-fiche-ouverte] { padding: 12px 16px; gap: 12px; }
+    #root aside.w-\[300px\][data-fiche-ouverte] .h-\[150px\] { height: 70px; }
+    #root aside.w-\[300px\][data-fiche-ouverte]::before {
+        content: 'Replier la fiche ◂';
+        align-self: flex-start;
+        font-size: 12.5px;
+        color: var(--sepia, #8a5a2b);
+        padding: 6px 10px;
+        border: 1px solid var(--trait);
+        border-radius: 999px;
+        cursor: pointer;
+    }
+}
+/* ---- FIN TÉLÉPHONE BASCULÉ ---- */
+/* ---- FIN TÉLÉPHONE : L'ARBRE PREND TOUT LE BAS ---- */

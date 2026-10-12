@@ -26,6 +26,8 @@ import { InviterAmis } from './inviter-amis/InviterAmis'; // 05/10 : « partager
 // import { PageVisiteur } from './page-visiteur/PageVisiteur'; // 06/10 : le visiteur s'inscrit et ajoute des noms, rien d'autre — plus appelé depuis le 12/10 (sa nouvelle règle)
 import './telephone-sobre/sobre.css'; // 12/10 : téléphone, moins de répétition du nom
 import './telephone-sobre/clavier'; // 12/10 : téléphone, le clavier se range
+import './hors-connexion/HorsConnexion'; // 12/10 : « prête hors connexion » + « Mettre Ancestria à jour »
+import './telephone-arbre/arbre-plein.css'; import './telephone-arbre/replier'; // 12/10 : téléphone, l'arbre prend tout le bas, la fiche se replie
 import './avis-panne/avisPanne'; // 12/10 : un mot sympathique si la base ne répond pas (panne, maintenance, hors connexion)
 import './defilement-pages/defilement.css'; // 10/10 : les pages du site défilent (inscription, connexion, visiteur) — sa capture « ne s'ouvre pas complètement »
 

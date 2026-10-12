@@ -26,6 +26,7 @@ import { garderInscription, lireInscription, validerInscription, type ErreursIns
 import { ARTICLES_CHARTE, AVIS_COURT, ENGAGEMENT_CHARTE, TITRE_CHARTE, VERSION_CHARTE, avisDetaille, charteAcceptee, garderCharte } from '../../../src/inscription/charte';
 import { ADMINISTRATEUR, MESSAGE_ACCUEIL, MESSAGE_SOUTIEN } from '../../../src/inscription/messages';
 import { ChampMotDePasse } from '../../src/lib/ChampMotDePasse'; // 12/10 : mot de passe de l'inscrit (désinscription)
+import { MaSauvegarde } from '../hors-connexion/MaSauvegarde'; // 12/10 : reprendre une sauvegarde
 import { TitreCentre } from '../../src/app/TitreCentre'; // l'en-tête de l'appli, tel quel (« au miroir de l'appli »)
 
 const champ = 'h-11 w-full px-3 rounded-[10px] bg-blanc border border-trait text-encre text-[15px] outline-none focus:border-sepia';
@@ -153,6 +154,7 @@ export function PorteInscription({ jeton, onEntree }: { jeton: string | null; on
                         {envoi ? 'Inscription…' : 'M’inscrire et entrer'}
                     </button>
                 </form>
+                <MaSauvegarde exporter={false} />{/* 12/10 : nouveau téléphone → reprendre sa sauvegarde (hors-connexion/MaSauvegarde.tsx) */}
                 {/* 10/10, sa règle : « l'administrateur ne doit pas être sur la page du site … quelqu'un de mauvais présage
                     pourrait essayer de se connecter » → plus de lien ici ; il entre par son adresse privée …/?administrateur
                     (Porte.tsx). onAdministrateur reste pour cette porte. */}

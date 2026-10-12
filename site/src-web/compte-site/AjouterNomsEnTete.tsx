@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import { PlusCircle, X } from '@phosphor-icons/react';
 import { AjouterFamille } from '../ajouter-famille/AjouterFamille';
+import { MaSauvegarde } from '../hors-connexion/MaSauvegarde'; // 12/10 : ma sauvegarde (JSON)
 import { Desinscription } from './Desinscription'; // 12/10 : se désinscrire (mot de passe)
 
 export function AjouterNomsEnTete({ classe }: { classe: string }) {
@@ -41,6 +42,7 @@ export function AjouterNomsEnTete({ classe }: { classe: string }) {
                         <div className="rounded-[14px] border border-trait bg-carte -mx-1 pt-4 empty:hidden" data-bloc="ajout-visiteur">
                             <AjouterFamille nom={nom.trim()} />
                         </div>
+                        <MaSauvegarde />{/* 12/10 : exporter / importer (hors-connexion/MaSauvegarde.tsx) */}
                         <button type="button" onClick={() => setPartir(true)} className="self-start mt-2 text-[13px] text-encre-3 underline underline-offset-4 min-h-11" data-bouton="vers-desinscription">Me désinscrire…</button>
                         </>)}
                     </div>
