@@ -1,0 +1,30 @@
+/* ---- SOUTIEN À L'ARBRE DE LUMIÈRE : LE CARTOUCHE (modèle B, 12/10/2026) ----
+   Repris de Ancestria/docs/soutien/soutien-ancestria.html (mesuré 320 → 1280 px : rien ne déborde, bouton ≥ 48 px). */
+.asl-b, .asl-b * { box-sizing: border-box; }
+.asl-b {
+  --asl-creme: var(--papier, #FBF8F1); --asl-carte: var(--carte, #FFFDF8); --asl-trait: var(--trait, #DDD5C3);
+  --asl-encre: var(--encre, #1F2A2E); --asl-encre-2: var(--encre-2, #5B6668); --asl-cuivre: var(--sepia, #A8672B);
+  --asl-amande: #3F6B45; --asl-amande-fonce: #33573A;
+  position: relative; width: 100%; max-width: 760px; margin: 8px auto 24px; padding: 28px 24px;
+  font-family: 'Instrument Sans', system-ui, sans-serif; color: var(--asl-encre);
+  background: linear-gradient(180deg, var(--asl-carte), var(--asl-creme)); border: 1px solid var(--asl-trait);
+  border-radius: 18px; box-shadow: 0 10px 30px rgba(60, 40, 20, .12), inset 0 0 0 6px var(--asl-carte), inset 0 0 0 7px rgba(200, 140, 60, .10);
+  display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-items: center;
+}
+.asl-b__sur { font: 600 12px/1 'Instrument Sans', system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--asl-cuivre); margin: 0 0 8px; }
+.asl-b h2 { font: 600 clamp(26px, 6vw, 34px)/1.1 'Cormorant Garamond', Garamond, Georgia, serif; margin: 0 0 10px; overflow-wrap: anywhere; }
+.asl-b p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--asl-encre-2); }
+.asl-b__actions { display: flex; flex-direction: column; gap: 8px; align-items: stretch; min-width: 220px; }
+.asl-b__bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5em; min-height: 48px; padding: 0 1.25rem;
+  border-radius: 12px; background: var(--asl-amande); color: #fff; font: 600 16px/1.2 'Instrument Sans', system-ui, sans-serif;
+  text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.asl-b__bouton:hover { background: var(--asl-amande-fonce); }
+.asl-b__bouton:focus-visible { outline: 3px solid var(--asl-cuivre); outline-offset: 2px; }
+.asl-b__mention { font-size: 13px; color: var(--asl-encre-2); text-align: center; }
+@media (max-width: 640px) {
+  .asl-b { grid-template-columns: 1fr; padding: 24px 18px; }
+  .asl-b__actions { min-width: 0; }
+}
+/* ---- FIN SOUTIEN : LE CARTOUCHE ---- */
