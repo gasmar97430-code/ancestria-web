@@ -145,9 +145,9 @@ textarea.input { min-height: 64px; resize: vertical; }
 .result .name { font: 600 16px var(--serif); }
 
 /* Zoom */
-#zoom, #zoom2 { position: fixed; z-index: 3; right: 12px; top: calc(var(--top) + 14px); display: flex; flex-direction: column; align-items: center; padding: 4px; border-radius: 12px; background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 16px oklch(0.3 0.03 60 / .18); }
-#zoom button, #zoom2 button { width: 44px; height: 44px; border: 0; background: none; color: var(--ink); font-size: 20px; cursor: pointer; border-radius: 8px; }
-#zoom button:hover, #zoom2 button:hover { background: var(--ivory-2); }
+#zoom { position: fixed; z-index: 3; right: 12px; top: calc(var(--top) + 14px); display: flex; flex-direction: column; align-items: center; padding: 4px; border-radius: 12px; background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 16px oklch(0.3 0.03 60 / .18); }
+#zoom button { width: 44px; height: 44px; border: 0; background: none; color: var(--ink); font-size: 20px; cursor: pointer; border-radius: 8px; }
+#zoom button:hover { background: var(--ivory-2); }
 .js-zoom-pct { font-size: 11px; color: var(--ink-2); padding: 2px 0; font-variant-numeric: tabular-nums; }
 
 /* Fiche détaillée */
@@ -262,50 +262,48 @@ a.btn { text-decoration: none; } /* « Ouvrir dans Chrome » est un lien qui a l
    est désactivée. »
    body.paysage = téléphone tenu à l'horizontale (app.js, media query) OU vue pivotée par CSS (body.pano-css,
    repli quand le verrou d'orientation est refusé, ex. Safari iPhone). L'image de fond n'est jamais modifiée. */
-body.paysage:not(.show-bars) #topbar, body.paysage:not(.show-bars) #tabbar, body.paysage #searchbar, body.paysage .chips { display: none !important; }
-body.paysage:not(.show-bars) { --top: 0px; }
+body.paysage #topbar, body.paysage #tabbar, body.paysage #searchbar, body.paysage .chips { display: none !important; }
+body.paysage { --top: 0px; }
 body.paysage #zoom { top: 8px; right: 8px; padding: 2px; }
 body.paysage #zoom button { width: 38px; height: 38px; font-size: 18px; }
-body.paysage #pano { bottom: 8px; right: auto; left: 8px; }
-body.paysage #zoom2, body.paysage #loupes { display: none !important; }
-body.paysage.show-bars #zoom { top: calc(var(--top) + 8px); }
-body.paysage.show-bars #pano { bottom: 74px; }
+body.paysage #pano { bottom: 8px; right: auto; left: 8px; min-height: 38px; font-size: 13px; }
 /* La fiche : panneau latéral étroit au lieu de la feuille du bas. */
 body.paysage #panel { left: auto; right: 60px; top: 8px; bottom: 8px; width: min(280px, 40%); max-height: none; }
 body.paysage #panel.has-portrait { margin-top: 0; top: 52px; }
 body.paysage #sheet { left: auto; right: 60px; top: 8px; bottom: 8px; width: min(380px, 60%); max-height: none; }
-body.paysage.show-bars #panel, body.paysage.show-bars #sheet { bottom: 74px; }
 /* Repli : la vue entière pivote de 90° (le pan/zoom convertit les coordonnées du doigt, tree-view.js). */
 body.pano-css #bg, body.pano-css #app { position: fixed; inset: auto; top: 0; left: 100vw; width: 100vh; width: 100dvh; height: 100vw; transform-origin: 0 0; transform: rotate(90deg) !important; }
 body.pano-css #app { overflow: hidden; }
 /* ---- FIN MODE PAYSAGE ET VUE PANORAMIQUE ---- */
 
 
-/* ---- ARBRE DU TÉLÉPHONE (sa référence du 13/10 : reference-telephone-13-10.png) ----
-   En-tête « Ancestria » + ◯ M'ASTEL.974 ; petites cartes blanches compactes ; grande carte dorée de l'ancêtre ;
-   pastille sous chaque couple ; liens en courbes dorées qui brillent ; la personne choisie et son couple
-   brillent ; 2e colonne de zoom en bas à gauche ; deux loupes rondes en bas à droite. */
+/* ---- ARBRE DE LUMIÈRE (ses modèles du 13/10, téléphone et PC) ----
+   En-tête avec M'ASTEL.974 ; petites cartes blanches compactes ; grande carte dorée de l'ancêtre ; pastille sous
+   chaque couple ; liens en courbes dorées qui brillent ; la personne choisie et son couple brillent ;
+   une seule colonne de zoom ; « Vue Panoramique 🔄 » en bas à droite du téléphone ; drapeau d'origine. */
+[data-mode="mobile"] .p-user { display: none; }
+.p-user { font-size: 12px; letter-spacing: .06em; color: var(--ink-2); }
+.facts .flag { width: 18px; height: 13px; border-radius: 2px; flex: none; box-shadow: 0 0 0 1px oklch(0.88 0.025 85); }
 .marque { font-size: 13px; font-weight: 500; letter-spacing: .03em; }
 [data-mode="mobile"] .brand { font-size: 33px; }
 [data-mode="mobile"] #tabbar button { font-size: 12.5px; }
 [data-mode="mobile"] #tabbar button i { font-size: 24px; }
 [data-mode="mobile"] .user-chip .ph-user-circle { font-size: 22px; }
-[data-mode="mobile"] #links > path:not(.cordon-fratrie) { stroke: #F3C76E; stroke-width: 3px; filter: drop-shadow(0 0 2px #ffd98a) drop-shadow(0 0 5px rgba(233, 169, 79, .8)); }
-[data-mode="mobile"] .node { gap: 5px; padding: 4px 6px 4px 4px; border-radius: 6px; border: 1px solid oklch(0.9 0.02 85); background: oklch(0.995 0.004 90 / .97); box-shadow: 0 1px 3px oklch(0.3 0.03 60 / .25); }
-[data-mode="mobile"] .node .av { width: 32px; height: 32px; font-size: 12px; }
-[data-mode="mobile"] .node-name { font-size: 14px; line-height: 1.05; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
-[data-mode="mobile"] .node-years { font-size: 10px; }
-[data-mode="mobile"] .node.is-sel, [data-mode="mobile"] .node.is-famille { border-color: #e9a94f; box-shadow: 0 0 0 2px rgba(255, 220, 150, .95), 0 0 18px 6px rgba(255, 186, 80, .85); }
+#links > path:not(.cordon-fratrie) { stroke: #F3C76E; stroke-width: 3px; filter: drop-shadow(0 0 2px #ffd98a) drop-shadow(0 0 5px rgba(233, 169, 79, .8)); }
+.node { gap: 5px; padding: 4px 6px 4px 4px; border-radius: 6px; border: 1px solid oklch(0.9 0.02 85); background: oklch(0.995 0.004 90 / .97); box-shadow: 0 1px 3px oklch(0.3 0.03 60 / .25); }
+.node .av { width: 32px; height: 32px; font-size: 12px; }
+.node-name { font-size: 14px; line-height: 1.05; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.node-years { font-size: 10px; }
+.node.is-sel, .node.is-famille { border-color: #e9a94f; box-shadow: 0 0 0 2px rgba(255, 220, 150, .95), 0 0 18px 6px rgba(255, 186, 80, .85); }
 .node.node--souche { flex-direction: column; justify-content: center; align-items: center; gap: 1px; padding: 8px 12px; text-align: center; border-radius: 8px; border: 1.5px solid #e9b955; background: oklch(0.99 0.008 90 / .97);
   box-shadow: 0 0 0 1px rgba(255, 220, 150, .9), 0 0 24px 6px rgba(255, 190, 90, .7), 0 4px 14px oklch(0.3 0.03 60 / .25); }
 .node--souche .av { position: absolute; top: 12px; left: 12px; width: 60px; height: 60px; font-size: 20px; opacity: .7; }
-.souche-first, .souche-last { font: 500 48px/1.05 var(--serif); color: var(--ink); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.souche-first, .souche-last { font: 500 42px/1.05 var(--serif); color: var(--ink); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .souche-last { text-transform: uppercase; letter-spacing: .02em; }
-.souche-sub { font: 26px/1.35 var(--sans); color: var(--ink); }
+.souche-sub { font: 24px/1.35 var(--sans); color: var(--ink); }
+[data-mode="pc"] .souche-first, [data-mode="pc"] .souche-last { font-size: 30px; }
+[data-mode="pc"] .souche-sub { font-size: 15px; }
+[data-mode="pc"] .node--souche .av { width: 36px; height: 36px; font-size: 13px; top: 8px; left: 8px; }
 .union { position: absolute; height: 14px; border-radius: 3px; background: oklch(0.995 0.004 90 / .94); border: 1px solid oklch(0.9 0.02 85); font: 600 9px/12px var(--sans); letter-spacing: .05em; color: var(--ink-2); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; pointer-events: none; }
-[data-mode="pc"] .union { display: none; }
-#zoom2 { top: auto; right: auto; left: 12px; bottom: calc(env(safe-area-inset-bottom) + 84px); }
-#loupes { position: fixed; z-index: 3; right: 12px; bottom: calc(env(safe-area-inset-bottom) + 84px); display: flex; flex-direction: column; gap: 10px; }
-#loupes button, #pano { width: 42px; height: 42px; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 16px oklch(0.3 0.03 60 / .18); color: var(--ink); font-size: 20px; cursor: pointer; padding: 0; }
-#pano { position: fixed; z-index: 3; right: 64px; bottom: calc(env(safe-area-inset-bottom) + 84px); font-size: 18px; }
+#pano { position: fixed; z-index: 3; right: 12px; bottom: calc(env(safe-area-inset-bottom) + 84px); min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--gold); background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 16px oklch(0.3 0.03 60 / .18); color: var(--gold-deep); font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; }
 /* ---- FIN ARBRE DU TÉLÉPHONE ---- */

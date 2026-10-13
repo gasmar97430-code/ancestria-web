@@ -44,6 +44,9 @@ const fmtDate = (d) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
 const fmtTime = (d) => d ? new Date(d).toLocaleString('fr-FR') : '';
 const photoOf = (p) => S.draft.photos[p.id] || S.photoUrls[p.photo_path] || null;
 const avatar = (p, cls = 'av') => `<span class="${cls}">${photoOf(p) ? `<img src="${esc(photoOf(p))}" alt="">` : esc(initials(p))}</span>`;
+// Drapeau de l'origine (son modèle PC) quand elle en a un ; sinon le globe du paquet.
+const FLAGS = { Europe: 'eu', Inde: 'in', Madagascar: 'mg', Chine: 'cn' };
+const flagOf = (o) => FLAGS[o] ? `<span class="fi fi-${FLAGS[o]} flag" aria-hidden="true"></span>` : '<i class="ph ph-globe-hemisphere-west"></i>';
 const safeUrl = (u) => /^https?:\/\//i.test(u || '') ? u : null;
 
 /* ---------- Démarrage / Auth ---------- */
@@ -148,15 +151,16 @@ function computeModel() {
   return visible;
 }
 
-// ---- ARBRE DU TÉLÉPHONE (sa référence du 13/10, reference-telephone-13-10.png) ----
-// Ses mots : « tu n'as pas fait comme cette image … fais-le comme il se doit ». En mode mobile : l'ancêtre de
-// la lignée en GRANDE carte en haut (bord doré lumineux, prénom / NOM sur deux lignes, rang, naissance / décès),
+// ---- ARBRE « ARBRE DE LUMIÈRE » (ses modèles du 13/10 : reference-telephone-13-10.png, reference-pc-13-10.webp) ----
+// Ses mots : « c'est tout simplement un modèle … réaliser une interface qui RESSEMBLE à cette image ». Téléphone
+// ET PC : l'ancêtre de la lignée en GRANDE carte dorée en haut au centre (prénom / NOM, rang, naissance / décès),
 // les générations dessous en petites cartes blanches compactes, une pastille sous chaque couple, des liens en
-// COURBES dorées. En mode PC : la mise en page du paquet, inchangée.
+// COURBES dorées, l'arbre centré sur le banian de l'image de fond.
 // Proportions mesurées sur sa référence : grande carte ≈ 3,5 × la largeur et la hauteur d'une petite ;
 // arbre presque aussi haut que large, posé sur le banian (centré vers 55 % de la hauteur de l'écran).
-const MOBILE_TREE = { nodeW: 112, nodeH: 62, col: 122, row: 140, top: 160, pad: 20, curves: true, union: 18 };
-const BIG = { w: 390, h: 215 };
+// Grande carte : ≈ 3 × une petite sur le modèle téléphone, ≈ 2 × sur le modèle PC.
+const MOBILE_TREE = { nodeW: 112, nodeH: 62, col: 122, row: 140, pad: 20, curves: true, union: 18 };
+const BIG = () => (desktop.matches ? { w: 240, h: 132 } : { w: 330, h: 200 });
 function soucheDe(L) {
   // L'ancêtre de la lignée : parmi la 1re génération, celui qui a le plus de descendants (à égalité : le plus à gauche).
   const roots = Object.keys(L.gen).filter((id) => L.gen[id] === 0 && L.children[id].length).sort((a, b) => L.pos[a].x - L.pos[b].x);
@@ -170,11 +174,11 @@ function soucheDe(L) {
 }
 function layoutOpts(visible, relations) {
   S.souche = null;
-  if (desktop.matches) return {};
   try {
-    S.souche = soucheDe(layoutTree(visible, relations, MOBILE_TREE));
+    S.souche = soucheDe(layoutTree(visible, relations, { ...MOBILE_TREE, top: BIG().h - MOBILE_TREE.nodeH }));
   } catch { S.souche = null; } // repli : pas de grande carte, l'arbre reste dessiné
-  return S.souche ? { ...MOBILE_TREE, big: { id: S.souche, ...BIG } } : MOBILE_TREE;
+  const big = BIG();
+  return S.souche ? { ...MOBILE_TREE, top: big.h - MOBILE_TREE.nodeH + 10, big: { id: S.souche, ...big } } : MOBILE_TREE;
 }
 function soucheHtml(p, o, cls) {
   const rk = rank(p);
@@ -182,7 +186,6 @@ function soucheHtml(p, o, cls) {
   return `<button type="button" class="${cls} node--souche" data-id="${p.id}" style="left:${o.x}px;top:${o.y}px;width:${o.w}px;height:${o.h}px">${avatar(p)}<span class="souche-first">${esc(p.first_name)}</span><span class="souche-last">${esc(p.last_name)}</span>${rk ? `<span class="souche-sub">${rk}</span>` : ''}${dates ? `<span class="souche-sub">${esc(dates)}</span>` : ''}</button>`;
 }
 function unionsHtml() {
-  if (desktop.matches) return '';
   return S.layout.couples.map((c) => {
     const noms = [...new Set([c.l, c.r].map((id) => (S.m.persons[id]?.last_name || '').trim().toUpperCase()).filter(Boolean))].join(' · ');
     return `<span class="union" style="left:${c.x + c.w * 0.1}px;top:${c.y + 4}px;width:${c.w * 0.8}px">${esc(noms)}</span>`;
@@ -294,6 +297,8 @@ function renderTopbar() {
   const btn = $('#publish');
   if (!btn.dataset.busy) { btn.disabled = n === 0; btn.querySelector('span').textContent = n ? `Envoi (${n})` : 'Envoi'; }
   if (!btn.dataset.busy) $('#status').textContent = n ? `${n} modification(s) en brouillon` : 'Tout est enregistré';
+  // Son modèle PC ne montre ni « Envoi » ni l'état quand rien n'attend : ils apparaissent dès qu'il y a un brouillon.
+  btn.hidden = n === 0 && !btn.dataset.busy; $('#status').hidden = btn.hidden;
 }
 
 function renderNav() {
@@ -334,12 +339,13 @@ function renderPanel() {
     <div class="portrait">${photoOf(p) ? `<img src="${esc(photoOf(p))}" alt="">` : esc(initials(p))}</div>
     <button type="button" class="btn-icon panel-close" data-act="close" aria-label="Fermer"><i class="ph ph-x"></i></button>
     <div class="panel-body">
+      <div class="p-user">M'ASTEL.974</div>
       <h2 class="p-title">${nameHtml(p)}</h2>
       <div class="facts">
         ${rk ? `<div><i class="ph-fill ph-circle"></i>${rk}</div>` : ''}
         <div><i class="ph-fill ph-circle"></i>${birth}</div>
         ${p.death_date ? `<div><i class="ph-fill ph-circle"></i>Décès le ${fmtDate(p.death_date)}</div>` : ''}
-        <div><i class="ph ph-globe-hemisphere-west"></i>Origine ${esc(p.origin || 'non documentée')}</div>
+        <div>${flagOf(p.origin)}Origine ${esc(p.origin || 'non documentée')}</div>
       </div>
       ${rel('Parents', S.layout.parents[p.id])}${rel('Conjoint·e', S.layout.spouses[p.id])}${rel('Enfants', S.layout.children[p.id])}
       ${adminMode() ? `
@@ -401,10 +407,9 @@ function renderEditor(el, p) {
 /* ---------- Vue / navigation ---------- */
 function insets() {
   if (document.body.classList.contains('paysage')) { // mode paysage : arbre plein écran, fiche en panneau latéral
-    const bars = document.body.classList.contains('show-bars');
-    return { left: 8, top: bars ? 66 : 8, right: S.sel ? 350 : 56, bottom: bars ? 74 : 8 };
+    return { left: 8, top: 8, right: S.sel ? 350 : 56, bottom: 8 };
   }
-  if (desktop.matches) return { left: 80, top: 62 + 110, right: S.sel ? 300 : 20, bottom: 20 };
+  if (desktop.matches) return { left: 80, top: 62 + 130, right: 20, bottom: 60 }; // PC : l'arbre centré sur le banian (son modèle)
   return { left: 0, top: 180, right: 0, bottom: 93 }; // téléphone : l'arbre sur toute la largeur, posé sur le banian (sa référence)
 }
 function fitView() { if (S.layout) pz.fit(S.layout.width, S.layout.height, insets()); }
@@ -426,8 +431,8 @@ $('#nodes').addEventListener('click', (e) => {
   const b = e.target.closest('.node');
   if (b && !pz.dragged) select(b.dataset.id, false);
 });
-// Zoom : la colonne du paquet, et sur téléphone la 2e colonne (bas gauche) et les deux loupes (bas droite).
-$$('#zoom, #zoom2, #loupes').forEach((box) => box.addEventListener('click', (e) => {
+// Zoom : UNE colonne par écran (sa précision : « un seul contrôle de zoom »).
+$$('#zoom').forEach((box) => box.addEventListener('click', (e) => {
   const z = e.target.closest('[data-zoom]')?.dataset.zoom;
   if (z === 'in') pz.zoomBy(0.2); else if (z === 'out') pz.zoomBy(-0.2); else if (z === 'fit') fitView();
 }));
@@ -439,7 +444,9 @@ document.addEventListener('click', (e) => {
   if (nav === 'home') { S.sel = null; closeSheet(); render(); fitView(); }
   else if (nav === 'search') desktop.matches ? $('#search-input').focus() : openSearchSheet();
   else if (nav === 'tree') { closeSheet(); S.sel ? focusPerson(S.sel) : pz.centerOn(S.layout.width / 2, S.layout.nodeH, 1, insets()); }
-  else if (nav === 'profile' || nav === 'admin') openProfileSheet(); // « Admin » (téléphone) = la page compte
+  else if (nav === 'profile') openProfileSheet();
+  // « Admin » (téléphone) : ce que le paquet prévoit pour l'administrateur (Modération) ; pour les autres, la page compte.
+  else if (nav === 'admin') S.isAdmin ? openModerationSheet() : openProfileSheet();
   else if (nav === 'settings') openSettingsSheet(); // « Paramètres » (téléphone) = affichage
   else if (nav === 'install') openInstallSheet();
   else if (nav === 'moderation' && adminMode()) openModerationSheet();
@@ -603,7 +610,6 @@ $('#sheet').addEventListener('click', async (e) => {
     window.AncestriaMode?.set(mode);
     kind === 'settings' ? openSettingsSheet() : openProfileSheet();
   }
-  if (a === 'pano') { closeSheet(); $('#pano').click(); }
   if (a === 'logout') { await signOut(); location.reload(); }
   if (a === 'install') { await promptInstall(); openInstallSheet(); }
   if (a === 'copy') {
@@ -631,9 +637,9 @@ function openSearchSheet() {
 const modeSwitch = () => `<div class="ed-label">Affichage</div>
     <div class="mode-switch" role="group" aria-label="Mode d'affichage">${[['auto', 'Automatique'], ['mobile', 'Mode Mobile 📱'], ['pc', 'Mode PC 💻']]
       .map(([v, l]) => `<button type="button" data-mode-choice="${v}" aria-pressed="${window.AncestriaMode?.choice() === v}">${l}</button>`).join('')}</div>`;
+const moderationBtn = () => adminMode() ? '<button type="button" class="btn" data-nav="moderation"><i class="ph ph-shield-check"></i>Modération</button>' : '';
 function openSettingsSheet() {
-  openSheet('Paramètres', `${modeSwitch()}
-    <button type="button" class="btn mobile-only" data-sheet-act="pano">🔄 Vue Panoramique</button>`);
+  openSheet('Paramètres', `${modeSwitch()}${moderationBtn()}`);
   $('#sheet').dataset.kind = 'settings';
 }
 function openProfileSheet() {
@@ -643,7 +649,7 @@ function openProfileSheet() {
       <div><i class="ph ph-envelope-simple"></i>${esc(S.user.email)}</div>
       ${S.isAdmin ? '<div><i class="ph ph-shield-check"></i>Administrateur' + (desktop.matches ? '' : ' (édition disponible sur PC)') + '</div>' : ''}
     </div>
-    ${modeSwitch()}
+    ${moderationBtn()}
     <button type="button" class="btn" data-sheet-act="share"><i class="ph ph-share-network"></i>Inviter un membre de la famille</button>
     <button type="button" class="btn mobile-only" data-sheet-act="sms"><i class="ph ph-chat-text"></i>Inviter par SMS</button>
     <button type="button" class="btn" data-sheet-act="logout"><i class="ph ph-sign-out"></i>Se déconnecter</button>`);
@@ -705,7 +711,7 @@ function toast(msg) {
 // d'orientation ("Vue Panoramique 🔄") pour forcer le basculement horizontal même si la rotation automatique
 // du smartphone est désactivée. »
 // - Paysage (téléphone tenu à l'horizontale) : body.paysage → barres cachées, arbre plein écran, zoom réduit,
-//   fiche en panneau latéral (app.css). Le petit bouton montre / cache les menus.
+//   fiche en panneau latéral (app.css).
 // - « Vue Panoramique 🔄 » en portrait : plein écran + verrou paysage (Android Chrome, appli installée) ;
 //   refusé ou absent (Safari iPhone) → repli body.pano-css : toute la vue pivote de 90° et le pan/zoom
 //   convertit les coordonnées du doigt (PanZoom.rot). « Retour portrait » annule tout.
@@ -716,13 +722,9 @@ function applyOrientation(reframe = true) {
   const b = document.body.classList;
   const css = b.contains('pano-css');
   b.toggle('paysage', (paysageMQ.matches && !desktop.matches) || css);
-  if (!b.contains('paysage')) b.remove('show-bars');
   if (pz) pz.rot = css ? 90 : 0;
   const pano = b.contains('pano');
-  // Bouton discret (sa référence ne le montre pas) : une petite icône ronde ; le nom dans aria-label / title.
-  const label = pano ? 'Retour portrait' : b.contains('paysage') ? (b.contains('show-bars') ? 'Vue Panoramique 🔄' : 'Menus') : 'Vue Panoramique 🔄';
-  panoBtn.textContent = pano ? '↩' : label === 'Menus' ? '☰' : '🔄';
-  panoBtn.setAttribute('aria-label', label); panoBtn.title = label;
+  panoBtn.textContent = pano ? 'Retour portrait' : 'Vue Panoramique 🔄'; // son texte, à la lettre
   panoBtn.setAttribute('aria-pressed', String(pano));
   if (reframe && S.layout) requestAnimationFrame(() => (S.sel && S.layout.pos[S.sel] ? focusPerson(S.sel) : fitView()));
 }
@@ -742,13 +744,12 @@ async function exitPano() {
   const b = document.body.classList;
   try { screen.orientation?.unlock?.(); } catch { /* rien à déverrouiller */ }
   if (document.fullscreenElement) await document.exitFullscreen().catch(() => {});
-  b.remove('pano', 'pano-css', 'show-bars');
+  b.remove('pano', 'pano-css');
   applyOrientation();
 }
 panoBtn.addEventListener('click', () => {
   const b = document.body.classList;
   if (b.contains('pano')) return exitPano();
-  if (b.contains('paysage')) { b.toggle('show-bars'); return applyOrientation(); }
   enterPano();
 });
 paysageMQ.addEventListener('change', () => applyOrientation());

@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap">
 <link rel="stylesheet" href="app.css">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
 <script src="config.js"></script>
 <script type="module" src="src/app.js"></script>
 <title>Ancestria</title>
@@ -50,7 +51,7 @@
     <div class="tb-left">
       <div class="brand serif mobile-only">Ancestria</div>
       <img class="app-icon desktop-only" src="icons/ancestria-192.png" alt="">
-      <div class="tb-id desktop-only"><span class="js-user-name"></span><span>L'Arbre de Lumière</span></div>
+      <div class="tb-id desktop-only"><span>M'ASTEL.974</span><span>L'Arbre de Lumière</span></div>
     </div>
     <div class="brand serif desktop-only">Ancestria</div>
     <div class="tb-right">
@@ -68,8 +69,7 @@
     <button type="button" data-nav="home"><i class="ph ph-house"></i>Accueil</button>
     <button type="button" data-nav="search"><i class="ph ph-magnifying-glass"></i>Recherche</button>
     <button type="button" data-nav="tree"><i class="ph ph-users-three"></i>Arbre</button>
-    <button type="button" data-nav="profile"><i class="ph ph-gear-six"></i>Paramètres</button>
-    <button type="button" data-nav="moderation" class="admin-only"><i class="ph ph-shield-check"></i>Modération</button>
+    <button type="button" data-nav="settings"><i class="ph ph-gear-six"></i>Paramètres</button>
     <div class="spacer"></div>
     <button type="button" data-nav="install" aria-label="Installer l'application"><i class="ph ph-download-simple"></i></button>
   </nav>
@@ -87,19 +87,8 @@
     <button type="button" data-zoom="fit" aria-label="Voir tout l'arbre"><i class="ph ph-corners-out"></i></button>
   </div>
 
-  <!-- Téléphone (sa référence du 13/10) : 2e colonne de zoom en bas à gauche, deux loupes en bas à droite,
-       et le bouton « Vue Panoramique 🔄 » en petite icône ronde à côté des loupes. -->
-  <div id="zoom2" class="mobile-only" role="group" aria-label="Zoom">
-    <button type="button" data-zoom="in" aria-label="Zoom avant"><i class="ph ph-plus"></i></button>
-    <span class="js-zoom-pct">100%</span>
-    <button type="button" data-zoom="out" aria-label="Zoom arrière"><i class="ph ph-minus"></i></button>
-    <button type="button" data-zoom="fit" aria-label="Voir tout l'arbre"><i class="ph ph-corners-out"></i></button>
-  </div>
-  <div id="loupes" class="mobile-only" role="group" aria-label="Loupe">
-    <button type="button" data-zoom="in" aria-label="Agrandir"><i class="ph ph-magnifying-glass-plus"></i></button>
-    <button type="button" data-zoom="out" aria-label="Réduire"><i class="ph ph-magnifying-glass-minus"></i></button>
-  </div>
-  <button id="pano" class="mobile-only" type="button" aria-pressed="false" aria-label="Vue Panoramique 🔄" title="Vue Panoramique 🔄">🔄</button>
+  <!-- « Vue Panoramique 🔄 » : bouton tactile du téléphone, en bas à droite au-dessus de la barre du bas. -->
+  <button id="pano" class="mobile-only" type="button" aria-pressed="false">Vue Panoramique 🔄</button>
 
   <aside id="panel" hidden></aside>
 
