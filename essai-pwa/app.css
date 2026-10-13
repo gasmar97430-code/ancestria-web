@@ -307,3 +307,11 @@ body.pano-css #app { overflow: hidden; }
 .union { position: absolute; height: 14px; border-radius: 3px; background: oklch(0.995 0.004 90 / .94); border: 1px solid oklch(0.9 0.02 85); font: 600 9px/12px var(--sans); letter-spacing: .05em; color: var(--ink-2); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; pointer-events: none; }
 #pano { position: fixed; z-index: 3; right: 12px; bottom: calc(env(safe-area-inset-bottom) + 84px); min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--gold); background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 16px oklch(0.3 0.03 60 / .18); color: var(--gold-deep); font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; }
 /* ---- FIN ARBRE DU TÉLÉPHONE ---- */
+
+/* ---- ÉCRAN TACTILE : PAS DE BARRE DE ZOOM (13/10, ses mots : « la barre de zoom est inutile sur un tactile ») ----
+   Sur un écran qu'on touche, on agrandit et on déplace l'arbre avec les doigts (pincer, glisser : PanZoom de
+   tree-view.js). La barre « + / % / − / ⛶ » reste seulement pour la souris. */
+@media (pointer: coarse) {
+  #zoom { display: none !important; }
+}
+/* ---- FIN ÉCRAN TACTILE ---- */
