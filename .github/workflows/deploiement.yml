@@ -59,6 +59,10 @@ jobs:
       - name: Liens directs (/c/…) aux deux adresses
         run: node scripts/bascule-404.mjs /${{ github.event.repository.name }}/
       # ---- FIN BASCULE ----
+      # ---- NOUVELLE APPLI (refonte du 13/10, son paquet PWA) : adresse d'ESSAI à part, le site ci-dessus ne bouge pas ----
+      - name: Nouvelle appli — adresse d'essai /essai-pwa/
+        run: cp -r essai-pwa dist/essai-pwa
+      # ---- FIN NOUVELLE APPLI ----
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

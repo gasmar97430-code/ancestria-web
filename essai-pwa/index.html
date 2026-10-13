@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#fbf8f0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ancestria">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/ancestria-192.png">
+<link rel="icon" type="image/png" href="icons/ancestria-192.png">
+<script src="src/mode.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap">
+<link rel="stylesheet" href="app.css">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="config.js"></script>
+<script type="module" src="src/app.js"></script>
+<title>Ancestria</title>
+</head>
+<body>
+
+<div id="bg" aria-hidden="true"></div>
+
+<section id="auth" hidden>
+  <form id="auth-form" class="auth-card" novalidate>
+    <img class="app-icon" src="icons/ancestria-192.png" alt="">
+    <h1 class="serif">Ancestria</h1>
+    <p class="muted">L'Arbre de Lumière. Connectez-vous pour accéder à l'arbre familial.</p>
+    <div class="names">
+      <label class="field"><span>Prénom (inscription)</span><input class="input" name="first_name" type="text" autocomplete="given-name"></label>
+      <label class="field"><span>Nom (inscription)</span><input class="input" name="last_name" type="text" autocomplete="family-name"></label>
+    </div>
+    <label class="field"><span>E-mail</span><input class="input" name="email" type="email" autocomplete="email" required></label>
+    <label class="field"><span>Mot de passe</span><input class="input" name="password" type="password" autocomplete="current-password" minlength="8" required></label>
+    <label class="check"><input type="checkbox" name="charte" value="2026-10-13"><span>J'accepte la Charte d'Ancestria</span></label>
+    <p id="auth-msg" class="auth-msg" role="status"></p>
+    <div class="row-actions">
+      <button class="btn" type="submit" value="signup">Créer un compte</button>
+      <button class="btn btn-primary" type="submit" value="signin">Se connecter</button>
+    </div>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <div id="viewport"><div id="layer"><svg id="links"></svg><div id="nodes"></div></div></div>
+
+  <header id="topbar">
+    <div class="tb-left">
+      <div class="brand serif mobile-only">Ancestria</div>
+      <img class="app-icon desktop-only" src="icons/ancestria-192.png" alt="">
+      <div class="tb-id desktop-only"><span class="js-user-name"></span><span>L'Arbre de Lumière</span></div>
+    </div>
+    <div class="brand serif desktop-only">Ancestria</div>
+    <div class="tb-right">
+      <span id="status" class="admin-only"></span>
+      <button id="publish" class="btn btn-primary admin-only" type="button"><i class="ph ph-paper-plane-tilt"></i><span>Envoi</span></button>
+      <button class="user-chip" data-nav="profile" type="button">
+        <i class="ph ph-user-circle"></i>
+        <span class="mobile-only js-user-name"></span>
+        <span class="desktop-only">Mon Compte</span><i class="ph ph-caret-down desktop-only"></i>
+      </button>
+    </div>
+  </header>
+
+  <nav id="rail" class="desktop-only">
+    <button type="button" data-nav="home"><i class="ph ph-house"></i>Accueil</button>
+    <button type="button" data-nav="search"><i class="ph ph-magnifying-glass"></i>Recherche</button>
+    <button type="button" data-nav="tree"><i class="ph ph-users-three"></i>Arbre</button>
+    <button type="button" data-nav="profile"><i class="ph ph-gear-six"></i>Paramètres</button>
+    <button type="button" data-nav="moderation" class="admin-only"><i class="ph ph-shield-check"></i>Modération</button>
+    <div class="spacer"></div>
+    <button type="button" data-nav="install" aria-label="Installer l'application"><i class="ph ph-download-simple"></i></button>
+  </nav>
+
+  <div id="searchbar" class="desktop-only">
+    <label class="search"><i class="ph ph-magnifying-glass"></i><input id="search-input" type="search" placeholder="Tapez un nom de famille…" autocomplete="off"></label>
+    <div id="search-results" class="results" hidden></div>
+    <div id="chips" class="chips"></div>
+  </div>
+
+  <div id="zoom" role="group" aria-label="Zoom">
+    <button type="button" data-zoom="in" aria-label="Zoom avant"><i class="ph ph-plus"></i></button>
+    <span id="zoom-pct">100%</span>
+    <button type="button" data-zoom="out" aria-label="Zoom arrière"><i class="ph ph-minus"></i></button>
+    <button type="button" data-zoom="fit" aria-label="Voir tout l'arbre"><i class="ph ph-corners-out"></i></button>
+  </div>
+
+  <button id="pano" class="mobile-only" type="button" aria-pressed="false">Vue Panoramique 🔄</button>
+
+  <aside id="panel" hidden></aside>
+
+  <nav id="tabbar" class="mobile-only">
+    <button type="button" data-nav="home"><i class="ph ph-house"></i>Accueil</button>
+    <button type="button" data-nav="search"><i class="ph ph-magnifying-glass"></i>Recherche</button>
+    <button type="button" data-nav="tree"><i class="ph ph-tree"></i>Arbre</button>
+    <button type="button" data-nav="profile"><i class="ph ph-user"></i>Profil</button>
+    <button type="button" data-nav="install"><i class="ph ph-download-simple"></i>Installer</button>
+  </nav>
+
+  <div id="sheet" hidden></div>
+  <div id="toast" role="status" hidden></div>
+</div>
+
+</body>
+</html>
