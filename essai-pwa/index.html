@@ -58,7 +58,7 @@
       <button id="publish" class="btn btn-primary admin-only" type="button"><i class="ph ph-paper-plane-tilt"></i><span>Envoi</span></button>
       <button class="user-chip" data-nav="profile" type="button">
         <i class="ph ph-user-circle"></i>
-        <span class="mobile-only js-user-name"></span>
+        <span class="mobile-only marque">M'ASTEL.974</span>
         <span class="desktop-only">Mon Compte</span><i class="ph ph-caret-down desktop-only"></i>
       </button>
     </div>
@@ -82,20 +82,32 @@
 
   <div id="zoom" role="group" aria-label="Zoom">
     <button type="button" data-zoom="in" aria-label="Zoom avant"><i class="ph ph-plus"></i></button>
-    <span id="zoom-pct">100%</span>
+    <span id="zoom-pct" class="js-zoom-pct">100%</span>
     <button type="button" data-zoom="out" aria-label="Zoom arrière"><i class="ph ph-minus"></i></button>
     <button type="button" data-zoom="fit" aria-label="Voir tout l'arbre"><i class="ph ph-corners-out"></i></button>
   </div>
 
-  <button id="pano" class="mobile-only" type="button" aria-pressed="false">Vue Panoramique 🔄</button>
+  <!-- Téléphone (sa référence du 13/10) : 2e colonne de zoom en bas à gauche, deux loupes en bas à droite,
+       et le bouton « Vue Panoramique 🔄 » en petite icône ronde à côté des loupes. -->
+  <div id="zoom2" class="mobile-only" role="group" aria-label="Zoom">
+    <button type="button" data-zoom="in" aria-label="Zoom avant"><i class="ph ph-plus"></i></button>
+    <span class="js-zoom-pct">100%</span>
+    <button type="button" data-zoom="out" aria-label="Zoom arrière"><i class="ph ph-minus"></i></button>
+    <button type="button" data-zoom="fit" aria-label="Voir tout l'arbre"><i class="ph ph-corners-out"></i></button>
+  </div>
+  <div id="loupes" class="mobile-only" role="group" aria-label="Loupe">
+    <button type="button" data-zoom="in" aria-label="Agrandir"><i class="ph ph-magnifying-glass-plus"></i></button>
+    <button type="button" data-zoom="out" aria-label="Réduire"><i class="ph ph-magnifying-glass-minus"></i></button>
+  </div>
+  <button id="pano" class="mobile-only" type="button" aria-pressed="false" aria-label="Vue Panoramique 🔄" title="Vue Panoramique 🔄">🔄</button>
 
   <aside id="panel" hidden></aside>
 
   <nav id="tabbar" class="mobile-only">
     <button type="button" data-nav="home"><i class="ph ph-house"></i>Accueil</button>
     <button type="button" data-nav="search"><i class="ph ph-magnifying-glass"></i>Recherche</button>
-    <button type="button" data-nav="tree"><i class="ph ph-tree"></i>Arbre</button>
-    <button type="button" data-nav="profile"><i class="ph ph-user"></i>Profil</button>
+    <button type="button" data-nav="admin"><i class="ph ph-user"></i>Admin</button>
+    <button type="button" data-nav="settings"><i class="ph ph-gear-six"></i>Paramètres</button>
     <button type="button" data-nav="install"><i class="ph ph-download-simple"></i>Installer</button>
   </nav>
 

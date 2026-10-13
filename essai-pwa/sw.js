@@ -1,7 +1,7 @@
 // Ancestria service worker — app shell en cache, données Supabase jamais mises en cache.
 // Chemins RELATIFS à l'emplacement de ce fichier : l'appli marche à la racine d'un domaine comme sous un
 // sous-dossier (GitHub Pages /ancestria-web/).
-const VERSION = 'ancestria-v1';
+const VERSION = 'ancestria-v2';
 const BASE = new URL('./', self.location).href;
 const SHELL = ['./', 'index.html', 'app.css', 'config.js', 'manifest.json',
   'src/app.js', 'src/mode.js', 'src/supabase.js', 'src/auth.js', 'src/pwa.js', 'src/tree-store.js', 'src/tree-view.js',

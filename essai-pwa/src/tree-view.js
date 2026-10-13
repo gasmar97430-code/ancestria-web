@@ -1,7 +1,15 @@
 // Mise en page de l'arborescence (ancêtres en haut, descendants vers le bas) + pan / pinch-zoom.
 export const NODE_W = 168, NODE_H = 58, COL = 184, ROW = 132, PAD = 60;
+const NODE_W0 = NODE_W, NODE_H0 = NODE_H, COL0 = COL, ROW0 = ROW, PAD0 = PAD;
 
-export function layoutTree(persons, relations) {
+// opts (mode mobile, sa référence du 13/10) : cartes plus petites (nodeW, nodeH, col, row), place en haut pour
+// la grande carte de l'ancêtre (top), liens en COURBES (curves) et pastille sous chaque couple (union : hauteur).
+// Sans opts : la mise en page du paquet, à l'identique.
+export function layoutTree(persons, relations, opts = {}) {
+  const NODE_W = opts.nodeW ?? NODE_W0, NODE_H = opts.nodeH ?? NODE_H0, COL = opts.col ?? COL0, ROW = opts.row ?? ROW0;
+  const PAD = opts.pad ?? PAD0, TOP = opts.top ?? 0, CURVES = !!opts.curves, UNION = opts.union ?? 0;
+  // opts.big = { id, w, h } : la grande carte de l'ancêtre de la lignée (son bas reste aligné sur sa ligne).
+  const W = (id) => (opts.big?.id === id ? opts.big.w : NODE_W);
   const ids = new Set(persons.map((p) => p.id));
   const byId = Object.fromEntries(persons.map((p) => [p.id, p]));
   const parents = {}, children = {}, spouses = {};
@@ -49,21 +57,23 @@ export function layoutTree(persons, relations) {
       order.push(id); placed.add(id);
       for (const s of spouses[id]) if (gen[s] === g && !placed.has(s)) { order.push(s); placed.add(s); }
     }
-    order.forEach((id, i) => { x[id] = i * COL; y[id] = PAD + g * ROW; });
-    rowW[g] = order.length * COL - (COL - NODE_W);
+    let cur = 0;
+    order.forEach((id) => { x[id] = cur; y[id] = PAD + TOP + g * ROW; cur += W(id) + (COL - NODE_W); });
+    rowW[g] = cur - (COL - NODE_W);
     maxW = Math.max(maxW, rowW[g]);
   });
   for (const id of ids) x[id] += PAD + (maxW - rowW[gen[id]]) / 2;
 
   // links = tracés (contrat du paquet) ; cords = les mêmes tracés avec leurs extrémités, pour la lumière des liens.
-  const links = [], cords = [];
-  const cx = (id) => x[id] + NODE_W / 2, cy = (id) => y[id] + NODE_H / 2;
+  const links = [], cords = [], couples = [];
+  const cx = (id) => x[id] + W(id) / 2, cy = (id) => y[id] + NODE_H / 2;
   const seen = new Set();
   for (const a of ids) for (const b of spouses[a]) {
     const k = [a, b].sort().join(); if (seen.has(k)) continue; seen.add(k);
     const [l, r] = x[a] < x[b] ? [a, b] : [b, a];
     if (gen[a] === gen[b]) {
-      const d = `M${x[l] + NODE_W},${cy(l)} L${x[r]},${cy(r)}`;
+      couples.push({ l, r, x: x[l], y: y[l] + NODE_H, w: x[r] + W(r) - x[l] });
+      const d = `M${x[l] + W(l)},${cy(l)} L${x[r]},${cy(r)}`;
       links.push(d); cords.push({ d, kind: 'spouse', from: [l], to: r });
     }
   }
@@ -72,14 +82,19 @@ export function layoutTree(persons, relations) {
     if (!ps.length) continue;
     const couple = ps.length === 2 && spouses[ps[0]].includes(ps[1]) && gen[ps[0]] === gen[ps[1]];
     const ox = couple ? (cx(ps[0]) + cx(ps[1])) / 2 : cx(ps[0]);
-    const oy = couple ? cy(ps[0]) : y[ps[0]] + NODE_H;
+    const oy = couple ? (UNION ? y[ps[0]] + NODE_H + UNION : cy(ps[0])) : y[ps[0]] + NODE_H;
     const bus = y[c] - (ROW - NODE_H) / 2;
-    const d = `M${ox},${oy} L${ox},${bus} L${cx(c)},${bus} L${cx(c)},${y[c]}`;
+    const k = (y[c] - oy) / 2;
+    const d = CURVES
+      ? `M${ox},${oy} C${ox},${oy + k} ${cx(c)},${y[c] - k} ${cx(c)},${y[c]}`
+      : `M${ox},${oy} L${ox},${bus} L${cx(c)},${bus} L${cx(c)},${y[c]}`;
     links.push(d); cords.push({ d, kind: 'parent', from: couple ? ps.slice(0, 2) : [ps[0]], to: c });
   }
 
-  const pos = Object.fromEntries([...ids].map((id) => [id, { x: x[id], y: y[id] }]));
-  return { pos, links, cords, parents, children, spouses, width: maxW + PAD * 2, height: PAD * 2 + rows.length * ROW };
+  const pos = Object.fromEntries([...ids].map((id) => [id, opts.big?.id === id
+    ? { x: x[id], y: y[id] + NODE_H - opts.big.h, w: opts.big.w, h: opts.big.h }
+    : { x: x[id], y: y[id], w: NODE_W, h: NODE_H }]));
+  return { pos, links, cords, couples, gen, parents, children, spouses, nodeW: NODE_W, nodeH: NODE_H, width: maxW + PAD * 2, height: PAD * 2 + TOP + rows.length * ROW };
 }
 
 export class PanZoom {

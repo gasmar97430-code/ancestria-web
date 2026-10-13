@@ -144,9 +144,51 @@ function computeModel() {
   for (const p of Object.values(S.draft.persons)) persons[p.id] = { ...persons[p.id], ...p, _dirty: true };
   S.m = { persons, relations: [...S.base.relations, ...S.draft.relations] };
   const visible = Object.values(persons).filter((p) => !p.is_hidden);
-  S.layout = layoutTree(visible, S.m.relations);
+  S.layout = layoutTree(visible, S.m.relations, layoutOpts(visible, S.m.relations));
   return visible;
 }
+
+// ---- ARBRE DU TÉLÉPHONE (sa référence du 13/10, reference-telephone-13-10.png) ----
+// Ses mots : « tu n'as pas fait comme cette image … fais-le comme il se doit ». En mode mobile : l'ancêtre de
+// la lignée en GRANDE carte en haut (bord doré lumineux, prénom / NOM sur deux lignes, rang, naissance / décès),
+// les générations dessous en petites cartes blanches compactes, une pastille sous chaque couple, des liens en
+// COURBES dorées. En mode PC : la mise en page du paquet, inchangée.
+// Proportions mesurées sur sa référence : grande carte ≈ 3,5 × la largeur et la hauteur d'une petite ;
+// arbre presque aussi haut que large, posé sur le banian (centré vers 55 % de la hauteur de l'écran).
+const MOBILE_TREE = { nodeW: 112, nodeH: 62, col: 122, row: 140, top: 160, pad: 20, curves: true, union: 18 };
+const BIG = { w: 390, h: 215 };
+function soucheDe(L) {
+  // L'ancêtre de la lignée : parmi la 1re génération, celui qui a le plus de descendants (à égalité : le plus à gauche).
+  const roots = Object.keys(L.gen).filter((id) => L.gen[id] === 0 && L.children[id].length).sort((a, b) => L.pos[a].x - L.pos[b].x);
+  let best = null, bestN = -1;
+  for (const r of roots) {
+    const vu = new Set(); const pile = [r];
+    while (pile.length) for (const c of L.children[pile.pop()]) if (!vu.has(c)) { vu.add(c); pile.push(c); }
+    if (vu.size > bestN) { best = r; bestN = vu.size; }
+  }
+  return best;
+}
+function layoutOpts(visible, relations) {
+  S.souche = null;
+  if (desktop.matches) return {};
+  try {
+    S.souche = soucheDe(layoutTree(visible, relations, MOBILE_TREE));
+  } catch { S.souche = null; } // repli : pas de grande carte, l'arbre reste dessiné
+  return S.souche ? { ...MOBILE_TREE, big: { id: S.souche, ...BIG } } : MOBILE_TREE;
+}
+function soucheHtml(p, o, cls) {
+  const rk = rank(p);
+  const dates = isProtected(p) ? '' : `Naiss. ${yr(p.birth_date) ?? '?'} / décès ${yr(p.death_date) ?? '—'}`;
+  return `<button type="button" class="${cls} node--souche" data-id="${p.id}" style="left:${o.x}px;top:${o.y}px;width:${o.w}px;height:${o.h}px">${avatar(p)}<span class="souche-first">${esc(p.first_name)}</span><span class="souche-last">${esc(p.last_name)}</span>${rk ? `<span class="souche-sub">${rk}</span>` : ''}${dates ? `<span class="souche-sub">${esc(dates)}</span>` : ''}</button>`;
+}
+function unionsHtml() {
+  if (desktop.matches) return '';
+  return S.layout.couples.map((c) => {
+    const noms = [...new Set([c.l, c.r].map((id) => (S.m.persons[id]?.last_name || '').trim().toUpperCase()).filter(Boolean))].join(' · ');
+    return `<span class="union" style="left:${c.x + c.w * 0.1}px;top:${c.y + 4}px;width:${c.w * 0.8}px">${esc(noms)}</span>`;
+  }).join('');
+}
+// ---- FIN ARBRE DU TÉLÉPHONE ----
 
 function touch(id) {
   if (!S.draft.persons[id]) S.draft.persons[id] = store.pickPerson(S.m.persons[id]);
@@ -239,9 +281,11 @@ function drawTree(visible) {
   svg.innerHTML = html;
   $('#nodes').innerHTML = visible.map((p) => {
     const o = pos[p.id];
-    const cls = ['node', p.id === S.sel && 'is-sel', lum?.parents.has(p.id) && 'is-parent-lit', p._dirty && 'is-dirty', S.origin && p.origin !== S.origin && 'is-dim'].filter(Boolean).join(' ');
-    return `<button type="button" class="${cls}" data-id="${p.id}" style="left:${o.x}px;top:${o.y}px">${avatar(p)}<span class="node-text"><span class="node-name">${nameHtml(p)}</span><span class="node-years">${esc(years(p))}</span></span></button>`;
-  }).join('');
+    const famille = S.sel && (p.id === S.sel || S.layout.spouses[S.sel]?.includes(p.id)); // la personne choisie et son couple brillent (téléphone)
+    const cls = ['node', p.id === S.sel && 'is-sel', famille && 'is-famille', lum?.parents.has(p.id) && 'is-parent-lit', p._dirty && 'is-dirty', S.origin && p.origin !== S.origin && 'is-dim'].filter(Boolean).join(' ');
+    if (p.id === S.souche) return soucheHtml(p, o, cls);
+    return `<button type="button" class="${cls}" data-id="${p.id}" style="left:${o.x}px;top:${o.y}px;width:${o.w}px;height:${o.h}px">${avatar(p)}<span class="node-text"><span class="node-name">${nameHtml(p)}</span><span class="node-years">${esc(years(p))}</span></span></button>`;
+  }).join('') + unionsHtml();
 }
 
 function renderTopbar() {
@@ -361,15 +405,15 @@ function insets() {
     return { left: 8, top: bars ? 66 : 8, right: S.sel ? 350 : 56, bottom: bars ? 74 : 8 };
   }
   if (desktop.matches) return { left: 80, top: 62 + 110, right: S.sel ? 300 : 20, bottom: 20 };
-  return { left: 0, top: 70, right: 60, bottom: 84 };
+  return { left: 0, top: 180, right: 0, bottom: 93 }; // téléphone : l'arbre sur toute la largeur, posé sur le banian (sa référence)
 }
 function fitView() { if (S.layout) pz.fit(S.layout.width, S.layout.height, insets()); }
 function focusPerson(id) {
   const o = S.layout?.pos[id]; if (!o) return;
-  pz.centerOn(o.x + NODE_W / 2, o.y + NODE_H / 2, Math.max(pz.s, 0.9), insets());
+  pz.centerOn(o.x + o.w / 2, o.y + o.h / 2, Math.max(pz.s, 0.9), insets());
 }
 function onView(s, x, y) {
-  $('#zoom-pct').textContent = `${Math.round(s * 100)}%`;
+  $$('.js-zoom-pct').forEach((el) => (el.textContent = `${Math.round(s * 100)}%`));
   $('#bg').style.transform = `translate3d(${(x * 0.03).toFixed(1)}px, ${(y * 0.03).toFixed(1)}px, 0)`;
 }
 function select(id, focus) {
@@ -382,10 +426,11 @@ $('#nodes').addEventListener('click', (e) => {
   const b = e.target.closest('.node');
   if (b && !pz.dragged) select(b.dataset.id, false);
 });
-$('#zoom').addEventListener('click', (e) => {
+// Zoom : la colonne du paquet, et sur téléphone la 2e colonne (bas gauche) et les deux loupes (bas droite).
+$$('#zoom, #zoom2, #loupes').forEach((box) => box.addEventListener('click', (e) => {
   const z = e.target.closest('[data-zoom]')?.dataset.zoom;
   if (z === 'in') pz.zoomBy(0.2); else if (z === 'out') pz.zoomBy(-0.2); else if (z === 'fit') fitView();
-});
+}));
 
 document.addEventListener('click', (e) => {
   const nav = e.target.closest('[data-nav]')?.dataset.nav;
@@ -393,8 +438,9 @@ document.addEventListener('click', (e) => {
   S.nav = nav; renderNav();
   if (nav === 'home') { S.sel = null; closeSheet(); render(); fitView(); }
   else if (nav === 'search') desktop.matches ? $('#search-input').focus() : openSearchSheet();
-  else if (nav === 'tree') { closeSheet(); S.sel ? focusPerson(S.sel) : pz.centerOn(S.layout.width / 2, NODE_H, 1, insets()); }
-  else if (nav === 'profile') openProfileSheet();
+  else if (nav === 'tree') { closeSheet(); S.sel ? focusPerson(S.sel) : pz.centerOn(S.layout.width / 2, S.layout.nodeH, 1, insets()); }
+  else if (nav === 'profile' || nav === 'admin') openProfileSheet(); // « Admin » (téléphone) = la page compte
+  else if (nav === 'settings') openSettingsSheet(); // « Paramètres » (téléphone) = affichage
   else if (nav === 'install') openInstallSheet();
   else if (nav === 'moderation' && adminMode()) openModerationSheet();
 });
@@ -552,7 +598,12 @@ $('#sheet').addEventListener('click', async (e) => {
   if (a === 'share') { const r = await shareInvite().catch(() => null); if (r === 'copied') toast('Lien copié.'); }
   if (a === 'sms') inviteBySms();
   const mode = e.target.closest('[data-mode-choice]')?.dataset.modeChoice;
-  if (mode) { window.AncestriaMode?.set(mode); openProfileSheet(); } // effet immédiat (render + fitView via le mode), choix gardé
+  if (mode) { // effet immédiat (render + fitView via le mode), choix gardé
+    const kind = $('#sheet').dataset.kind;
+    window.AncestriaMode?.set(mode);
+    kind === 'settings' ? openSettingsSheet() : openProfileSheet();
+  }
+  if (a === 'pano') { closeSheet(); $('#pano').click(); }
   if (a === 'logout') { await signOut(); location.reload(); }
   if (a === 'install') { await promptInstall(); openInstallSheet(); }
   if (a === 'copy') {
@@ -577,6 +628,14 @@ function openSearchSheet() {
   setTimeout(() => input.focus(), 50);
 }
 
+const modeSwitch = () => `<div class="ed-label">Affichage</div>
+    <div class="mode-switch" role="group" aria-label="Mode d'affichage">${[['auto', 'Automatique'], ['mobile', 'Mode Mobile 📱'], ['pc', 'Mode PC 💻']]
+      .map(([v, l]) => `<button type="button" data-mode-choice="${v}" aria-pressed="${window.AncestriaMode?.choice() === v}">${l}</button>`).join('')}</div>`;
+function openSettingsSheet() {
+  openSheet('Paramètres', `${modeSwitch()}
+    <button type="button" class="btn mobile-only" data-sheet-act="pano">🔄 Vue Panoramique</button>`);
+  $('#sheet').dataset.kind = 'settings';
+}
 function openProfileSheet() {
   openSheet(desktop.matches ? 'Mon compte' : 'Profil', `
     <div class="facts">
@@ -584,9 +643,7 @@ function openProfileSheet() {
       <div><i class="ph ph-envelope-simple"></i>${esc(S.user.email)}</div>
       ${S.isAdmin ? '<div><i class="ph ph-shield-check"></i>Administrateur' + (desktop.matches ? '' : ' (édition disponible sur PC)') + '</div>' : ''}
     </div>
-    <div class="ed-label">Affichage</div>
-    <div class="mode-switch" role="group" aria-label="Mode d'affichage">${[['auto', 'Automatique'], ['mobile', 'Mode Mobile 📱'], ['pc', 'Mode PC 💻']]
-      .map(([v, l]) => `<button type="button" data-mode-choice="${v}" aria-pressed="${window.AncestriaMode?.choice() === v}">${l}</button>`).join('')}</div>
+    ${modeSwitch()}
     <button type="button" class="btn" data-sheet-act="share"><i class="ph ph-share-network"></i>Inviter un membre de la famille</button>
     <button type="button" class="btn mobile-only" data-sheet-act="sms"><i class="ph ph-chat-text"></i>Inviter par SMS</button>
     <button type="button" class="btn" data-sheet-act="logout"><i class="ph ph-sign-out"></i>Se déconnecter</button>`);
@@ -662,7 +719,10 @@ function applyOrientation(reframe = true) {
   if (!b.contains('paysage')) b.remove('show-bars');
   if (pz) pz.rot = css ? 90 : 0;
   const pano = b.contains('pano');
-  panoBtn.textContent = pano ? 'Retour portrait' : b.contains('paysage') ? (b.contains('show-bars') ? 'Vue Panoramique 🔄' : 'Menus') : 'Vue Panoramique 🔄';
+  // Bouton discret (sa référence ne le montre pas) : une petite icône ronde ; le nom dans aria-label / title.
+  const label = pano ? 'Retour portrait' : b.contains('paysage') ? (b.contains('show-bars') ? 'Vue Panoramique 🔄' : 'Menus') : 'Vue Panoramique 🔄';
+  panoBtn.textContent = pano ? '↩' : label === 'Menus' ? '☰' : '🔄';
+  panoBtn.setAttribute('aria-label', label); panoBtn.title = label;
   panoBtn.setAttribute('aria-pressed', String(pano));
   if (reframe && S.layout) requestAnimationFrame(() => (S.sel && S.layout.pos[S.sel] ? focusPerson(S.sel) : fitView()));
 }
