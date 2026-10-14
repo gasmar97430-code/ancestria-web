@@ -375,3 +375,9 @@ body:not(.est-admin) [data-nav="admin"] { display: none !important; }
    l'arbre bouge et zoome ; l'image reste immobile. */
 #bg { transform: none !important; }
 /* ---- FIN L'IMAGE DE FOND FIGÉE ---- */
+
+/* ---- INSTALLER, FLUIDE (15/10/2026) : la carte de src/installer-fluide.js ---- */
+.install-gestes { margin: 4px 0 12px; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.45; color: var(--ink); }
+.install-gestes li::marker { font-weight: 700; color: var(--gold-deep); }
+.install-ok { margin: 4px 0 8px; font-size: 15px; line-height: 1.45; color: var(--ink); }
+/* ---- FIN INSTALLER, FLUIDE ---- */
