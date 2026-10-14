@@ -405,3 +405,14 @@ html, body { overscroll-behavior: none; touch-action: none; }
 #searchbar, #panel, #sheet, #tabbar, #topbar, #rail { touch-action: manipulation; }
 #sheet, .results, .panel-body { touch-action: pan-y; }
 /* ---- FIN LE FOND NE BOUGE JAMAIS ---- */
+
+/* ---- FICHE = INSCRIPTION SEULEMENT (15/10/2026) ----
+   Ses mots : « la fiche de la personne doit s'ouvrir que pour l'inscription des noms ». Sa capture : fiche en grand,
+   longue liste d'enfants, le rond du portrait par-dessus les noms quand on fait défiler.
+   La fiche (carte touchée, PC) ne montre plus que : le nom, « Modifier », « Ajouter un membre » (Enfant, Conjoint·e,
+   Parent). Les listes Parents / Conjoint / Enfants et les faits restent dans l'arbre lui-même. Le portrait ne passe
+   plus jamais par-dessus : la partie qui défile commence sous lui. */
+#panel:not(.is-editing) .facts, #panel:not(.is-editing) .ed-label, #panel:not(.is-editing) .links-list,
+#panel:not(.is-editing) .admin-box, #panel:not(.is-editing) .p-user { display: none !important; }
+#panel.has-portrait .panel-body { margin-top: 48px; padding-top: 10px; }
+/* ---- FIN FICHE = INSCRIPTION SEULEMENT ---- */

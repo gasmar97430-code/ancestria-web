@@ -96,7 +96,8 @@ try {
       const res = [...document.querySelectorAll('#search-results [data-goto]')];
       const q = e.target.value.trim();
       if (q.length < 3 || !res.length) return;
-      const nomsListe = new Set(res.map((b) => (b.querySelector('.name b')?.textContent || '').trim().toUpperCase()));
+      // 15/10, sur SON arbre : « FERRERE » et « FERRÈRE » = le même nom (accents et majuscules ne comptent pas).
+      const nomsListe = new Set(res.map((b) => mots(b.querySelector('.name b')?.textContent || '').join(' ')));
       if (res.length === 1) { requeteAuto = q; clicAuto = true; res[0].click(); return; }
       if (nomsListe.size === 1) {
         // Un nom de famille : on ouvre son arborescence sur le plus ancien de la liste (l'aïeul).
