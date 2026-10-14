@@ -88,6 +88,10 @@ export function familleVisible(personnes, relations, choisi) {
 
 // Une seule personne trouvée pendant la frappe → son arbre s'ouvre (après une courte pause de frappe).
 try {
+  // 15/10 : « les lettres du clavier changent de format bizarre » → pas de correction, de majuscule ni de suggestion
+  // du clavier dans le champ des noms (un nom de famille ne se corrige pas).
+  const champ = document.getElementById('search-input');
+  if (champ) { champ.setAttribute('autocorrect', 'off'); champ.setAttribute('autocapitalize', 'off'); champ.setAttribute('spellcheck', 'false'); champ.setAttribute('autocomplete', 'off'); }
   let minuterie = 0;
   document.addEventListener('input', (e) => {
     if (!(e.target instanceof Element) || e.target.id !== 'search-input') return;
@@ -95,17 +99,27 @@ try {
     minuterie = setTimeout(() => {
       const res = [...document.querySelectorAll('#search-results [data-goto]')];
       const q = e.target.value.trim();
-      if (mots(q).join('').length < 2 || !res.length) return; // 15/10 : les noms de 2 lettres (LY, HO…) s'ouvrent aussi
+      // 15/10 (« je n'arrive même plus à taper un nom sur le téléphone ») : l'ouverture vidait le champ en pleine frappe.
+      // Maintenant : 3 lettres au moins (ou un nom court tapé EN ENTIER), une vraie pause, et le texte tapé reste.
+      // Jamais au milieu d'un mot : le DERNIER mot tapé doit être un mot ENTIER du nom ou d'un prénom trouvé
+      // (« hoa » attend, « hoarau » ouvre ; « paul hoarau » ouvre ; « jose » attend, « joselito » ouvre).
+      const tape = mots(q); const dernier = tape[tape.length - 1];
+      const entier = res.some((b) => mots(b.querySelector('.name')?.textContent || '').includes(dernier));
+      if (!res.length || !dernier || !entier) return;
+      // Le mot en cours du clavier est d'abord validé (le clavier se range) : sinon remplir le champ pendant que le
+      // clavier compose le mot donnait des lettres « bizarres » (ses mots du 15/10).
+      e.target.blur();
+      const remettre = () => setTimeout(() => { if (e.target.value === '') e.target.value = q; }, 0);
       // 15/10, sur SON arbre : « FERRERE » et « FERRÈRE » = le même nom (accents et majuscules ne comptent pas).
       const nomsListe = new Set(res.map((b) => mots(b.querySelector('.name b')?.textContent || '').join(' ')));
-      if (res.length === 1) { requeteAuto = q; clicAuto = true; res[0].click(); return; }
+      if (res.length === 1) { requeteAuto = q; clicAuto = true; res[0].click(); remettre(); return; }
       if (nomsListe.size === 1) {
         // Un nom de famille : on ouvre son arborescence sur le plus ancien de la liste (l'aïeul).
         const an = (b) => +((b.querySelector('small')?.textContent || '').match(/(1[0-9]{3}|20[0-9]{2})/)?.[1] || 9999);
         const aieul = res.reduce((a, b) => (an(b) < an(a) ? b : a));
-        requeteAuto = q; clicAuto = true; aieul.click();
+        requeteAuto = q; clicAuto = true; aieul.click(); remettre();
       }
-    }, 700);
+    }, 1200);
   });
   // Un toucher sur un nom de la liste = la famille de CETTE personne (on quitte l'arborescence du nom).
   document.addEventListener('click', (e) => {
