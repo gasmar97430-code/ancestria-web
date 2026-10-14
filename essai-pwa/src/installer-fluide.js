@@ -68,13 +68,18 @@ export function gestes(mode) {
     const lien = () => new URL('./', document.baseURI).href;
     const versChrome = () => { const u = new URL(lien()); return `intent://${u.host}${u.pathname}#Intent;scheme=https;package=com.android.chrome;end`; };
     const mode = (sansInvite) => modeInstallation({
-      autonome: isStandalone(), inviteDisponible: !sansInvite && installState() === 'prompt',
+      autonome: isStandalone() || document.body.classList.contains('appli-installee'), inviteDisponible: !sansInvite && installState() === 'prompt',
       agent: navigator.userAgent, tactile: navigator.maxTouchPoints > 0,
     });
     // Appli installée (ouverte depuis son icône, ou installation acceptée ici) : plus de bouton « Installer ».
-    const marquer = () => document.body.classList.add('appli-installee');
-    if (isStandalone()) marquer();
+    // 15/10 (« le bouton installé est toujours visible ») : l'appli s'en SOUVIENT sur l'appareil (ouverte depuis son
+    // icône = adresse ?source=pwa du manifeste, installation acceptée, ou Chrome qui la dit installée).
+    const CLE = 'ancestria:installee';
+    const marquer = () => { document.body.classList.add('appli-installee'); try { localStorage.setItem(CLE, '1'); } catch (err) { /* rien */ } };
+    let dejaNotee = false; try { dejaNotee = localStorage.getItem(CLE) === '1'; } catch (err) { /* rien */ }
+    if (isStandalone() || new URLSearchParams(location.search).get('source') === 'pwa' || dejaNotee) marquer();
     window.addEventListener('appinstalled', marquer);
+    navigator.getInstalledRelatedApps?.().then((l) => { if (l?.length) marquer(); }).catch(() => {});
     let message = null; // « accepté » / « refusé » : ce que la carte doit dire après la fenêtre du téléphone
 
     const remplir = () => {

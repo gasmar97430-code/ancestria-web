@@ -24,11 +24,42 @@ export function correspond(p, q) {
   } catch (err) { return false; }
 }
 
+// 15/10 — ses mots : « je tape un nom et rien ne s'affiche, ça reste bloqué sur la liste, pas d'arborescence ».
+// Un NOM DE FAMILLE seul (« hoarau ») → l'arborescence de ce nom s'ouvre d'elle-même : tous ceux qui le portent et
+// leurs conjoints (sa demande du 14/10 : « quand je tape un nom de famille, l'arborescence s'ouvre »). Une PERSONNE
+// (« paul hoarau ») → sa famille, comme avant. Un toucher sur un nom de la liste → la famille de cette personne.
+let requeteAuto = null;   // ce qui était tapé quand l'appli a ouvert l'arbre d'elle-même
+let clicAuto = false;
+let nomOuvert = null;     // nom de famille dont l'arborescence est ouverte (null = famille d'une personne)
+const motsNom = (p) => mots(p.last_name);
+
+function arbreDuNom(personnes, relations, nom, choisi) {
+  const garde = new Set(personnes.filter((p) => mots(p.last_name).join(' ') === nom).map((p) => p.id));
+  garde.add(choisi);
+  const base = new Set(garde);
+  for (const r of relations) {
+    if (r.is_hidden || r.kind !== 'spouse') continue;
+    if (base.has(r.person_id)) garde.add(r.related_id);
+    if (base.has(r.related_id)) garde.add(r.person_id);
+  }
+  return personnes.filter((p) => garde.has(p.id));
+}
+
 export function familleVisible(personnes, relations, choisi) {
   try {
-    if (!choisi) return [];
+    if (!choisi) { nomOuvert = null; requeteAuto = null; return []; }
     const ids = new Set(personnes.map((p) => p.id));
     if (!ids.has(choisi)) return [];
+    if (requeteAuto !== null) {
+      // Tout ce qui correspond porte le même nom, et chaque mot tapé est dans ce nom → c'est un nom de famille.
+      const trouves = personnes.filter((p) => correspond(p, requeteAuto));
+      const noms = new Set(trouves.map((p) => motsNom(p).join(' ')));
+      const tapes = mots(requeteAuto);
+      const [nom] = noms;
+      nomOuvert = trouves.length > 1 && noms.size === 1 && tapes.every((t) => nom.split(' ').some((m) => m.startsWith(t))) ? nom : null;
+      requeteAuto = null;
+    }
+    if (nomOuvert) return arbreDuNom(personnes, relations, nomOuvert, choisi);
     const parents = {}, enfants = {}, conjoints = {};
     const ajoute = (m, k, v) => { (m[k] ??= []).includes(v) || m[k].push(v); };
     for (const r of relations) {
@@ -62,9 +93,24 @@ try {
     if (!(e.target instanceof Element) || e.target.id !== 'search-input') return;
     clearTimeout(minuterie);
     minuterie = setTimeout(() => {
-      const res = document.querySelectorAll('#search-results [data-goto]');
-      if (res.length === 1 && e.target.value.trim().length >= 3) res[0].click();
+      const res = [...document.querySelectorAll('#search-results [data-goto]')];
+      const q = e.target.value.trim();
+      if (q.length < 3 || !res.length) return;
+      const nomsListe = new Set(res.map((b) => (b.querySelector('.name b')?.textContent || '').trim().toUpperCase()));
+      if (res.length === 1) { requeteAuto = q; clicAuto = true; res[0].click(); return; }
+      if (nomsListe.size === 1) {
+        // Un nom de famille : on ouvre son arborescence sur le plus ancien de la liste (l'aïeul).
+        const an = (b) => +((b.querySelector('small')?.textContent || '').match(/(1[0-9]{3}|20[0-9]{2})/)?.[1] || 9999);
+        const aieul = res.reduce((a, b) => (an(b) < an(a) ? b : a));
+        requeteAuto = q; clicAuto = true; aieul.click();
+      }
     }, 700);
   });
+  // Un toucher sur un nom de la liste = la famille de CETTE personne (on quitte l'arborescence du nom).
+  document.addEventListener('click', (e) => {
+    if (!(e.target instanceof Element) || !e.target.closest('[data-goto]')) return;
+    if (clicAuto) { clicAuto = false; return; }
+    requeteAuto = null; nomOuvert = null;
+  }, true);
 } catch (err) { /* repli : on choisit dans la liste, comme avant */ }
 // ---- FIN RIEN À L'OUVERTURE ----

@@ -5,6 +5,7 @@
   "start_url": "./?source=pwa",
   "scope": "./",
   "display": "standalone",
+  "related_applications": [{ "platform": "webapp", "url": "https://gasmar97430-code.github.io/ancestria-web/manifest.json" }],
   "orientation": "any",
   "background_color": "#fbf8f0",
   "theme_color": "#fbf8f0",

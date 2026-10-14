@@ -391,3 +391,17 @@ body:not(.est-admin) [data-nav="admin"] { display: none !important; }
 }
 body.appli-installee [data-nav="install"] { display: none !important; }
 /* ---- FIN APPLI INSTALLÉE ---- */
+
+/* ---- TÉLÉPHONE : FICHE RÉDUITE PAR DÉFAUT (15/10/2026, src/fiche-mobile.js) ----
+   Ses mots : « une fenêtre d'information qui ne doit pas rester figée ». Bande en bas : portrait + nom + « Voir la
+   fiche ▴ » ; l'arbre reste visible. */
+[data-mode="mobile"] #panel.fiche-reduite { max-height: 118px; overflow: hidden; cursor: pointer; }
+[data-mode="mobile"] #panel.fiche-reduite .panel-body { overflow: hidden; padding-top: 50px; gap: 6px; }
+[data-mode="mobile"] #panel.fiche-reduite .panel-body > :not(.p-title):not(.fiche-bascule) { display: none; }
+[data-mode="mobile"] #panel.fiche-reduite .portrait { width: 64px; height: 64px; top: -32px; font-size: 22px; }
+[data-mode="mobile"] #panel.fiche-reduite .p-title { font-size: 20px; margin: 0; }
+.fiche-bascule { align-self: center; order: 99; border: 0; background: none; padding: 4px 10px; font: 600 14px var(--sans, inherit); color: var(--gold-deep); cursor: pointer; }
+[data-mode="mobile"] #panel:not(.fiche-reduite) .fiche-bascule { order: -1; }
+[data-mode="pc"] .fiche-bascule { display: none; }
+/* ---- FIN TÉLÉPHONE : FICHE RÉDUITE ---- */
+[data-mode="mobile"] #panel.fiche-cachee { display: none !important; } /* 15/10 : l'arbre seul après une recherche */
