@@ -315,3 +315,17 @@ body.pano-css #app { overflow: hidden; }
   #zoom { display: none !important; }
 }
 /* ---- FIN ÉCRAN TACTILE ---- */
+
+/* ---- FORMULAIRE SANS DOUBLON (14/10/2026) ----
+   Ses mots : « il faut de la fluidité donc pas de doublon ». Dans la feuille, un seul titre (celui de la feuille) :
+   l'icône, le 2e « Ancestria » et sa phrase sont retirés de l'affichage. Un seul chemin visible (src/auth-mode.js). */
+#sheet .auth-card > .app-icon,
+#sheet .auth-card > h1,
+#sheet .auth-card > p.muted { display: none; }
+#auth-form [hidden] { display: none !important; }
+#auth-form[data-auth-mode="signin"] .names,
+#auth-form[data-auth-mode="signin"] .check { display: none; }
+#auth-form .row-actions .btn:not([hidden]) { flex: 1; }
+.auth-switch { margin: 0; text-align: center; font-size: 14px; color: var(--ink); }
+.auth-switch .lien { background: none; border: 0; padding: 4px 2px; font: inherit; font-weight: 600; color: var(--gold-deep); text-decoration: underline; cursor: pointer; }
+/* ---- FIN FORMULAIRE SANS DOUBLON ---- */
