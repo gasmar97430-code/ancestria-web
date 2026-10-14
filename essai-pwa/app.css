@@ -329,3 +329,11 @@ body.pano-css #app { overflow: hidden; }
 .auth-switch { margin: 0; text-align: center; font-size: 14px; color: var(--ink); }
 .auth-switch .lien { background: none; border: 0; padding: 4px 2px; font: inherit; font-weight: 600; color: var(--gold-deep); text-decoration: underline; cursor: pointer; }
 /* ---- FIN FORMULAIRE SANS DOUBLON ---- */
+
+/* ---- APRÈS « CRÉER MON COMPTE » (14/10/2026) : seule l'étape « Vérifiez votre boîte mail » reste (src/inscription-envoyee.js) ---- */
+.auth-envoye { display: none; }
+#auth-form[data-auth-mode="envoye"] > :not(.auth-envoye) { display: none !important; }
+#auth-form[data-auth-mode="envoye"] .auth-envoye { display: flex; flex-direction: column; gap: 10px; text-align: center; font-size: 15px; color: var(--ink); }
+.auth-envoye p { margin: 0; }
+.auth-envoye-icone { font-size: 40px; line-height: 1; }
+/* ---- FIN APRÈS « CRÉER MON COMPTE » ---- */
