@@ -381,3 +381,13 @@ body:not(.est-admin) [data-nav="admin"] { display: none !important; }
 .install-gestes li::marker { font-weight: 700; color: var(--gold-deep); }
 .install-ok { margin: 4px 0 8px; font-size: 15px; line-height: 1.45; color: var(--ink); }
 /* ---- FIN INSTALLER, FLUIDE ---- */
+
+/* ---- APPLI INSTALLÉE : PLUS DE BOUTON « INSTALLER » (15/10/2026) ----
+   Ses mots : « une fois l'installation terminée on ne devrait plus voir le bouton d'installation ».
+   Ouverte depuis son icône (fenêtre d'appli, sans barre d'adresse) → display-mode standalone ; iPhone → classe
+   posée par src/installer-fluide.js ; installation acceptée dans le navigateur → même classe. */
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+  [data-nav="install"] { display: none !important; }
+}
+body.appli-installee [data-nav="install"] { display: none !important; }
+/* ---- FIN APPLI INSTALLÉE ---- */

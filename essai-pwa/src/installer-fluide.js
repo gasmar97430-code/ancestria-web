@@ -71,6 +71,10 @@ export function gestes(mode) {
       autonome: isStandalone(), inviteDisponible: !sansInvite && installState() === 'prompt',
       agent: navigator.userAgent, tactile: navigator.maxTouchPoints > 0,
     });
+    // Appli installée (ouverte depuis son icône, ou installation acceptée ici) : plus de bouton « Installer ».
+    const marquer = () => document.body.classList.add('appli-installee');
+    if (isStandalone()) marquer();
+    window.addEventListener('appinstalled', marquer);
     let message = null; // « accepté » / « refusé » : ce que la carte doit dire après la fenêtre du téléphone
 
     const remplir = () => {
@@ -99,6 +103,7 @@ export function gestes(mode) {
     const fenetreDuTelephone = async () => {
       const issue = await promptInstall();
       message = issue === 'accepted' ? 'accepte' : 'refuse';
+      if (issue === 'accepted') marquer();
       if (sheet.dataset.kind === 'install' && !sheet.hidden) remplir();
       else document.querySelector('[data-nav="install"]')?.click();
     };
