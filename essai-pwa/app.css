@@ -337,3 +337,9 @@ body.pano-css #app { overflow: hidden; }
 .auth-envoye p { margin: 0; }
 .auth-envoye-icone { font-size: 40px; line-height: 1; }
 /* ---- FIN APRÈS « CRÉER MON COMPTE » ---- */
+
+/* ---- UNE SEULE PAGE : PAS DE BOUTON « ARBRE » (14/10/2026) ----
+   Ses mots : « sur ton image je vois deux pages donc tu ne m'écoutes pas », « y a accueil puis arbre ». L'appli n'a
+   qu'une page : l'arbre de la personne tapée s'ouvre sur l'Accueil même. « Arbre » faisait doublon avec « Accueil ». */
+[data-nav="tree"] { display: none !important; }
+/* ---- FIN UNE SEULE PAGE ---- */
