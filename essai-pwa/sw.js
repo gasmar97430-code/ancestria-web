@@ -1,7 +1,7 @@
 // Ancestria service worker — app shell en cache, données Supabase jamais mises en cache.
 // Chemins RELATIFS à l'emplacement de ce fichier : l'appli marche à la racine d'un domaine comme sous un
 // sous-dossier (GitHub Pages /ancestria-web/).
-const VERSION = 'ancestria-v21';
+const VERSION = 'ancestria-v22';
 const BASE = new URL('./', self.location).href;
 const SHELL = ['./', 'index.html', 'app.css', 'config.js', 'manifest.json',
   'src/app.js', 'src/auth-mode.js', 'src/inscription-envoyee.js', 'src/installer-fluide.js', 'src/mise-a-jour.js', 'src/fiche-mobile.js', 'src/famille-visible.js', 'src/admin-table.js', 'src/mode.js', 'src/supabase.js', 'src/auth.js', 'src/pwa.js', 'src/tree-store.js', 'src/tree-view.js',
@@ -27,6 +27,9 @@ self.addEventListener('activate', (e) => {
     try {
       const keys = await caches.keys();
       bascule = !ESSAI && keys.some((k) => k.startsWith('ancestria-appli-'));
+      // 15/10 : une page encore ouverte sur une version d'AVANT (cache « ancestria-vN » plus ancien) est rechargée tout
+      // de suite elle aussi : jamais d'ancienne version à l'écran (ses mots : « des versions qui ne doivent plus y être »).
+      if (keys.some((k) => /^ancestria-v\d+$/.test(k) && k !== VERSION)) bascule = true;
       const anciens = (k) => k !== VERSION && (/^ancestria-v\d+$/.test(k) || (bascule && /^ancestria-(appli-|donnees$)/.test(k)));
       await Promise.all(keys.filter(anciens).map((k) => caches.delete(k)));
     } catch (err) { /* repli : on continue comme avant */ }
@@ -39,23 +42,27 @@ self.addEventListener('activate', (e) => {
 });
 // ---- FIN BASCULE DEPUIS L'ANCIEN SITE ----
 
+// ---- TOUJOURS LA DERNIÈRE VERSION (15/10/2026) ----
+// Ses mots : « arrête de me dire à chaque fois que c'est l'ancienne version … tu dois résoudre le problème ».
+// Avant : les fichiers gardés passaient d'abord (cache d'abord) → l'ancienne version s'affichait jusqu'à l'ouverture
+// suivante. Maintenant : le RÉSEAU d'abord, revalidé (no-cache : GitHub garde 10 min sinon), la copie gardée n'est
+// rendue que SANS Internet. Avec Internet, on voit toujours la dernière version publiée.
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   const url = new URL(req.url);
-  // Supabase (auth, REST, RPC, storage) et toute écriture : toujours réseau.
+  // Supabase (auth, REST, RPC, storage) et toute écriture : toujours réseau, jamais gardé.
   if (req.method !== 'GET' || url.hostname.endsWith('.supabase.co')) return;
-
-  if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).catch(() => caches.match(new URL('index.html', BASE).href)));
-    return;
-  }
-  e.respondWith(
-    caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-      if (res.ok && url.origin === location.origin) {
-        const copy = res.clone();
-        caches.open(VERSION).then((c) => c.put(req, copy));
-      }
+  if (url.origin !== location.origin) return; // polices, icônes d'ailleurs : le navigateur s'en occupe
+  e.respondWith((async () => {
+    try {
+      const res = await fetch(req, { cache: 'no-cache' });
+      if (res.ok) { const copie = res.clone(); caches.open(VERSION).then((c) => c.put(req, copie)).catch(() => {}); }
       return res;
-    }))
-  );
+    } catch (err) {
+      const garde = await caches.match(req) || (req.mode === 'navigate' ? await caches.match(new URL('index.html', BASE).href) : null);
+      if (garde) return garde;
+      throw err;
+    }
+  })());
 });
+// ---- FIN TOUJOURS LA DERNIÈRE VERSION ----
