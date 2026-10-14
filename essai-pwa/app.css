@@ -392,16 +392,16 @@ body:not(.est-admin) [data-nav="admin"] { display: none !important; }
 body.appli-installee [data-nav="install"] { display: none !important; }
 /* ---- FIN APPLI INSTALLÉE ---- */
 
-/* ---- TÉLÉPHONE : FICHE RÉDUITE PAR DÉFAUT (15/10/2026, src/fiche-mobile.js) ----
-   Ses mots : « une fenêtre d'information qui ne doit pas rester figée ». Bande en bas : portrait + nom + « Voir la
-   fiche ▴ » ; l'arbre reste visible. */
-[data-mode="mobile"] #panel.fiche-reduite { max-height: 118px; overflow: hidden; cursor: pointer; }
-[data-mode="mobile"] #panel.fiche-reduite .panel-body { overflow: hidden; padding-top: 50px; gap: 6px; }
-[data-mode="mobile"] #panel.fiche-reduite .panel-body > :not(.p-title):not(.fiche-bascule) { display: none; }
-[data-mode="mobile"] #panel.fiche-reduite .portrait { width: 64px; height: 64px; top: -32px; font-size: 22px; }
-[data-mode="mobile"] #panel.fiche-reduite .p-title { font-size: 20px; margin: 0; }
-.fiche-bascule { align-self: center; order: 99; border: 0; background: none; padding: 4px 10px; font: 600 14px var(--sans, inherit); color: var(--gold-deep); cursor: pointer; }
-[data-mode="mobile"] #panel:not(.fiche-reduite) .fiche-bascule { order: -1; }
-[data-mode="pc"] .fiche-bascule { display: none; }
-/* ---- FIN TÉLÉPHONE : FICHE RÉDUITE ---- */
-[data-mode="mobile"] #panel.fiche-cachee { display: none !important; } /* 15/10 : l'arbre seul après une recherche */
+/* ---- LA FICHE NE CACHE JAMAIS L'ARBRE (15/10/2026, src/fiche-mobile.js) ----
+   La fiche ne s'ouvre que pour inscrire des noms (carte touchée sur le PC) ; fermée = cachée, l'arbre reste. */
+#panel.fiche-cachee { display: none !important; }
+/* ---- FIN LA FICHE NE CACHE JAMAIS L'ARBRE ---- */
+
+/* ---- LE FOND NE BOUGE JAMAIS (15/10/2026) ----
+   Ses mots : « quand je zoome sur l'arborescence l'image de fond bouge en même temps ». Seul l'arbre se zoome :
+   pas de zoom de la page entière, pas de rebond ni de « tirer pour actualiser » qui déplaçait l'écran. */
+html, body { overscroll-behavior: none; touch-action: none; }
+#bg { touch-action: none; pointer-events: none; }
+#searchbar, #panel, #sheet, #tabbar, #topbar, #rail { touch-action: manipulation; }
+#sheet, .results, .panel-body { touch-action: pan-y; }
+/* ---- FIN LE FOND NE BOUGE JAMAIS ---- */
