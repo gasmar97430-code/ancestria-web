@@ -3,6 +3,8 @@ import { signIn, signUp, signOut, requireSession, isAdminUser, displayName, shar
 import { initPWA, installState, promptInstall, onInstallChange, isAndroid } from './pwa.js';
 import * as store from './tree-store.js';
 import { layoutTree, PanZoom, NODE_W, NODE_H } from './tree-view.js';
+import { familleVisible } from './famille-visible.js'; // 14/10 : rien à l'ouverture, la famille du nom tapé
+import { estAdministrateur } from './admin-table.js'; // 14/10 : administrateur aussi par la table admins
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -67,7 +69,7 @@ async function boot() {
   if ($('#sheet').dataset.kind === 'auth') closeSheet();
   $('#auth').append(authForm); // le formulaire retourne à sa place (section #auth, cachée)
   S.user = session.user;
-  S.isAdmin = isAdminUser(session.user);
+  S.isAdmin = isAdminUser(session.user) || await estAdministrateur(supabase, session.user);
   $('#auth').hidden = true; $('#app').hidden = false;
   $$('.js-user-name').forEach((el) => (el.textContent = displayName(S.user)));
 
@@ -146,7 +148,7 @@ function computeModel() {
   for (const p of S.base.all) persons[p.id] = p;
   for (const p of Object.values(S.draft.persons)) persons[p.id] = { ...persons[p.id], ...p, _dirty: true };
   S.m = { persons, relations: [...S.base.relations, ...S.draft.relations] };
-  const visible = Object.values(persons).filter((p) => !p.is_hidden);
+  const visible = familleVisible(Object.values(persons).filter((p) => !p.is_hidden), S.m.relations, S.sel);
   S.layout = layoutTree(visible, S.m.relations, layoutOpts(visible, S.m.relations));
   return visible;
 }
