@@ -368,3 +368,10 @@ body:not(.est-admin) [data-nav="admin"] { display: none !important; }
 [data-mode="mobile"] #searchbar .chips button { font-size: 12px; }
 @media (pointer: coarse) { [data-mode="mobile"] #searchbar.desktop-only { right: 12px; } } /* pas de barre de zoom au tactile */
 /* ---- FIN TÉLÉPHONE : LA RECHERCHE SUR LA PAGE ---- */
+
+/* ---- L'IMAGE DE FOND FIGÉE (15/10/2026) ----
+   Ses mots : « l'image doit être figée dans la page, alors que je scrolle la souris l'image se déplace ».
+   onView() (app.js) décalait le fond de 3 % du déplacement de l'arbre (effet de profondeur) : annulé ici. Seul
+   l'arbre bouge et zoome ; l'image reste immobile. */
+#bg { transform: none !important; }
+/* ---- FIN L'IMAGE DE FOND FIGÉE ---- */
