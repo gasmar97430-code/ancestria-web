@@ -355,3 +355,16 @@ body.pano-css #app { overflow: hidden; }
 #sheet[data-kind="settings"] [data-nav="moderation"] { display: none !important; }
 body:not(.est-admin) [data-nav="admin"] { display: none !important; }
 /* ---- FIN AUCUN DOUBLON ---- */
+
+/* ---- TÉLÉPHONE : LA RECHERCHE SUR LA PAGE MÊME (15/10/2026) ----
+   Ses mots : « je t'ai demandé en plusieurs fois de supprimer la deuxième page et je vois que c'est actif ».
+   Sur le téléphone, « Recherche » ouvrait une feuille plein écran = une deuxième page. La barre de recherche du PC
+   (#searchbar : champ, pastilles d'origine, résultats) est maintenant aussi sur la page du téléphone, et le bouton
+   « Recherche » n'existe plus nulle part. Une seule page, une seule recherche. */
+[data-nav="search"] { display: none !important; }
+[data-mode="mobile"] #searchbar.desktop-only { display: flex !important; left: 12px; right: 68px; top: calc(var(--top) + 10px); gap: 8px; }
+[data-mode="mobile"] #searchbar .search, [data-mode="mobile"] #searchbar .results { width: 100%; }
+[data-mode="mobile"] #searchbar .chips { gap: 6px; }
+[data-mode="mobile"] #searchbar .chips button { font-size: 12px; }
+@media (pointer: coarse) { [data-mode="mobile"] #searchbar.desktop-only { right: 12px; } } /* pas de barre de zoom au tactile */
+/* ---- FIN TÉLÉPHONE : LA RECHERCHE SUR LA PAGE ---- */
