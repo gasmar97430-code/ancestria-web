@@ -3,7 +3,7 @@ import { signIn, signUp, signOut, requireSession, isAdminUser, displayName, shar
 import { initPWA, installState, promptInstall, onInstallChange, isAndroid } from './pwa.js';
 import * as store from './tree-store.js';
 import { layoutTree, PanZoom, NODE_W, NODE_H } from './tree-view.js';
-import { familleVisible } from './famille-visible.js'; // 14/10 : rien à l'ouverture, la famille du nom tapé
+import { familleVisible, correspond } from './famille-visible.js'; // 14/10 : rien à l'ouverture ; la famille de la personne tapée (tous ses prénoms)
 import { estAdministrateur } from './admin-table.js'; // 14/10 : administrateur aussi par la table admins
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -467,7 +467,7 @@ document.addEventListener('click', (e) => {
 function searchMatches(q) {
   const n = q.trim().toLowerCase();
   return Object.values(S.m.persons)
-    .filter((p) => !p.is_hidden && (!S.origin || p.origin === S.origin) && (!n || fullName(p).toLowerCase().includes(n)))
+    .filter((p) => !p.is_hidden && (!S.origin || p.origin === S.origin) && (!n || correspond(p, n)))
     .sort((a, b) => (a.last_name || '').localeCompare(b.last_name || '', 'fr') || (a.first_name || '').localeCompare(b.first_name || '', 'fr'))
     .slice(0, 40);
 }
