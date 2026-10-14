@@ -343,3 +343,15 @@ body.pano-css #app { overflow: hidden; }
    qu'une page : l'arbre de la personne tapée s'ouvre sur l'Accueil même. « Arbre » faisait doublon avec « Accueil ». */
 [data-nav="tree"] { display: none !important; }
 /* ---- FIN UNE SEULE PAGE ---- */
+
+/* ---- AUCUN DOUBLON (14/10/2026) ----
+   Ses mots : « sur la page d'accueil deux barres de recherche doublons », « sur le PC idem, tu ne fais aucune analyse ».
+   Relevé de toute la page (PC et téléphone, chaque feuille ouverte) : une fonction = un seul bouton.
+   · PC : « Recherche » de la barre de gauche refaisait la barre de recherche du haut → retiré ;
+   · « Modération » était dans Paramètres ET dans Mon Compte → gardée dans Mon Compte seulement ;
+   · téléphone : « Admin » ouvrait, pour un non-administrateur, la même feuille que le bouton du haut → montré à
+     l'administrateur seulement (classe est-admin posée par render()). */
+#rail [data-nav="search"] { display: none !important; }
+#sheet[data-kind="settings"] [data-nav="moderation"] { display: none !important; }
+body:not(.est-admin) [data-nav="admin"] { display: none !important; }
+/* ---- FIN AUCUN DOUBLON ---- */

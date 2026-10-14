@@ -213,6 +213,7 @@ function rank(p) {
 /* ---------- Rendu ---------- */
 function render() {
   document.body.classList.toggle('admin-mode', adminMode());
+  document.body.classList.toggle('est-admin', !!S.isAdmin); // 14/10 : « Admin » (téléphone) seulement pour l'administrateur
   drawTree(computeModel());
   renderTopbar(); renderPanel(); renderNav(); renderChips($('#chips'));
 }
@@ -467,11 +468,12 @@ document.addEventListener('click', (e) => {
 function searchMatches(q) {
   const n = q.trim().toLowerCase();
   return Object.values(S.m.persons)
-    .filter((p) => !p.is_hidden && (!S.origin || p.origin === S.origin) && (!n || correspond(p, n)))
+    .filter((p) => !p.is_hidden && (!S.origin || p.origin === S.origin) && (n ? correspond(p, n) : !!S.origin)) // 14/10 : rien tant qu'on n'a rien tapé (ou choisi une origine)
     .sort((a, b) => (a.last_name || '').localeCompare(b.last_name || '', 'fr') || (a.first_name || '').localeCompare(b.first_name || '', 'fr'))
     .slice(0, 40);
 }
 function runSearch(q, el) {
+  if (!q.trim() && !S.origin) { el.innerHTML = ''; return; } // 14/10 : aucun nom avant la frappe
   const list = searchMatches(q);
   el.innerHTML = list.length
     ? list.map((p) => `<button type="button" class="result" data-goto="${p.id}">${avatar(p)}<span><span class="name">${nameHtml(p)}</span><small>${esc(years(p))}${p.origin ? ` · ${esc(p.origin)}` : ''}</small></span></button>`).join('')
