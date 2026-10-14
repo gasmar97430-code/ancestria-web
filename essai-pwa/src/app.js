@@ -768,3 +768,12 @@ window.addEventListener('resize', () => { // rotation : recadrer seulement quand
   resizeTimer = setTimeout(() => { const o = innerWidth > innerHeight; if (o !== lastOrient) { lastOrient = o; applyOrientation(); } }, 150);
 });
 // ---- FIN MODE PAYSAGE ET VUE PANORAMIQUE ----
+
+// ---- PORTE DE LA VUE (15/10/2026) : lecture seule pour src/fiche-mobile.js (cadrer l'arbre lisible sur téléphone) ----
+window.AncestriaVue = {
+  echelle: () => pz?.s ?? 1,
+  souche: () => S.souche, choisi: () => S.sel,
+  boite: (id) => S.layout?.pos?.[id] ?? null,
+  centrer: (x, y, s) => { if (pz) pz.centerOn(x, y, s, insets()); },
+};
+// ---- FIN PORTE DE LA VUE ----

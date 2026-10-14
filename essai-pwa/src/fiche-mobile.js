@@ -35,7 +35,18 @@
       if (e.target.closest('#panel [data-act="view"]')) { cachee = true; setTimeout(appliquer, 0); return; }
       if (e.target.closest('#search-results [data-goto]')) {
         cachee = true; appliquer();
-        setTimeout(() => document.querySelector('[data-zoom="fit"]')?.click(), 80); // toute l'arborescence à l'écran
+        setTimeout(() => {
+          document.querySelector('[data-zoom="fit"]')?.click(); // toute l'arborescence à l'écran…
+          // …sauf si les noms deviennent illisibles (sur SON arbre : FERRÈRE = 50 cartes, illisible sur un téléphone).
+          // Alors : taille lisible, centrée sur la personne cherchée (un nom de famille : son aïeul, placé en haut) ;
+          // on fait glisser l'arbre au doigt pour le reste.
+          const V = window.AncestriaVue; const LISIBLE = 0.62;
+          if (!V || V.echelle() >= LISIBLE) return;
+          const id = V.choisi() || V.souche(); const b = id && V.boite(id);
+          if (!b) return;
+          const enHaut = id === V.souche(); // l'aïeul : en haut de l'écran ; une personne : au milieu
+          V.centrer(b.x + b.w / 2, enHaut ? b.y + (window.innerHeight * 0.32) / LISIBLE : b.y + b.h / 2, LISIBLE);
+        }, 80);
         return;
       }
       if (e.target.closest('#nodes .node')) { cachee = false; setTimeout(appliquer, 0); return; }

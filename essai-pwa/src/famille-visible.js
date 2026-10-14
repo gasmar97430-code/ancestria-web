@@ -18,7 +18,7 @@ const mots = (s) => norme(s).split(/[^a-z0-9]+/).filter(Boolean);
 export function correspond(p, q) {
   try {
     const tapes = mots(q);
-    if (!tapes.length) return true;
+    if (!tapes.length) return false; // 15/10 : « ?? » (nom inconnu) ou signes seuls → personne, pas toute la base
     const siens = [...mots(p.first_name), ...mots(p.last_name)];
     return tapes.every((t) => siens.some((m) => m.startsWith(t)));
   } catch (err) { return false; }
@@ -95,7 +95,7 @@ try {
     minuterie = setTimeout(() => {
       const res = [...document.querySelectorAll('#search-results [data-goto]')];
       const q = e.target.value.trim();
-      if (q.length < 3 || !res.length) return;
+      if (mots(q).join('').length < 2 || !res.length) return; // 15/10 : les noms de 2 lettres (LY, HO…) s'ouvrent aussi
       // 15/10, sur SON arbre : « FERRERE » et « FERRÈRE » = le même nom (accents et majuscules ne comptent pas).
       const nomsListe = new Set(res.map((b) => mots(b.querySelector('.name b')?.textContent || '').join(' ')));
       if (res.length === 1) { requeteAuto = q; clicAuto = true; res[0].click(); return; }
