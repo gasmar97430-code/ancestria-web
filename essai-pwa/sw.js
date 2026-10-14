@@ -1,14 +1,16 @@
 // Ancestria service worker — app shell en cache, données Supabase jamais mises en cache.
 // Chemins RELATIFS à l'emplacement de ce fichier : l'appli marche à la racine d'un domaine comme sous un
 // sous-dossier (GitHub Pages /ancestria-web/).
-const VERSION = 'ancestria-v6';
+const VERSION = 'ancestria-v7';
 const BASE = new URL('./', self.location).href;
 const SHELL = ['./', 'index.html', 'app.css', 'config.js', 'manifest.json',
   'src/app.js', 'src/auth-mode.js', 'src/mode.js', 'src/supabase.js', 'src/auth.js', 'src/pwa.js', 'src/tree-store.js', 'src/tree-view.js',
   'icons/ancestria-192.png', 'icons/ancestria-512.png', 'img/arbre-de-vie.webp'].map((p) => new URL(p, BASE).href);
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // 14/10 : cache: 'reload' = fichiers frais, jamais ceux que le navigateur gardait (GitHub les garde 10 min) :
+  // sinon une nouvelle version s'installait avec l'ancienne feuille de style (mesuré en ligne, v6).
+  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 // ---- BASCULE DEPUIS L'ANCIEN SITE (13/10/2026) ----
