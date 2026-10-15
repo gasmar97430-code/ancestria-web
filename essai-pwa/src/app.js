@@ -36,7 +36,10 @@ const S = {
 let pz = null, bootedFor;
 const authForm = $('#auth-form'); // le formulaire du paquet, montré dans la feuille « inscrivez-vous »
 
-const adminMode = () => S.isAdmin && desktop.matches;
+// 15/10 : l'administrateur inscrit aussi depuis SON téléphone (« + Enfant » sur l'épouse, ses mots : « comment on rajoute
+// une personne ensuite ? … au-dessus du nom de la femme on doit voir ENFANT »). ADMIN_TELEPHONE = false → comme avant (PC seul).
+const ADMIN_TELEPHONE = true;
+const adminMode = () => S.isAdmin && (desktop.matches || ADMIN_TELEPHONE);
 const fullName = (p) => `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim();
 const nameHtml = (p) => `${esc(p.first_name)} <b>${esc(p.last_name)}</b>`;
 const initials = (p) => ((p.first_name?.[0] ?? '') + (p.last_name?.[0] ?? '')).toUpperCase() || '?';
@@ -162,6 +165,7 @@ function computeModel() {
 // arbre presque aussi haut que large, posé sur le banian (centré vers 55 % de la hauteur de l'écran).
 // Grande carte : ≈ 3 × une petite sur le modèle téléphone, ≈ 2 × sur le modèle PC.
 const MOBILE_TREE = { nodeW: 112, nodeH: 62, col: 122, row: 140, pad: 20, curves: true, union: 18 };
+const CARTES_EGALES = true; // 15/10 : toutes les cartes à la même taille (voir layoutOpts)
 const BIG = () => (desktop.matches ? { w: 240, h: 132 } : { w: 330, h: 200 });
 function soucheDe(L) {
   // L'ancêtre de la lignée : parmi la 1re génération, celui qui a le plus de descendants (à égalité : le plus à gauche).
@@ -176,6 +180,9 @@ function soucheDe(L) {
 }
 function layoutOpts(visible, relations) {
   S.souche = null;
+  // 15/10 ~08:15, ses mots (capture GASTELLIER) : « tous les blocs doivent être à la même dimension » → plus de
+  // grande carte : l'aïeul a la même carte que les autres. Retirer cette ligne = la grande carte d'avant.
+  if (CARTES_EGALES) return MOBILE_TREE;
   try {
     S.souche = soucheDe(layoutTree(visible, relations, { ...MOBILE_TREE, top: BIG().h - MOBILE_TREE.nodeH }));
   } catch { S.souche = null; } // repli : pas de grande carte, l'arbre reste dessiné
@@ -651,7 +658,7 @@ function openProfileSheet() {
     <div class="facts">
       <div><i class="ph ph-user-circle"></i>${esc(displayName(S.user))}</div>
       <div><i class="ph ph-envelope-simple"></i>${esc(S.user.email)}</div>
-      ${S.isAdmin ? '<div><i class="ph ph-shield-check"></i>Administrateur' + (desktop.matches ? '' : ' (édition disponible sur PC)') + '</div>' : ''}
+      ${S.isAdmin ? '<div><i class="ph ph-shield-check"></i>Administrateur' + (desktop.matches || ADMIN_TELEPHONE ? '' : ' (édition disponible sur PC)') + '</div>' : ''}
     </div>
     ${moderationBtn()}
     <button type="button" class="btn" data-sheet-act="share"><i class="ph ph-share-network"></i>Inviter un membre de la famille</button>
@@ -777,3 +784,36 @@ window.AncestriaVue = {
   centrer: (x, y, s) => { if (pz) pz.centerOn(x, y, s, insets()); },
 };
 // ---- FIN PORTE DE LA VUE ----
+
+// ---- PORTE DU COUPLE (15/10/2026) : pour src/bouton-enfant-epouse.js (« + Enfant » sur l'épouse, ancienne appli) ----
+// Lecture : la personne, ses conjoints, le mode administrateur. Écriture : un seul geste, ajouter un enfant à un
+// couple (mère ET père liés), puis la fiche de l'enfant s'ouvre pour inscrire son prénom — comme addMember().
+Object.assign(window.AncestriaVue, {
+  personne: (id) => S.m?.persons?.[id] ?? null,
+  conjoints: (id) => S.layout?.spouses?.[id] ?? [],
+  admin: () => adminMode(),
+  ajouterEnfant: (mereId, pereId) => {
+    if (!adminMode()) return;
+    const mere = S.m.persons[mereId], pere = S.m.persons[pereId];
+    if (!mere || !pere) return;
+    const id = store.newPersonId();
+    // Nom proposé : celui du père (AjouterEnfant.tsx de l'ancienne appli : nomPropose).
+    S.draft.persons[id] = store.pickPerson({ id, last_name: pere.last_name || mere.last_name || null, deceased: false });
+    addRelation(mere.id, id, 'parent'); addRelation(pere.id, id, 'parent');
+    persist();
+    S.sel = id; S.editing = true; S.adding = false;
+    render(); focusPerson(id);
+    $('#panel [data-field="first_name"]')?.focus();
+  },
+  // 15/10 : « tout en bas un bloc pour ajouter un nouveau nom » (src/ajouter-nom.js) : une personne sans lien.
+  ajouterNom: () => {
+    if (!adminMode()) return;
+    const id = store.newPersonId();
+    S.draft.persons[id] = store.pickPerson({ id, deceased: false });
+    persist();
+    S.sel = id; S.editing = true; S.adding = false;
+    render(); focusPerson(id);
+    $('#panel [data-field="first_name"]')?.focus();
+  },
+});
+// ---- FIN PORTE DU COUPLE ----

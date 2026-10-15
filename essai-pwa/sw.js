@@ -1,10 +1,11 @@
 // Ancestria service worker — app shell en cache, données Supabase jamais mises en cache.
 // Chemins RELATIFS à l'emplacement de ce fichier : l'appli marche à la racine d'un domaine comme sous un
 // sous-dossier (GitHub Pages /ancestria-web/).
-const VERSION = 'ancestria-v24';
+const VERSION = 'ancestria-v25';
 const BASE = new URL('./', self.location).href;
 const SHELL = ['./', 'index.html', 'app.css', 'config.js', 'manifest.json',
   'src/app.js', 'src/auth-mode.js', 'src/inscription-envoyee.js', 'src/installer-fluide.js', 'src/mise-a-jour.js', 'src/fiche-mobile.js', 'src/famille-visible.js', 'src/admin-table.js', 'src/mode.js', 'src/supabase.js', 'src/auth.js', 'src/pwa.js', 'src/tree-store.js', 'src/tree-view.js',
+  'src/couleurs-generations.js', 'src/bouton-enfant-epouse.js', 'src/fluidite-geste.js', 'src/fiche-enfant-telephone.js', 'src/sauvegarde-telephone.js', 'src/ajouter-nom.js', 'src/bouton-maj.js', // 15/10 : lot téléphone
   'icons/ancestria-192.png', 'icons/ancestria-512.png', 'img/arbre-de-vie.webp'].map((p) => new URL(p, BASE).href);
 
 self.addEventListener('install', (e) => {

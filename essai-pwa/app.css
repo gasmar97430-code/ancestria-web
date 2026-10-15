@@ -416,3 +416,48 @@ html, body { overscroll-behavior: none; touch-action: none; }
 #panel:not(.is-editing) .admin-box, #panel:not(.is-editing) .p-user { display: none !important; }
 #panel.has-portrait .panel-body { margin-top: 48px; padding-top: 10px; }
 /* ---- FIN FICHE = INSCRIPTION SEULEMENT ---- */
+
+/* ---- ENVOI SUR LE TÉLÉPHONE (15/10/2026) ----
+   L'administrateur inscrit aussi depuis son téléphone (« + Enfant » sur l'épouse) : la barre du haut garde
+   « Ancestria » et M'ASTEL.974 ; le texte « n modification(s) en brouillon » se cache (le nombre reste sur « Envoi (n) »). */
+[data-mode="mobile"] #status { display: none !important; }
+[data-mode="mobile"] #publish { min-height: 34px; padding: 0 10px; font-size: 13px; }
+[data-mode="mobile"] #publish i { display: none; }
+/* ---- FIN ENVOI SUR LE TÉLÉPHONE ---- */
+
+/* ---- IMAGE ENTIÈRE EN VERTICAL (15/10/2026) ----
+   Ses mots : « l'image en mode vertical, on ne voit plus le mode responsive pour que l'on puisse voir la totalité de
+   l'image ». Téléphone tenu droit : le banian (1456 × 734, l'image n'est PAS modifiée) est montré EN ENTIER (contain,
+   sans déformation) au lieu d'être coupé sur les côtés (cover n'en montrait qu'un quart de la largeur) ; au-dessus,
+   la couleur du ciel du bord haut de l'image (#2a5da0, mesurée) ; au-dessous, celle de la terre du bord bas (#594232).
+   Retirer ce bloc = le fond d'avant. */
+@media (orientation: portrait) {
+  [data-mode="mobile"] #bg {
+    background: url(img/arbre-de-vie.webp) 50% 55% / contain no-repeat,
+                linear-gradient(180deg, #2a5da0 0 55%, #594232 55% 100%);
+  }
+}
+/* ---- FIN IMAGE ENTIÈRE EN VERTICAL ---- */
+
+/* ---- SANS « VUE PANORAMIQUE » SUR LE TÉLÉPHONE (15/10/2026) ----
+   Ses mots, sur sa page d'images : « le A mais sans cette bulle » (sa capture : le bouton « Vue Panoramique 🔄 »).
+   Le bouton n'est plus montré sur le téléphone ; le PC n'est pas touché (« le PC on fera plus tard »).
+   Retirer ce bloc = le bouton d'avant. */
+[data-mode="mobile"] #pano { display: none !important; }
+/* ---- FIN SANS « VUE PANORAMIQUE » SUR LE TÉLÉPHONE ---- */
+
+/* ---- PAS DE PASTILLES D'ORIGINE SUR LA PAGE DU TÉLÉPHONE (15/10/2026) ----
+   Ses mots (sa capture des pastilles Europe · Inde · Afrique · Madagascar · Chine · Nom d'affranchi) : « on avait déjà
+   discuté de ces blocs qui ne devraient plus être visibles sur la page mais dans la page d'ajout de nom, de leur
+   origine » (déjà retirées de l'Accueil de l'ancienne appli le 13/10). L'origine se choisit dans la petite page
+   d'inscription (champ « Origine », mêmes six choix). Téléphone seulement (« le PC on fera plus tard »).
+   Retirer ce bloc = les pastilles d'avant. */
+[data-mode="mobile"] #chips { display: none !important; }
+/* ---- FIN PAS DE PASTILLES D'ORIGINE ---- */
+
+/* ---- PAS DE BARRE DE ZOOM EN MODE TÉLÉPHONE (15/10/2026) ----
+   Ses mots (sa capture « + / 96 % / − / ⛶ » dans l'essai téléphone du PC) : « pour un tactile on n'a pas besoin de ça ».
+   Déjà cachée au toucher (13/10) ; maintenant aussi dans tout le mode téléphone (essai à la souris compris) : on agrandit
+   avec les doigts. Retirer ce bloc = comme avant. */
+[data-mode="mobile"] #zoom { display: none !important; }
+/* ---- FIN PAS DE BARRE DE ZOOM EN MODE TÉLÉPHONE ---- */

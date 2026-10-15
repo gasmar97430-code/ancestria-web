@@ -8,7 +8,7 @@
 //     sœurs, et les conjoints de tous ceux-là (même règle que la lumière des liens) ;
 //   · la recherche : chaque mot tapé doit se trouver dans UN des prénoms ou dans le nom (sans accents, sans
 //     majuscules, dans n'importe quel ordre) → « paul hoarau » et « joselito hoarau » trouvent Josélito Paul HOARAU ;
-//   · une seule personne trouvée → son arbre s'ouvre tout seul.
+//   · rien ne s'ouvre pendant la frappe : il choisit un nom de la liste, ou Entrée (15/10 matin).
 // Lignes d'appel : app.js, computeModel() et searchMatches(). Les retirer = comme avant.
 export const GENERATIONS = { haut: 3, bas: 2 };
 const norme = (s) => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -86,41 +86,34 @@ export function familleVisible(personnes, relations, choisi) {
   }
 }
 
-// Une seule personne trouvée pendant la frappe → son arbre s'ouvre (après une courte pause de frappe).
+// 15/10 matin — ses mots : « quand je tape un nom, donne-moi le temps de choisir, car à peine le nom écrit tu ouvres
+// toute l'arborescence alors je n'ai rien choisi ». PLUS AUCUNE ouverture pendant la frappe (la minuterie est retirée) :
+// la liste se resserre lettre par lettre, et l'arbre s'ouvre SEULEMENT quand il choisit :
+//   · il touche un nom de la liste → la famille de CETTE personne ;
+//   · il appuie sur Entrée (« Rechercher » du clavier du téléphone) → si toute la liste porte le même nom de famille,
+//     l'arborescence de ce nom (sa demande du 14/10) ; sinon la première personne de la liste (app.js, comme avant).
 try {
   // 15/10 : « les lettres du clavier changent de format bizarre » → pas de correction, de majuscule ni de suggestion
   // du clavier dans le champ des noms (un nom de famille ne se corrige pas).
   const champ = document.getElementById('search-input');
-  if (champ) { champ.setAttribute('autocorrect', 'off'); champ.setAttribute('autocapitalize', 'off'); champ.setAttribute('spellcheck', 'false'); champ.setAttribute('autocomplete', 'off'); }
-  let minuterie = 0;
-  document.addEventListener('input', (e) => {
-    if (!(e.target instanceof Element) || e.target.id !== 'search-input') return;
-    clearTimeout(minuterie);
-    minuterie = setTimeout(() => {
-      const res = [...document.querySelectorAll('#search-results [data-goto]')];
-      const q = e.target.value.trim();
-      // 15/10 (« je n'arrive même plus à taper un nom sur le téléphone ») : l'ouverture vidait le champ en pleine frappe.
-      // Maintenant : 3 lettres au moins (ou un nom court tapé EN ENTIER), une vraie pause, et le texte tapé reste.
-      // Jamais au milieu d'un mot : le DERNIER mot tapé doit être un mot ENTIER du nom ou d'un prénom trouvé
-      // (« hoa » attend, « hoarau » ouvre ; « paul hoarau » ouvre ; « jose » attend, « joselito » ouvre).
-      const tape = mots(q); const dernier = tape[tape.length - 1];
-      const entier = res.some((b) => mots(b.querySelector('.name')?.textContent || '').includes(dernier));
-      if (!res.length || !dernier || !entier) return;
-      // Le mot en cours du clavier est d'abord validé (le clavier se range) : sinon remplir le champ pendant que le
-      // clavier compose le mot donnait des lettres « bizarres » (ses mots du 15/10).
-      e.target.blur();
-      const remettre = () => setTimeout(() => { if (e.target.value === '') e.target.value = q; }, 0);
-      // 15/10, sur SON arbre : « FERRERE » et « FERRÈRE » = le même nom (accents et majuscules ne comptent pas).
-      const nomsListe = new Set(res.map((b) => mots(b.querySelector('.name b')?.textContent || '').join(' ')));
-      if (res.length === 1) { requeteAuto = q; clicAuto = true; res[0].click(); remettre(); return; }
-      if (nomsListe.size === 1) {
-        // Un nom de famille : on ouvre son arborescence sur le plus ancien de la liste (l'aïeul).
-        const an = (b) => +((b.querySelector('small')?.textContent || '').match(/(1[0-9]{3}|20[0-9]{2})/)?.[1] || 9999);
-        const aieul = res.reduce((a, b) => (an(b) < an(a) ? b : a));
-        requeteAuto = q; clicAuto = true; aieul.click(); remettre();
-      }
-    }, 1200);
-  });
+  if (champ) { champ.setAttribute('autocorrect', 'off'); champ.setAttribute('autocapitalize', 'off'); champ.setAttribute('spellcheck', 'false'); champ.setAttribute('autocomplete', 'off'); champ.setAttribute('enterkeyhint', 'search'); }
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || !(e.target instanceof Element) || e.target.id !== 'search-input') return;
+    const res = [...document.querySelectorAll('#search-results [data-goto]')];
+    const q = e.target.value.trim();
+    // 15/10, sur SON arbre : « FERRERE » et « FERRÈRE » = le même nom (accents et majuscules ne comptent pas).
+    const nomsListe = new Set(res.map((b) => mots(b.querySelector('.name b')?.textContent || '').join(' ')));
+    const [nom = ''] = nomsListe; // « paul hoarau » = une personne, pas le nom HOARAU entier
+    const queLeNom = mots(q).every((t) => nom.split(' ').some((m) => m.startsWith(t)));
+    if (res.length < 2 || nomsListe.size !== 1 || !queLeNom) return; // app.js ouvre la première personne de la liste
+    e.stopPropagation(); e.preventDefault();
+    e.target.blur(); // le clavier se range avant que l'arbre s'ouvre
+    // Un nom de famille : son arborescence s'ouvre sur le plus ancien de la liste (l'aïeul) ; le texte tapé reste.
+    const an = (b) => +((b.querySelector('small')?.textContent || '').match(/(1[0-9]{3}|20[0-9]{2})/)?.[1] || 9999);
+    const aieul = res.reduce((a, b) => (an(b) < an(a) ? b : a));
+    requeteAuto = q; clicAuto = true; aieul.click();
+    setTimeout(() => { if (e.target.value === '') e.target.value = q; }, 0);
+  }, true);
   // Un toucher sur un nom de la liste = la famille de CETTE personne (on quitte l'arborescence du nom).
   document.addEventListener('click', (e) => {
     if (!(e.target instanceof Element) || !e.target.closest('[data-goto]')) return;
