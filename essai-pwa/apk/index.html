@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ancestria pour Android · M'astel.974</title>
+<!-- ---- LIEN ANDROID FIXE (23/10/2026) ----
+     Son oui : « Oui, pose un lien Android fixe qui ne change pas d'une version à l'autre, et mets-le dans le kit. »
+     Adresse qui ne change jamais : https://gasmar97430-code.github.io/ancestria-web/apk/
+     Lit version.json (posée à côté par scripts/poser-sur-site.ps1) et télécharge la DERNIÈRE APK ; iPhone / ordinateur →
+     Ancestria et son bouton « Installer ». Supprimer ce fichier = les liens versionnés marchent comme avant. -->
+<style>
+  :root { --ivoire: #FBF8F1; --encre: #2b1d0e; --or: #c9a46a; --or-fonce: #7a5520; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--ivoire); color: var(--encre);
+         font: 16px/1.5 system-ui, Segoe UI, sans-serif; padding: 16px; box-sizing: border-box; }
+  .carte { width: min(100%, 420px); text-align: center; }
+  img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 4px 16px #0002; }
+  h1 { font: 600 26px Georgia, serif; margin: 14px 0 4px; }
+  .v { color: #6b5a48; font-size: 14px; margin: 0 0 18px; }
+  a.bouton { display: block; padding: 14px; border-radius: 14px; background: var(--or-fonce); color: #fff; text-decoration: none; font-weight: 700; }
+  a.second { display: block; margin-top: 10px; padding: 12px; border-radius: 14px; border: 1.5px solid var(--or); color: var(--or-fonce); text-decoration: none; font-weight: 600; }
+  .aide { font-size: 13.5px; color: #5b4a38; margin-top: 16px; }
+  .sig { margin-top: 22px; font: 600 13px Georgia, serif; color: #7a5520; }
+</style>
+</head>
+<body>
+<div class="carte">
+  <img src="../icons/ancestria-192.png" alt="">
+  <h1>Ancestria</h1>
+  <p class="v" id="version">pour Android</p>
+  <a class="bouton" id="telecharger" href="Ancestria-1.0.3.apk">Télécharger Ancestria</a>
+  <a class="second" href="../">Ouvrir Ancestria (iPhone, ordinateur)</a>
+  <p class="aide" id="aide">Après le téléchargement, touchez le fichier puis « Installer ». La première fois, Android demande d'autoriser l'installation : acceptez. Ensuite, Ancestria se met à jour toute seule.</p>
+  <p class="sig">M'astel.974</p>
+</div>
+<script>
+// ---- DERNIÈRE VERSION ----
+(async () => {
+  const lien = document.getElementById('telecharger');
+  try {
+    const r = await fetch('version.json', { cache: 'no-store' });
+    const f = await r.json();
+    if (!/^[\w.-]+\.apk$/.test(f.apk)) throw new Error('fiche invalide');
+    lien.href = f.apk;
+    document.getElementById('version').textContent = `pour Android · version ${f.version}`;
+  } catch (err) { /* repli : le lien écrit dans la page */ }
+  const android = /Android/i.test(navigator.userAgent);
+  if (!android) {
+    document.getElementById('aide').textContent = 'Sur iPhone ou ordinateur : ouvrez Ancestria, puis le bouton « Installer ».';
+  } else {
+    let deja = false;
+    try { deja = sessionStorage.getItem('ancestria-apk-lance') === '1'; sessionStorage.setItem('ancestria-apk-lance', '1'); } catch (err) { /* mémoire bloquée : on lance quand même */ }
+    if (!deja) location.href = lien.href; // une seule fois, pas à chaque retour sur la page
+  }
+})();
+// ---- FIN DERNIÈRE VERSION ----
+</script>
+</body>
+</html>
